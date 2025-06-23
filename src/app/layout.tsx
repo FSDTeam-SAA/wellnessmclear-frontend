@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import AppProvider from "@/provider/app-provider";
 import type { Metadata } from "next";
 import { Manrope, Roboto_Serif } from "next/font/google";
 import "./globals.css";
@@ -28,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(robotoSerrif.variable, manrope.className)}>
-        {children}
+        <AppProvider>{children}</AppProvider>
       </body>
     </html>
   );
