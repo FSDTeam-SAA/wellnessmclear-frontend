@@ -47,9 +47,13 @@ export function SignUpForm() {
     onSuccess: (data) => {
       console.log(data);
       // handle success
-      setLoading(true);
-      toast.success("Registration successfully");
-      router.push(callback ? `/login?callback=${callback}` : "/login");
+      if (data.status) {
+        setLoading(true);
+        toast.success("Registration successfully");
+        router.push(callback ? `/login?callback=${callback}` : "/login");
+      } else {
+        toast.error(data.message);
+      }
     },
     onError: (error) => {
       toast.error(error.message);
