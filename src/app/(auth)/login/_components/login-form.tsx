@@ -169,7 +169,7 @@ export default function LoginForm() {
       <div className="text-center text-sm">
         <span className="text-gray-600">New to our platform?</span>{" "}
         <Link
-          href={callback ? `/sign-up?callback=${callback}` : "/signup"}
+          href={callback ? `/sign-up?callback=${callback}` : "/sign-up"}
           className="font-medium text-primary-blue hover:text-primary-blue/80"
         >
           Sign Up Here
