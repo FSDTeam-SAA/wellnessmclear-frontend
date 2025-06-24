@@ -7,7 +7,7 @@ import "./globals.css";
 const manrope = Manrope({
   variable: "--font-manrope",
   weight: ["300", "400", "500", "600", "700", "800"],
-  subsets: ["latin"],
+  subsets: ["vietnamese"],
 });
 
 const robotoSerrif = Roboto_Serif({

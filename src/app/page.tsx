@@ -1,7 +1,12 @@
+import ServiceCard from "@/components/cards/service-card";
+
 export default function Home() {
   return (
-    <div className="min-h-screen flex justify-center items-center">
-      <h1 className="text-5xl ">Monir Hossain Rabby</h1>
+    <div className="container mx-auto grid grid-cols-4 gap-5 mt-[200px]">
+      <ServiceCard />
+      <ServiceCard />
+      <ServiceCard />
+      <ServiceCard />
     </div>
   );
 }
