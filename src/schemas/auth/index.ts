@@ -43,3 +43,14 @@ export const signUpFormSchema = z
 
 // Infer the type from the schema
 export type SignUpFormValues = z.infer<typeof signUpFormSchema>;
+
+// Define the form schema with Zod
+export const resetReqestForm = z.object({
+  email: z
+    .string()
+    .min(1, { message: "Email is required" })
+    .email({ message: "Invalid email address" }),
+});
+
+// Infer the type from the schema
+export type ResetRequestFormValues = z.infer<typeof resetReqestForm>;
