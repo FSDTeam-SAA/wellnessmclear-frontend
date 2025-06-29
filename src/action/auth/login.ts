@@ -1,5 +1,6 @@
 "use server";
 
+import { signIn } from "@/auth";
 import { loginFormSchema, LoginFormValues } from "@/schemas/auth";
 import { cookies } from "next/headers";
 
@@ -47,6 +48,9 @@ export async function loginAction(data: LoginFormValues) {
       data.rememberMe ? data.email : undefined,
       data.rememberMe ? data.password : undefined
     );
+
+    await signIn("credentials", result.data.user);
+
     return {
       success: true,
       message: "Login successful. Welcome back!",

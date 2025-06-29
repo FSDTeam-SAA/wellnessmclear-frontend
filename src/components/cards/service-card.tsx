@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Brain } from "lucide-react";
+import Link from "next/link";
 
 const ServiceCard = () => {
   return (
@@ -31,7 +32,9 @@ const ServiceCard = () => {
         </p>
       </CardContent>
       <CardFooter>
-        <Button className="text-white w-full">Book a Coach</Button>
+        <Button className="text-white w-full" asChild>
+          <Link href="/fsdfs">Book a Coach</Link>
+        </Button>
       </CardFooter>
     </Card>
   );
