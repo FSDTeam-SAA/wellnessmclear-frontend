@@ -54,7 +54,7 @@ export default function NewArrivals() {
       className="w-full py-8 px-4"
       style={{ backgroundColor: "#f3e8ff" }}
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="container mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold text-gray-900">New Arrivals</h2>
           <Link
