@@ -3,6 +3,8 @@ import AppProvider from "@/provider/app-provider";
 import type { Metadata } from "next";
 import { Manrope, Roboto_Serif } from "next/font/google";
 import "./globals.css";
+import { Navbar } from "@/components/Navbar/Navbar";
+import Footer from "@/components/footer/Footer";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -29,7 +31,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(robotoSerrif.variable, manrope.className)}>
+        <Navbar />
         <AppProvider>{children}</AppProvider>
+        <Footer />
       </body>
     </html>
   );
