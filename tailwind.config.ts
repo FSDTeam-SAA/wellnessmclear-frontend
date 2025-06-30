@@ -13,7 +13,7 @@ const config: Config = {
         center: true,
         padding: "2rem",
         screens: {
-          lg: "1170px",
+          lg: "1370px",
         },
       },
       colors: {
