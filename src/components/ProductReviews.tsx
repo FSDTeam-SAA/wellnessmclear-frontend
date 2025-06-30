@@ -214,7 +214,7 @@ export default function ProductReviews({ productId }: ReviewsSectionProps) {
       : 0;
 
   return (
-    <div className="w-full p-4 sm:p-6 lg:p-8">
+    <div className="w-full container mx-auto p-4 sm:p-6 lg:p-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
         {/* Left Side */}
         <div className="space-y-6">
