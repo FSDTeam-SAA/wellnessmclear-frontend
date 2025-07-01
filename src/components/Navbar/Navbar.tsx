@@ -133,7 +133,10 @@ export function Navbar() {
 
                   <ul className="hidden overflow-hidden right-0 peer-focus:block w-40 bg-white border border-gray-300 rounded shadow-md mt-2 py-1 absolute top-10">
                     <li className="px-4 py-2 hover:bg-gray-500/10 cursor-pointer text-blue-700">
-                     Login
+                      Login
+                    </li>
+                    <li className="px-4 py-2 hover:bg-gray-500/10 cursor-pointer text-black">
+                      <Link href="/account">My Account</Link>
                     </li>
                     <li className="px-4 py-2 hover:bg-gray-500/10 cursor-pointer text-black">
                       Sign Up
@@ -169,23 +172,22 @@ export function Navbar() {
                       onClick={() => setIsSheetOpen(false)}
                       className="text-lg font-medium hover:text-[#23547B]"
                     >
-                    BLOG
+                      BLOG
                     </Link>
                     <Link
                       href="/blogs"
                       onClick={() => setIsSheetOpen(false)}
                       className="text-lg font-medium hover:text-[#23547B]"
                     >
-                    COMMUNITY
+                      COMMUNITY
                     </Link>
                     <Link
                       href="/blog"
                       onClick={() => setIsSheetOpen(false)}
                       className="text-lg font-medium hover:text-[#23547B]"
                     >
-                    FIND A COACH
+                      FIND A COACH
                     </Link>
-
                   </nav>
                 </SheetContent>
               </Sheet>
