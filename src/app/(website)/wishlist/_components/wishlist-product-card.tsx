@@ -4,41 +4,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+// import type { Product } from "@/lib/types";
 import { addToCart } from "@/lib/cart-utils";
-import { toggleWishlist, getWishlistItems } from "@/lib/wishlist-utils";
+import { removeFromWishlist } from "@/lib/wishlist-utils";
+import { useState } from "react";
+import { Product } from "@/lib/types";
 
-interface Product {
-  id: number;
-  name: string;
-  category: string;
-  price: number;
-  rating: number;
-  reviews: number;
-  image: string;
-  isFavorite: boolean;
-}
-
-interface ProductCardProps {
+interface WishlistProductCardProps {
   product: Product;
-  showAddToCart?: boolean;
+  onRemove: () => void;
 }
 
-export default function ProductCard({
+export default function WishlistProductCard({
   product,
-  showAddToCart = false,
-}: ProductCardProps) {
+  onRemove,
+}: WishlistProductCardProps) {
   const [isAdding, setIsAdding] = useState(false);
-  const [isInWishlist, setIsInWishlist] = useState(false);
-
-  useEffect(() => {
-    // Check if the product is already in the wishlist
-    const wishlist = getWishlistItems();
-    const found = wishlist.some(
-      (item) => String(item.id) === String(product.id)
-    );
-    setIsInWishlist(found);
-  }, [product.id]);
 
   const handleAddToCart = () => {
     setIsAdding(true);
@@ -50,13 +31,10 @@ export default function ProductCard({
     }, 500);
   };
 
-  const handleToggleWishlist = (e: React.MouseEvent) => {
+  const handleRemoveFromWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
-    const newWishlistStatus = toggleWishlist({
-      ...product,
-      id: String(product.id),
-    });
-    setIsInWishlist(newWishlistStatus);
+    removeFromWishlist(String(product.id));
+    onRemove();
     window.dispatchEvent(new Event("wishlistUpdated"));
   };
 
@@ -66,13 +44,9 @@ export default function ProductCard({
         <div className="relative aspect-square p-4 group">
           <button
             className="absolute top-2 right-2 z-10 p-2"
-            onClick={handleToggleWishlist}
+            onClick={handleRemoveFromWishlist}
           >
-            <Heart
-              className={`w-5 h-5 transition-all ${
-                isInWishlist ? "fill-red-500 text-red-500" : "text-gray-400"
-              }`}
-            />
+            <Heart className="w-5 h-5 fill-red-500 text-red-500 transition-all" />
           </button>
 
           <Image
@@ -82,21 +56,19 @@ export default function ProductCard({
             className="object-cover rounded-md"
           />
 
-          {showAddToCart && (
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-md flex items-center justify-center">
-              <Button
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-gray-900 hover:bg-gray-100"
-                size="sm"
-                disabled={isAdding}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleAddToCart();
-                }}
-              >
-                {isAdding ? "Adding..." : "Add to Cart"}
-              </Button>
-            </div>
-          )}
+          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-md flex items-center justify-center">
+            <Button
+              className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-gray-900 hover:bg-gray-100"
+              size="sm"
+              disabled={isAdding}
+              onClick={(e) => {
+                e.preventDefault();
+                handleAddToCart();
+              }}
+            >
+              {isAdding ? "Adding..." : "Add to Cart"}
+            </Button>
+          </div>
         </div>
       </Link>
 
@@ -115,7 +87,7 @@ export default function ProductCard({
               <Star
                 key={i}
                 className={`w-3 h-3 ${
-                  i < Math.floor(product.rating)
+                  i < Math.floor(product.rating ?? 0)
                     ? "fill-yellow-400 text-yellow-400"
                     : "text-gray-300"
                 }`}

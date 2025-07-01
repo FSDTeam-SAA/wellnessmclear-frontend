@@ -4,6 +4,12 @@ export interface Product {
   price: number
   image: string
   description?: string
+  category?: string
+  rating?: number
+  reviews?: number
+  isFavorite?: boolean
+  stock?: number
+  createdAt?: string
 }
 
 export interface CartItem extends Product {
