@@ -1,6 +1,6 @@
 import Image from "next/image";
-import aboutImage from "../../public/images/about.jpg";
-import aboutImage1 from "../../public/images/about1.jpg";
+import aboutImage from "@/public/images/about.jpg";
+import aboutImage1 from "@/public/images/about1.jpg";
 import ShopByCategory from "@/components/products/shop-by-category";
 
 export default function AboutUs() {

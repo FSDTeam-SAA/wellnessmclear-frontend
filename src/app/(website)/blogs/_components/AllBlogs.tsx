@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import BlogCard from "../cards/BlogCard";
+import BlogCard from "../../../../components/cards/BlogCard";
 
 const BlogSection = () => {
   const blogData = [
