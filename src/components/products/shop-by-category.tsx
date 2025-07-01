@@ -53,7 +53,7 @@ export default function ShopByCategory() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.map((category) => (
             <Link key={category.id} href={`/category/${category.id}`} className="group">
-              <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+              <div className=" rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="relative aspect-square">
                   <Image
                     src={category.image || "/placeholder.svg"}
