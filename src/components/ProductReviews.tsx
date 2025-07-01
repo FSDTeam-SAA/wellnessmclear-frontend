@@ -14,7 +14,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {  useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 // import { toast } from "sonner";
 // import { useSession } from "next-auth/react";
 // import Link from "next/link";
@@ -63,43 +63,43 @@ function StarRating({
 
 function WriteReviewModal({ productId }: { productId: string }) {
   const [isOpen, setIsOpen] = useState(false);
-//   const session = useSession();
-//   const token = (session?.data?.user as { token: string })?.token || "";
+  //   const session = useSession();
+  //   const token = (session?.data?.user as { token: string })?.token || "";
   const [formData, setFormData] = useState({ rating: 5, comment: "" });
 
-//   const mutation = useMutation({
-//     mutationFn: async (formData: FormData) => {
-//       const res = await fetch(
-//         `${process.env.NEXT_PUBLIC_API_URL}/api/reviews`,
-//         {
-//           method: "POST",
-//           headers: {
-//             ...(token && { Authorization: `Bearer ${token}` }),
-//           },
-//           body: formData,
-//         }
-//       );
+  //   const mutation = useMutation({
+  //     mutationFn: async (formData: FormData) => {
+  //       const res = await fetch(
+  //         `${process.env.NEXT_PUBLIC_API_URL}/api/reviews`,
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             ...(token && { Authorization: `Bearer ${token}` }),
+  //           },
+  //           body: formData,
+  //         }
+  //       );
 
-//       if (!res.ok) {
-//         const error = await res.json();
-//         setIsOpen(false);
-//         throw new Error(error.message || "Failed to submit");
-//       }
+  //       if (!res.ok) {
+  //         const error = await res.json();
+  //         setIsOpen(false);
+  //         throw new Error(error.message || "Failed to submit");
+  //       }
 
-//       return res.json();
-//     },
+  //       return res.json();
+  //     },
 
-//     onSuccess: (data) => {
-//       toast.success(data.message || "Review added successfully");
-//       setFormData({ rating: 5, comment: "" });
-//       setIsOpen(false);
-//     },
+  //     onSuccess: (data) => {
+  //       toast.success(data.message || "Review added successfully");
+  //       setFormData({ rating: 5, comment: "" });
+  //       setIsOpen(false);
+  //     },
 
-//     onError: (error: Error) => {
-//       toast.error(error.message || "Something went wrong");
-//       setIsOpen(false);
-//     },
-//   });
+  //     onError: (error: Error) => {
+  //       toast.error(error.message || "Something went wrong");
+  //       setIsOpen(false);
+  //     },
+  //   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -174,9 +174,9 @@ function WriteReviewModal({ productId }: { productId: string }) {
               Cancel
             </Button>
             {/* {token ? ( */}
-              <Button type="submit" className="flex-1">
-                Submit Review
-              </Button>
+            <Button type="submit" className="flex-1">
+              Submit Review
+            </Button>
             {/* ) : (
               <Link href="/login" className="flex-1">
                 <Button className="w-full">Please Login</Button>
