@@ -14,7 +14,7 @@ import middleNavLogo from "@/public/images/middleNavLogo.svg";
 import { LiaFacebookSquare } from "react-icons/lia";
 import { CiInstagram, CiLinkedin } from "react-icons/ci";
 import { RiTwitterXFill } from "react-icons/ri";
-import { getCartItems, getCartSummary } from "@/lib/cart-utils";
+import { getCartItems } from "@/lib/cart-utils";
 
 export function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
