@@ -13,7 +13,7 @@ function WellnessServices() {
           unique needs and goals.
         </p>
       </div>
-      <div className="container mx-auto grid grid-cols-4 gap-5">
+      <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 px-4">
         <ServiceCard />
         <ServiceCard />
         <ServiceCard />

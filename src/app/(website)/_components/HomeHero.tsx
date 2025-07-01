@@ -50,12 +50,12 @@ export default function HomeHero() {
               {/* Buttons */}
               <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 w-full">
                 <Link href="/products" className="w-full sm:w-auto">
-                  <Button className="w-full sm:w-[200px] h-12 sm:h-[54px] text-base sm:text-lg font-bold text-white bg-[#A8C2A3] hover:bg-[#94b294] transition-colors duration-200">
+                  <Button className="w-full sm:w-[200px] h-10 sm:h-[54px] text-base sm:text-lg font-bold text-white bg-[#A8C2A3] hover:bg-[#94b294] transition-colors duration-200">
                     Explore Resources
                   </Button>
                 </Link>
                 <Link href="/products" className="w-full sm:w-auto">
-                  <Button className="w-full sm:w-[200px] h-12 sm:h-[54px] text-base sm:text-lg font-bold text-white bg-[#A8C2A3] hover:bg-[#94b294] transition-colors duration-200">
+                  <Button className="w-full sm:w-[200px] h-10 sm:h-[54px] text-base sm:text-lg font-bold text-white bg-[#A8C2A3] hover:bg-[#94b294] transition-colors duration-200">
                     Find A Coach
                   </Button>
                 </Link>
