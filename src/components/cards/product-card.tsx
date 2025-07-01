@@ -3,8 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, Star } from "lucide-react";
-import { Button } from "../ui/button";
-// import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 interface Product {
   id: number;

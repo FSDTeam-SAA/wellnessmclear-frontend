@@ -172,7 +172,7 @@ export function Navbar() {
                     BLOG
                     </Link>
                     <Link
-                      href="/blog"
+                      href="/blogs"
                       onClick={() => setIsSheetOpen(false)}
                       className="text-lg font-medium hover:text-[#23547B]"
                     >
@@ -235,7 +235,7 @@ export function Navbar() {
               </Link>
 
               <Link
-                href="/blog"
+                href="/blogs"
                 onClick={() => setIsSheetOpen(false)}
                 className="text-lg font-medium hover:text-[#23547B] px-4"
               >

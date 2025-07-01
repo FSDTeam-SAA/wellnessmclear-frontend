@@ -10,21 +10,25 @@ type BlogCardProps = {
   title: string;
 };
 
-function BlogCard({ id,  date, title }: BlogCardProps) {
+function BlogCard({ id, date, title }: BlogCardProps) {
   return (
-    <div className="overflow-hidden max-w-sm w-full">
+    <div className="max-w-sm w-full bg-white rounded overflow-hidden flex flex-col">
       <Image
         src={cardImage}
         width={400}
-        height={300}
+        height={275}
         alt={title}
         className="w-full h-[275px] object-cover"
       />
-      <div className="">
-        <p className="text-gray-500 text-sm mt-[24px]">{date}</p>
-        <p className="text-[#000000] text-[20px] font-semibold mb-4 mt-2">{title}</p>
+      <div className="flex flex-col flex-1 justify-between mt-6">
+        <div>
+          <p className="text-[#BACDDD] text-base font-medium">{date}</p>
+          <p className="text-[#000000] text-[20px] font-semibold mt-2 mb-4 line-clamp-2">
+            {title}
+          </p>
+        </div>
         <Link href={`/blog/${id}`}>
-          <button className="bg-transparent border border-green-500 text-green-500 text-sm px-4 py-2 rounded hover:bg-green-500 hover:text-white transition duration-300">
+          <button className="bg-transparent border border-[#A8C2A3] text-[#A8C2A3] text-sm px-4 py-2 rounded hover:bg-green-500 hover:text-white transition duration-300">
             View Details
           </button>
         </Link>

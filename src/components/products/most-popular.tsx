@@ -1,7 +1,7 @@
 import Link from "next/link";
-import ProductCard from "./product-card";
+import ProductCard from "../cards/product-card";
 
-export default function NewArrivals() {
+export default function MostPopular() {
   const products = [
     {
       id: 1,
@@ -46,7 +46,7 @@ export default function NewArrivals() {
   ];
 
   return (
-    <section className="w-full py-8 px-4">
+    <section className="w-full py-8 px-4 bg-[#F8FAF9]">
       <div className="container mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold text-gray-900">Most Popular</h2>
