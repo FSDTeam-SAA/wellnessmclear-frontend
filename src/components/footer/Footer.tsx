@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { Twitter, Instagram, Linkedin, Facebook } from "lucide-react";
+import Image from "next/image";
+import logoImage from "@/public/images/middleNavLogo.svg";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -19,20 +21,9 @@ const Footer = () => {
           {/* Logo and Description */}
           <div className="max-w-sm">
             <div className="flex items-center mb-6">
-              <div className="w-16 h-16 rounded-full border-2 border-gray-300 flex items-center justify-center">
+              <div className="w-[72px] h-[72px] rounded-full border-2 border-gray-300 flex items-center justify-center">
                 <div className="text-green-600 font-bold text-xl">
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z"
-                      fill="currentColor"
-                    />
-                  </svg>
+                  <Image src={logoImage} alt="" width={100} height={100} className="object-cover" />
                 </div>
               </div>
             </div>
@@ -45,18 +36,18 @@ const Footer = () => {
               {[Twitter, Instagram, Linkedin, Facebook].map((Icon, idx) => (
                 <div
                   key={idx}
-                  className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center hover:bg-green-200 transition-colors cursor-pointer"
+                  className="w-10 h-10 bg-[#E4ECE2] rounded-full flex items-center justify-center hover:bg-green-200 transition-colors cursor-pointer"
                 >
-                  <Icon className="w-5 h-5 text-green-600" />
+                  <Icon className="w-5 h-5 text-[#A8C2A3]" />
                 </div>
               ))}
             </div>
           </div>
 
           {/* Company & Support Links */}
-          <div className="flex  sm:flex-row lg:gap-32 gap-20">
+          <div className="flex sm:flex-row lg:gap-32 gap-20">
             <div>
-              <h3 className="font-semibold text-gray-800 mb-6">Company</h3>
+              <h3 className="font-semibold text-[#2F3E34] mb-6 text-[20px]">Company</h3>
               <ul className="space-y-4">
                 {["About Us", "Blogs", "Products", "Contract"].map((item, i) => (
                   <li key={i}>
@@ -71,7 +62,7 @@ const Footer = () => {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-800 mb-6">Support</h3>
+              <h3 className="font-semibold text-[#2F3E34] mb-6 text-[20px]">Support</h3>
               <ul className="space-y-4">
                 {["Privacy Policy", "Terms Of Service", "FAQ", "Help Center"].map(
                   (item, i) => (
@@ -91,7 +82,7 @@ const Footer = () => {
 
           {/* Newsletter */}
           <div className="max-w-md">
-            <h3 className="font-semibold text-gray-800 mb-6">
+            <h3 className="font-semibold text-[#2F3E34] mb-6 text-[20px]">
               Subscribe to Wellness Made Clear Newsletter
             </h3>
             <p className="text-gray-600 text-sm mb-6 leading-relaxed">
