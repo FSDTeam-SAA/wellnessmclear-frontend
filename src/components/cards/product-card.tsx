@@ -61,7 +61,7 @@ export default function ProductCard({
   };
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+    <div className=" rounded-lg overflow-hidden  hover:shadow-md transition-shadow">
       <Link href={`/product/${product.id}`}>
         <div className="relative aspect-square p-4 group">
           <button
@@ -85,7 +85,7 @@ export default function ProductCard({
           {showAddToCart && (
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-md flex items-center justify-center">
               <Button
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-gray-900 hover:bg-gray-100"
+                className="opacity-0 bg-[#A8C2A3] text-white text-[18px] group-hover:opacity-100 transition-opacity duration-300"
                 size="sm"
                 disabled={isAdding}
                 onClick={(e) => {
@@ -100,16 +100,20 @@ export default function ProductCard({
         </div>
       </Link>
 
-      <div className="p-4 pt-2">
-        <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
+      <div className="p-2 pt-2 mt-[20px]">
+        <p className="text-xs text-[#000000] text-[16px] uppercase tracking-wide mb-1">
           {product.category}
         </p>
         <Link href={`/product/${product.id}`}>
-          <h3 className="font-medium text-gray-900 mb-2 hover:text-gray-700">
+          <h3 className="font-medium text-[#000000]  text-[20px] mb-2 hover:text-gray-700">
             {product.name}
           </h3>
         </Link>
-        <div className="flex items-center gap-2 mb-2">
+
+        <p className="text-lg text-[#131313] mt-[32px] text-[40px] font-semibold text-gray-900">
+          ${product.price}
+        </p>
+        <div className="flex items-center gap-2 mb-2 mt-[8px]">
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
               <Star
@@ -126,7 +130,6 @@ export default function ProductCard({
             {product.rating} ({product.reviews})
           </span>
         </div>
-        <p className="text-lg font-semibold text-gray-900">${product.price}</p>
       </div>
     </div>
   );

@@ -39,7 +39,7 @@ export default function WishlistProductCard({
   };
 
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+    <div className=" rounded-lg overflow-hidden  hover:shadow-md transition-shadow duration-300">
       <Link href={`/product/${product.id}`}>
         <div className="relative aspect-square p-4 group">
           <button
@@ -58,7 +58,7 @@ export default function WishlistProductCard({
 
           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-md flex items-center justify-center">
             <Button
-              className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-gray-900 hover:bg-gray-100"
+              className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-[#A8C2A3] text-white text-[18px]"
               size="sm"
               disabled={isAdding}
               onClick={(e) => {

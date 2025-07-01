@@ -31,6 +31,28 @@ export default function CheckoutPage() {
   });
   const [isProcessing, setIsProcessing] = useState(false);
 
+  const [date, setDate] = useState("");
+  // const [expiry, setExpiry] = useState("");
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, ""); // Keep only digits
+
+    if (value.length > 8) {
+      value = value.slice(0, 8);
+    }
+
+    if (value.length >= 5) {
+      // Format as MM/DD/YYYY
+      value =
+        value.slice(0, 2) + "/" + value.slice(2, 4) + "/" + value.slice(4, 8);
+    } else if (value.length >= 3) {
+      // Format as MM/DD
+      value = value.slice(0, 2) + "/" + value.slice(2, 4);
+    }
+
+    setDate(value);
+  };
+
   useEffect(() => {
     const items = getCartItems();
     if (items.length === 0) {
@@ -44,7 +66,6 @@ export default function CheckoutPage() {
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
-
     // Simulate payment processing
     setTimeout(() => {
       clearCart();
@@ -189,8 +210,18 @@ export default function CheckoutPage() {
               </div>
 
               <div>
-                <Label htmlFor="expiry">Expiry date</Label>
-                <Input id="expiry" placeholder="MM/YY" maxLength={5} required />
+                <Label htmlFor="date">Date (MM/DD/YYYY)</Label>
+                <Input
+                  id="date"
+                  name="date"
+                  placeholder="MM/DD/YYYY"
+                  value={date}
+                  onChange={handleDateChange}
+                  maxLength={10}
+                  inputMode="numeric"
+                  pattern="\d{2}/\d{2}/\d{4}"
+                  required
+                />
               </div>
 
               <div>
@@ -207,7 +238,7 @@ export default function CheckoutPage() {
                 </p>
                 <Button
                   type="submit"
-                  className="w-full bg-green-600 hover:bg-green-700 py-3"
+                  className="w-full bg-[#A8C2A3] text-white py-3"
                   disabled={isProcessing}
                 >
                   {isProcessing ? "Processing Payment..." : "Make Your Payment"}
