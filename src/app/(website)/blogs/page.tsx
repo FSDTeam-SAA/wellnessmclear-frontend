@@ -1,4 +1,4 @@
-import BlogSection from '@/components/blogPage/AllBlogs'
+import BlogSection from '@/app/(website)/blogs/_components/AllBlogs'
 import React from 'react'
 
 function BlogPage() {
