@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ProductCard from "@/components/products/product-card";
+import ProductCard from "@/components/cards/product-card";
 import ProductReviews from "@/components/ProductReviews";
 import ProductDetails from "./_components/productDetails";
 import RelatedProduct from "./_components/relatedProduct";

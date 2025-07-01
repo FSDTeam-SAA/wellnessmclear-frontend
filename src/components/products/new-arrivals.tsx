@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ProductCard from "./product-card";
+import ProductCard from "../cards/product-card";
 
 export default function NewArrivals() {
   const products = [
