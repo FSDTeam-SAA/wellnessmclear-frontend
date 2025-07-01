@@ -33,9 +33,9 @@ const blogData = [
 const WellnessVault = () => {
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center lg:mb-[56px] lg:mt-[49px]">
+      <div className="flex justify-between items-center lg:mb-[56px] lg:mt-[49px] mb-5">
         <h2 className="text-[#2F3E34] hover:text-[#3b5243] text-2xl font-medium">The Wellness Vault</h2>
-        <Link href="/blogs" className="text-[#2F3E34] hover:text-[#3b5243] text-2xl font-medium">
+        <Link href="/blogs" className="text-[#2F3E34] hover:text-[#3b5243] lg:text-2xl font-medium">
           View all Blogs <span aria-hidden="true">→</span>
         </Link>
       </div>
