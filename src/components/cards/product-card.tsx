@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { addToCart } from "@/lib/cart-utils";
 
 interface Product {
   id: number;
@@ -25,6 +27,20 @@ export default function ProductCard({
   product,
   showAddToCart = false,
 }: ProductCardProps) {
+  const [isAdding, setIsAdding] = useState(false);
+
+  const handleAddToCart = () => {
+    setIsAdding(true);
+    addToCart({ ...product, id: String(product.id) });
+
+    // Dispatch custom event to update cart count
+    window.dispatchEvent(new Event("cartUpdated"));
+
+    setTimeout(() => {
+      setIsAdding(false);
+    }, 500);
+  };
+
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100">
       <Link href={`/product/${product.id}`}>
@@ -53,14 +69,16 @@ export default function ProductCard({
           {showAddToCart && (
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-md flex items-center justify-center">
               <Button
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-gray-900 hover:bg-gray-100"
+                className="opacity-0  group-hover:opacity-100 transition-opacity duration-300 bg-white text-gray-900 hover:bg-gray-100"
                 size="sm"
+                disabled={isAdding}
                 onClick={(e) => {
                   e.preventDefault();
                   // Handle add to cart
+                  handleAddToCart()
                 }}
               >
-                Add to Cart
+               {isAdding ? "Adding..." : "Add to Cart"}
               </Button>
             </div>
           )}
