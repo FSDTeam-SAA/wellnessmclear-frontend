@@ -4,7 +4,7 @@ import { useState } from "react";
 // import ProductCard from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
-import ProductCard from "@/components/products/product-card";
+import ProductCard from "@/components/cards/product-card";
 
 export default function AllProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
