@@ -15,7 +15,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-gray-50 py-16 px-4">
+    <footer className="bg-[#FFFFFF] py-16 px-4">
       <div className="container mx-auto">
         <div className="flex flex-col lg:flex-row flex-wrap justify-between gap-10">
           {/* Logo and Description */}
