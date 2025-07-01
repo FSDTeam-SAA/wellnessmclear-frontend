@@ -49,7 +49,7 @@ export default function CartPage() {
             <h1 className="text-3xl font-bold mb-4">Your Cart is Empty</h1>
             <p className="text-gray-600 mb-8">Add some products to get started!</p>
             <Link href="/">
-              <Button className="bg-green-600 hover:bg-green-700">Continue Shopping</Button>
+              <Button className="bg-[#A8C2A3] hover:bg-green-700">Continue Shopping</Button>
             </Link>
           </div>
         </main>
@@ -195,7 +195,7 @@ export default function CartPage() {
         <div className="mt-8 flex flex-col lg:flex-row gap-8">
           <div className="lg:flex-1">
             <Link href="/">
-              <Button variant="outline" className="bg-green-100 text-green-700 border-green-300 hover:bg-green-200">
+              <Button variant="outline" className="bg-[#A8C2A3] text-white border-[#A8C2A3] ">
                 Continue Shopping
               </Button>
             </Link>
@@ -219,7 +219,7 @@ export default function CartPage() {
                 </div>
               </div>
               <Link href="/checkout">
-                <Button className="w-full mt-4 bg-green-600 hover:bg-green-700">Checkout</Button>
+                <Button className="w-full mt-4 bg-[#A8C2A3] border-[#A8C2A3] text-white">Checkout</Button>
               </Link>
             </div>
           </div>

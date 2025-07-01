@@ -14,16 +14,43 @@ import middleNavLogo from "@/public/images/middleNavLogo.svg";
 import { LiaFacebookSquare } from "react-icons/lia";
 import { CiInstagram, CiLinkedin } from "react-icons/ci";
 import { RiTwitterXFill } from "react-icons/ri";
+import { getCartItems } from "@/lib/cart-utils";
 
 export function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isMounted, setIsMounted] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  //   const pathname = usePathname();
+  const [cartItemCount, setCartItemCount] = useState(0);
+
+  // const [cartItems, setCartItems] = useState<number>(0);
+  // //   const pathname = usePathname();
+
+  // useEffect(() => {
+  //   const items = getCartItems();
+  //   setCartItems(items.length);
+  //   setIsMounted(true);
+  // }, []);
 
   useEffect(() => {
+    const updateCartCount = () => {
+      const items = getCartItems();
+      const count = items.reduce((sum, item) => sum + item.quantity, 0);
+      setCartItemCount(count);
+    };
     setIsMounted(true);
+    updateCartCount();
+
+    // Listen for storage changes
+    window.addEventListener("storage", updateCartCount);
+
+    // Custom event for cart updates
+    window.addEventListener("cartUpdated", updateCartCount);
+
+    return () => {
+      window.removeEventListener("storage", updateCartCount);
+      window.removeEventListener("cartUpdated", updateCartCount);
+    };
   }, []);
 
   return (
@@ -110,14 +137,14 @@ export function Navbar() {
               <Link href="/wishlist" className="relative p-2 flex">
                 <Heart className="text-2xl text-gray-600" />
               </Link>
-              <button className="p-2 relative">
+              <Link href="/cart" className="relative p-2 flex">
                 <ShoppingCart className="text-2xl text-gray-600" />
                 {isMounted && (
                   <Badge className="absolute -top-1 -right-1 bg-[#6A93B6] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center p-0">
-                    0
+                    {cartItemCount}
                   </Badge>
                 )}
-              </button>
+              </Link>
               <div className=" text-white px-6 py-2 rounded-md hidden sm:flex">
                 <div className="flex flex-col text-sm relative">
                   <button className="peer w-full text-left  bg-white text-gray-700 border-gray-300 focus:outline-none flex items-center">
@@ -133,7 +160,7 @@ export function Navbar() {
 
                   <ul className="hidden overflow-hidden right-0 peer-focus:block w-40 bg-white border border-gray-300 rounded shadow-md mt-2 py-1 absolute top-10">
                     <li className="px-4 py-2 hover:bg-gray-500/10 cursor-pointer text-blue-700">
-                     Login
+                      Login
                     </li>
                     <li className="px-4 py-2 hover:bg-gray-500/10 cursor-pointer text-black">
                       Sign Up
@@ -169,23 +196,22 @@ export function Navbar() {
                       onClick={() => setIsSheetOpen(false)}
                       className="text-lg font-medium hover:text-[#23547B]"
                     >
-                    BLOG
+                      BLOG
                     </Link>
                     <Link
                       href="/blogs"
                       onClick={() => setIsSheetOpen(false)}
                       className="text-lg font-medium hover:text-[#23547B]"
                     >
-                    COMMUNITY
+                      COMMUNITY
                     </Link>
                     <Link
                       href="/blog"
                       onClick={() => setIsSheetOpen(false)}
                       className="text-lg font-medium hover:text-[#23547B]"
                     >
-                    FIND A COACH
+                      FIND A COACH
                     </Link>
-
                   </nav>
                 </SheetContent>
               </Sheet>
