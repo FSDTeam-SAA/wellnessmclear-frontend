@@ -1,5 +1,9 @@
 import Image from "next/image"
 import Link from "next/link"
+import shopbycategory1 from '../../public/images/shopbycategory1.jpg';
+import shopbycategory2 from '../../public/images/shopbycategory2.jpg';
+import shopbycategory3 from '../../public/images/shopbycategory3.jpg';
+import shopbycategory4 from '../../public/images/shopbycategory4.jpg';
 
 export default function ShopByCategory() {
   const categories = [
@@ -7,28 +11,28 @@ export default function ShopByCategory() {
       id: 1,
       title: "Daily Essentials",
       description: "Curated for foundational wellness and everyday vitality",
-      image: "/placeholder.svg?height=300&width=300",
+      image: shopbycategory1,
       avatar: "/placeholder.svg?height=40&width=40",
     },
     {
       id: 2,
       title: "Gut & Detox Support",
       description: "Balance your microbiome and cleanse your system naturally",
-      image: "/placeholder.svg?height=300&width=300",
+      image: shopbycategory2,
       avatar: "/placeholder.svg?height=40&width=40",
     },
     {
       id: 3,
       title: "Energy & Focus",
       description: "Boost vitality, stamina, and mental clarity",
-      image: "/placeholder.svg?height=300&width=300",
+      image: shopbycategory3,
       avatar: "/placeholder.svg?height=40&width=40",
     },
     {
       id: 4,
       title: "Self-Care Rituals",
       description: "Restore your body, soul, and mind with intentional practices",
-      image: "/placeholder.svg?height=300&width=300",
+      image: shopbycategory4,
       avatar: "/placeholder.svg?height=40&width=40",
     },
   ]
@@ -49,7 +53,7 @@ export default function ShopByCategory() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.map((category) => (
             <Link key={category.id} href={`/category/${category.id}`} className="group">
-              <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+              <div className=" rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="relative aspect-square">
                   <Image
                     src={category.image || "/placeholder.svg"}
