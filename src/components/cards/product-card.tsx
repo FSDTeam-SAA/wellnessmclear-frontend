@@ -32,7 +32,7 @@ export default function ProductCard({
   const [isInWishlist, setIsInWishlist] = useState(false);
 
   useEffect(() => {
-    // Check if the product is already in the wishlist
+
     const wishlist = getWishlistItems();
     const found = wishlist.some(
       (item) => String(item.id) === String(product.id)
