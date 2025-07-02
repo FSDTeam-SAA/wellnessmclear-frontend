@@ -22,6 +22,7 @@ export function Navbar() {
   const [isMounted, setIsMounted] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [cartItemCount, setCartItemCount] = useState(0);
+  const [wishlistItem, setWishlistItemCount] = useState(0);
 
   // const [cartItems, setCartItems] = useState<number>(0);
   // //   const pathname = usePathname();
@@ -35,16 +36,17 @@ export function Navbar() {
   useEffect(() => {
     const updateCartCount = () => {
       const items = getCartItems();
-      const count = items.reduce((sum, item) => sum + item.quantity, 0);
+      const count = items.length; // Only count unique items
       setCartItemCount(count);
     };
+    const storedWishlist = localStorage.getItem("wishlist");
+    const wishlist = storedWishlist ? JSON.parse(storedWishlist) : [];
+    setWishlistItemCount(wishlist.length);
     setIsMounted(true);
     updateCartCount();
 
-    // Listen for storage changes
+    // Listen for storage and custom cart updates
     window.addEventListener("storage", updateCartCount);
-
-    // Custom event for cart updates
     window.addEventListener("cartUpdated", updateCartCount);
 
     return () => {
@@ -136,6 +138,11 @@ export function Navbar() {
             <div className="flex items-center">
               <Link href="/wishlist" className="relative p-2 flex">
                 <Heart className="text-2xl text-gray-600" />
+                {isMounted && (
+                  <Badge className="absolute -top-1 -right-1 bg-[#6A93B6] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center p-0">
+                    {wishlistItem}
+                  </Badge>
+                )}
               </Link>
               <Link href="/cart" className="relative p-2 flex">
                 <ShoppingCart className="text-2xl text-gray-600" />
