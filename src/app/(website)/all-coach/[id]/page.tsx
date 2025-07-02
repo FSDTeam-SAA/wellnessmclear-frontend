@@ -23,7 +23,7 @@ const coachData = {
     experience:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor si",
     skills: {
-      "Medical Skills": 95,
+      "Medical Skills": 99,
       "Communication Skills": 100,
       "Patients Care": 98,
       "Career Overview": 95,
