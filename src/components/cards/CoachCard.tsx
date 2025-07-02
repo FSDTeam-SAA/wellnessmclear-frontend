@@ -33,7 +33,7 @@ export default function CoachCard({ coach }: { coach: Coach }) {
           <Badge variant="secondary">{coach.rating} ⭐</Badge>
           <Badge variant="outline">{coach.experience}</Badge>
         </div>
-        <Link href={`/coach/${coach.id}`}>
+        <Link href={`/all-coach/${coach.id}`}>
           <Button className="w-full bg-[#A8C2A3] hover:bg-[#A8C2A3]/70 text-white hover:text-black">Book Now</Button>
         </Link>
       </CardContent>
