@@ -22,14 +22,18 @@ export function Navbar() {
   const [isMounted, setIsMounted] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [cartItemCount, setCartItemCount] = useState(0);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [wishlistItem, setWishlistItemCount] = useState(0);
 
   useEffect(() => {
     const updateCartCount = () => {
       const items = getCartItems();
-      const count = items.reduce((sum, item) => sum + item.quantity, 0);
+      const count = items.length; // Only count unique items
       setCartItemCount(count);
     };
+    const storedWishlist = localStorage.getItem("wishlist");
+    const wishlist = storedWishlist ? JSON.parse(storedWishlist) : [];
+    setWishlistItemCount(wishlist.length);
     setIsMounted(true);
     updateCartCount();
 
@@ -112,23 +116,29 @@ export function Navbar() {
             <Search className="text-2xl" />
           </button>
 
-          <div className="flex items-center">
-            <Link href="/wishlist" className="relative p-2">
+        <div className="flex items-center">
+            <Link href="/wishlist" className="relative p-2 flex">
               <Heart className="text-2xl text-gray-600" />
+              {isMounted && (
+                <Badge className="absolute -top-1 -right-1 bg-[#6A93B6] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center p-0">
+                  {wishlistItem}
+                </Badge>
+              )}
             </Link>
-            <Link href="/cart" className="relative p-2">
+            <Link href="/cart" className="relative p-2 flex">
               <ShoppingCart className="text-2xl text-gray-600" />
               {isMounted && (
                 <Badge className="absolute -top-1 -right-1 bg-[#6A93B6] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center p-0">
                   {cartItemCount}
                 </Badge>
               )}
+          
             </Link>
 
             {/* Account Dropdown */}
             <div className="text-white px-6 py-2 rounded-md hidden sm:flex relative">
               <div className="flex flex-col text-sm">
-                <button 
+                <button
                   className="w-full text-left bg-white text-gray-700 border-gray-300 focus:outline-none flex items-center"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
@@ -256,23 +266,38 @@ export function Navbar() {
         </div>
       )}
 
-      {/* Bottom Nav */}
+    {/* Bottom Nav */}
       <div className="bg-white pb-4 hidden md:block border-b-[1.5px] border-[#23547B]">
         <div className="container mx-auto">
           <nav className="flex items-center justify-center gap-2 divide-x divide-gray-300">
-            <Link href="/" className="text-lg font-medium hover:text-[#616161] leading-[120%] pr-4">
+            <Link
+              href="/"
+              className="text-lg font-medium hover:text-[#616161] leading-[120%] pr-4"
+            >
               HOME
             </Link>
-            <Link href="/products" className="text-lg font-medium hover:text-[#23547B] px-4">
+            <Link
+              href="/products"
+              className="text-lg font-medium hover:text-[#23547B] px-4"
+            >
               SHOP
             </Link>
-            <Link href="/blogs" className="text-lg font-medium hover:text-[#23547B] px-4">
+            <Link
+              href="/blogs"
+              className="text-lg font-medium hover:text-[#23547B] px-4"
+            >
               BLOG
             </Link>
-            <Link href="/blog" className="text-lg font-medium hover:text-[#23547B] px-4">
+            <Link
+              href="/blog"
+              className="text-lg font-medium hover:text-[#23547B] px-4"
+            >
               COMMUNITY
             </Link>
-            <Link href="/blog" className="text-lg font-medium hover:text-[#23547B] px-4">
+            <Link
+              href="/blog"
+              className="text-lg font-medium hover:text-[#23547B] px-4"
+            >
               FIND A COACH
             </Link>
           </nav>
