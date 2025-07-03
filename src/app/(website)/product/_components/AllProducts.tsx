@@ -1,14 +1,17 @@
 "use client";
 
 import { useState } from "react";
-// import ProductCard from "@/components/product-card";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import ProductCard from "@/components/cards/product-card";
+import { ProductResponse } from "@/types/productDataType";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AllProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
-  // const [sortBy, setSortBy] = useState("best-sellers");
+  const [page, setPage] = useState(1);
+
   const categories = [
     { id: "all", name: "All Products" },
     { id: "daily-essentials", name: "Daily Essentials" },
@@ -17,88 +20,31 @@ export default function AllProductsPage() {
     { id: "self-care", name: "Self-Care Rituals" },
   ];
 
-  const products = [
-    {
-      id: 1,
-      name: "Brightening Serum",
-      category: "Serums",
-      price: 65,
-      rating: 4.8,
-      reviews: 161,
-      image: "https://plus.unsplash.com/premium_photo-1679913792906-13ccc5c84d44?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D",
-      isFavorite: false,
+  const { data, isLoading, isError, refetch } = useQuery<ProductResponse>({
+    queryKey: ["products", page],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/product?page=${page}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!res.ok) {
+        throw new Error("Failed to fetch products");
+      }
+      return res.json();
     },
-    {
-      id: 2,
-      name: "Brightening Serum",
-      category: "Serums",
-      price: 65,
-      rating: 4.9,
-      reviews: 186,
-     image:"https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D",
-      isFavorite: false,
-    },
-    {
-      id: 3,
-      name: "Brightening Serum",
-      category: "Serums",
-      price: 65,
-      rating: 4.9,
-      reviews: 186,
-      image: "https://plus.unsplash.com/premium_photo-1679913792906-13ccc5c84d44?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D",
-      isFavorite: true,
-    },
-    {
-      id: 4,
-      name: "Brightening Serum",
-      category: "Serums",
-      price: 65,
-      rating: 4.9,
-      reviews: 186,
-      image: "https://plus.unsplash.com/premium_photo-1679913792906-13ccc5c84d44?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D",
-      isFavorite: false,
-    },
-    {
-      id: 5,
-      name: "Brightening Serum",
-      category: "Serums",
-      price: 65,
-      rating: 4.8,
-      reviews: 161,
-      image: "https://plus.unsplash.com/premium_photo-1679913792906-13ccc5c84d44?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D",
-      isFavorite: false,
-    },
-    {
-      id: 6,
-      name: "Brightening Serum",
-      category: "Serums",
-      price: 65,
-      rating: 4.9,
-      reviews: 186,
-      image: "https://plus.unsplash.com/premium_photo-1679913792906-13ccc5c84d44?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D",
-      isFavorite: false,
-    },
-    {
-      id: 7,
-      name: "Brightening Serum",
-      category: "Serums",
-      price: 65,
-      rating: 4.9,
-      reviews: 186,
-      image: "https://plus.unsplash.com/premium_photo-1679913792906-13ccc5c84d44?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D",
-      isFavorite: false,
-    },
-    {
-      id: 8,
-      name: "Brightening Serum",
-      category: "Serums",
-      price: 65,
-      rating: 4.9,
-      reviews: 186,
-      image: "https://plus.unsplash.com/premium_photo-1679913792906-13ccc5c84d44?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D",
-      isFavorite: false,
-    },
-  ];
+  });
+
+  const products = data?.data.products || [];
+  const pagination = data?.data.pagination || {
+    page: 1,
+    totalPages: 1,
+    total: 0,
+    limit: 10,
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -108,7 +54,7 @@ export default function AllProductsPage() {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             All Products
           </h1>
-          <p className="text-gray-600">{products.length} Results</p>
+          <p className="text-gray-600">{pagination.total} Results</p>
         </div>
 
         {/* Filters and Sort */}
@@ -157,34 +103,73 @@ export default function AllProductsPage() {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="space-y-3">
+                <Skeleton className="h-52 w-full rounded-lg" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+              </div>
+            ))}
+          </div>
+        ) : isError ? (
+          <div className="flex flex-col items-center justify-center py-12 gap-4 text-center text-red-500">
+            <p>Something went wrong while fetching products.</p>
+            <Button onClick={() => refetch()} variant="outline">
+              Retry
+            </Button>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              {products.map((product) => (
+                <ProductCard
+                  key={product._id}
+                  showAddToCart={true}
+                  product={product}
+                />
+              ))}
+            </div>
 
-        {/* Pagination */}
-        <div className="flex items-center justify-center gap-2">
-          <Button variant="outline" size="sm" disabled>
-            Previous
-          </Button>
-          <Button variant="default" size="sm" className="bg-black text-white">
-            1
-          </Button>
-          <Button variant="outline" size="sm">
-            2
-          </Button>
-          <Button variant="outline" size="sm">
-            3
-          </Button>
-          <span className="text-gray-500">...</span>
-          <Button variant="outline" size="sm">
-            10
-          </Button>
-          <Button variant="outline" size="sm">
-            Next
-          </Button>
-        </div>
+            {/* Pagination */}
+            <div className="flex items-center justify-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                disabled={pagination.page === 1}
+              >
+                Previous
+              </Button>
+
+              {Array.from({ length: pagination.totalPages }, (_, i) => (
+                <Button
+                  key={i + 1}
+                  variant={pagination.page === i + 1 ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setPage(i + 1)}
+                  className={
+                    pagination.page === i + 1 ? "bg-black text-white" : ""
+                  }
+                >
+                  {i + 1}
+                </Button>
+              ))}
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setPage((prev) => Math.min(prev + 1, pagination.totalPages))
+                }
+                disabled={pagination.page === pagination.totalPages}
+              >
+                Next
+              </Button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { addToCart } from "@/lib/cart-utils";
 import { removeFromWishlist } from "@/lib/wishlist-utils";
 import { useState } from "react";
-import { Product } from "@/lib/types";
+import { Product } from "@/types/productDataType";
+// import { Product } from "@/lib/types";
 
 interface WishlistProductCardProps {
   product: Product;
@@ -23,7 +24,7 @@ export default function WishlistProductCard({
 
   const handleAddToCart = () => {
     setIsAdding(true);
-    addToCart({ ...product, id: String(product.id) });
+    addToCart({ ...product, _id: String(product._id) });
     window.dispatchEvent(new Event("cartUpdated"));
 
     setTimeout(() => {
@@ -33,14 +34,14 @@ export default function WishlistProductCard({
 
   const handleRemoveFromWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
-    removeFromWishlist(String(product.id));
+    removeFromWishlist(String(product._id));
     onRemove();
     window.dispatchEvent(new Event("wishlistUpdated"));
   };
 
   return (
     <div className=" rounded-lg overflow-hidden  hover:shadow-md transition-shadow duration-300">
-      <Link href={`/product/${product.id}`}>
+      <Link href={`/product/${product._id}`}>
         <div className="relative aspect-square p-4 group">
           <button
             className="absolute top-2 right-2 z-10 p-2"
@@ -76,7 +77,7 @@ export default function WishlistProductCard({
         <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
           {product.category}
         </p>
-        <Link href={`/product/${product.id}`}>
+        <Link href={`/product/${product._id}`}>
           <h3 className="font-medium text-gray-900 mb-2 hover:text-gray-700">
             {product.name}
           </h3>
@@ -87,7 +88,7 @@ export default function WishlistProductCard({
               <Star
                 key={i}
                 className={`w-3 h-3 ${
-                  i < Math.floor(product.rating ?? 0)
+                  i < Math.floor(product.avgRating ?? 0)
                     ? "fill-yellow-400 text-yellow-400"
                     : "text-gray-300"
                 }`}
@@ -95,10 +96,10 @@ export default function WishlistProductCard({
             ))}
           </div>
           <span className="text-xs text-gray-600">
-            {product.rating} ({product.reviews})
+            {product.avgRating} ({product.totalReviews})
           </span>
         </div>
-        <p className="text-lg font-semibold text-gray-900">${product.price}</p>
+        <p className="text-lg font-semibold text-gray-900">${product.actualPrice}</p>
       </div>
     </div>
   );

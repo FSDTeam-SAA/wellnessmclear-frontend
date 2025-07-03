@@ -11,8 +11,9 @@ import { Lock, Search, Globe } from "lucide-react"
 import Link from "next/link"
 
 export default function PaymentPage() {
-  const [appointmentData, setAppointmentData] = useState<any>(null)
-  const [coachData, setCoachData] = useState<any>(null)
+  const [appointmentData, setAppointmentData] = useState(null)
+  type CoachData = { price?: number; [key: string]: number | string | undefined; }
+  const [coachData, setCoachData] = useState<CoachData | null>(null)
 
   const [paymentData, setPaymentData] = useState({
     paymentMethod: "credit-card",

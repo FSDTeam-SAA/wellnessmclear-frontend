@@ -1,4 +1,5 @@
-import type { CartItem, Product, CartSummary } from "./types"
+import { Product } from "@/types/productDataType"
+import type { CartItem, CartSummary } from "./types"
 
 export const getCartItems = (): CartItem[] => {
   if (typeof window === "undefined") return []
@@ -11,14 +12,19 @@ export const saveCartItems = (items: CartItem[]): void => {
   localStorage.setItem("cart", JSON.stringify(items))
 }
 
-export const addToCart = (product: Product): void => {
+export const addToCart = (product:Product ): void => {
   const cartItems = getCartItems()
-  const existingItem = cartItems.find((item) => item.id === product.id)
+  const existingItem = cartItems.find((item) => item.id === product._id)
 
   if (existingItem) {
     existingItem.quantity += 1
   } else {
-    cartItems.push({ ...product, quantity: 1 })
+    cartItems.push({ 
+      ...product, 
+      id: product._id, 
+      price: product.discountedPrice, 
+      quantity: 1 
+    })
   }
 
   saveCartItems(cartItems)
