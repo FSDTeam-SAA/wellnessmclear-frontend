@@ -22,7 +22,7 @@ function BlogCard({ slug, image, date, title }: BlogCardProps) {
   };
 
   return (
-    <div className="max-w-sm w-full bg-white rounded overflow-hidden flex flex-col duration-300">
+    <div className="max-w-sm w-full rounded overflow-hidden flex flex-col duration-300">
       <div className="relative w-full h-[275px]">
         <Image
           src={image || cardImage} // Use API image or fallback
