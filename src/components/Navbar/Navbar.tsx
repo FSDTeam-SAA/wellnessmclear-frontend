@@ -267,7 +267,7 @@ const [isDropdownOpen, setIsDropdownOpen] = useState(false);
       )}
 
     {/* Bottom Nav */}
-      <div className="bg-white pb-4 hidden md:block border-b-[1.5px] border-[#23547B]">
+      <div className="bg-white pb-4 hidden md:block  border-[#23547B]">
         <div className="container mx-auto">
           <nav className="flex items-center justify-center gap-2 divide-x divide-gray-300">
             <Link
@@ -277,7 +277,7 @@ const [isDropdownOpen, setIsDropdownOpen] = useState(false);
               HOME
             </Link>
             <Link
-              href="/products"
+              href="/product"
               className="text-lg font-medium hover:text-[#23547B] px-4"
             >
               SHOP
