@@ -14,27 +14,29 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Review, ReviewsResponse } from "@/types/reviewDataType";
+import { toast } from "sonner";
 // import { toast } from "sonner";
 // import { useSession } from "next-auth/react";
 // import Link from "next/link";
 
-interface Review {
-  id: string;
-  productId: string;
-  userName: string;
-  userAvatar?: string;
-  rating: number;
-  comment: string;
-  date: string;
-  user: {
-    name: string;
-    id: string;
-    email: string;
-    image: string;
-  };
-  created_at: string;
-}
+// interface Review {
+//   id: string;
+//   productId: string;
+//   userName: string;
+//   userAvatar?: string;
+//   rating: number;
+//   comment: string;
+//   date: string;
+//   user: {
+//     name: string;
+//     id: string;
+//     email: string;
+//     image: string;
+//   };
+//   created_at: string;
+// }
 
 interface ReviewsSectionProps {
   productId: string;
@@ -63,54 +65,56 @@ function StarRating({
 
 function WriteReviewModal({ productId }: { productId: string }) {
   const [isOpen, setIsOpen] = useState(false);
-  //   const session = useSession();
-  //   const token = (session?.data?.user as { token: string })?.token || "";
   const [formData, setFormData] = useState({ rating: 5, comment: "" });
 
-  //   const mutation = useMutation({
-  //     mutationFn: async (formData: FormData) => {
-  //       const res = await fetch(
-  //         `${process.env.NEXT_PUBLIC_API_URL}/api/reviews`,
-  //         {
-  //           method: "POST",
-  //           headers: {
-  //             ...(token && { Authorization: `Bearer ${token}` }),
-  //           },
-  //           body: formData,
-  //         }
-  //       );
+  const mutation = useMutation({
+    mutationFn: async (payload: {
+      productId: string;
+      userId: string;
+      rating: number;
+      review: string;
+    }) => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/reviews`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Authorization: `Bearer ${token}`, // Uncomment if needed
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
-  //       if (!res.ok) {
-  //         const error = await res.json();
-  //         setIsOpen(false);
-  //         throw new Error(error.message || "Failed to submit");
-  //       }
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Failed to submit");
+      }
 
-  //       return res.json();
-  //     },
+      return res.json();
+    },
 
-  //     onSuccess: (data) => {
-  //       toast.success(data.message || "Review added successfully");
-  //       setFormData({ rating: 5, comment: "" });
-  //       setIsOpen(false);
-  //     },
+    onSuccess: (data) => {
+      toast.success(data.message || "Review added successfully");
+      setFormData({ rating: 5, comment: "" });
+      setIsOpen(false);
+    },
 
-  //     onError: (error: Error) => {
-  //       toast.error(error.message || "Something went wrong");
-  //       setIsOpen(false);
-  //     },
-  //   });
+    onError: (error: Error) => {
+      toast.error(error.message || "Something went wrong");
+      setIsOpen(false);
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const fromdata = new FormData();
-    fromdata.append("product_id", productId);
-    fromdata.append("comment", formData.comment);
-    fromdata.append("rating", formData.rating.toString());
-
-    // mutation.mutate(fromdata);
-    setFormData({ rating: 5, comment: "" });
+    mutation.mutate({
+      productId,
+      userId: "12345", // Replace with actual user ID from session or context
+      rating: formData.rating,
+      review: formData.comment,
+    });
   };
 
   const handleRatingClick = (rating: number) => {
@@ -173,15 +177,9 @@ function WriteReviewModal({ productId }: { productId: string }) {
             >
               Cancel
             </Button>
-            {/* {token ? ( */}
             <Button type="submit" className="flex-1">
               Submit Review
             </Button>
-            {/* ) : (
-              <Link href="/login" className="flex-1">
-                <Button className="w-full">Please Login</Button>
-              </Link>
-            )} */}
           </div>
         </form>
       </DialogContent>
@@ -190,11 +188,11 @@ function WriteReviewModal({ productId }: { productId: string }) {
 }
 
 export default function ProductReviews({ productId }: ReviewsSectionProps) {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading } = useQuery<ReviewsResponse>({
     queryKey: ["getReviews", productId],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/products/${productId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/review-rating/get-all-reviews/${productId}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -205,8 +203,36 @@ export default function ProductReviews({ productId }: ReviewsSectionProps) {
     },
   });
 
-  const reviewData: Review[] = data?.data?.reviews || [];
+  if (isLoading) {
+    return (
+      <div className="w-full container mx-auto p-4 sm:p-6 lg:p-8">
+        <div className="animate-pulse space-y-6">
+          <div className="h-8 bg-gray-300 rounded w-1/3" />
+          <div className="h-4 bg-gray-200 rounded w-1/4" />
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, idx) => (
+              <div key={idx} className="space-y-2 border-b pb-4">
+                <div className="flex items-center gap-4">
+                  <div className="rounded-full bg-gray-300 w-10 h-10 sm:w-12 sm:h-12" />
+                  <div className="space-y-2 w-full">
+                    <div className="h-4 bg-gray-300 rounded w-1/3" />
+                    <div className="h-3 bg-gray-200 rounded w-2/3" />
+                  </div>
+                </div>
+                <div className="h-3 bg-gray-200 rounded w-full mt-2" />
+                <div className="h-3 bg-gray-200 rounded w-5/6" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const reviewData: Review[] = data?.data.reviews || [];
+
   console.log(reviewData);
+  // console.log(reviewData);
   const averageRating =
     reviewData.length > 0
       ? reviewData.reduce((sum, review) => sum + review.rating, 0) /
@@ -258,12 +284,12 @@ export default function ProductReviews({ productId }: ReviewsSectionProps) {
           ) : reviewData.length > 0 ? (
             <div className="flex flex-col gap-6 min-w-[500px]">
               {reviewData.map((review) => (
-                <div key={review.id} className="border-b border-gray-400 pb-6">
+                <div key={review._id} className="border-b border-gray-400 pb-6">
                   <div className="flex items-start gap-4">
                     <Avatar className="w-10 h-10 sm:w-12 sm:h-12">
                       <AvatarImage
-                        src={review.userAvatar || "/placeholder.svg"}
-                        alt={review.userName}
+                        src={review.userId.profileImage || "/placeholder.svg"}
+                        alt={review.userId.firstName || "User Avatar"}
                       />
                       <AvatarFallback>
                         <User className="w-5 h-5" />
@@ -276,15 +302,15 @@ export default function ProductReviews({ productId }: ReviewsSectionProps) {
                       </div>
 
                       <p className="text-gray-700 text-sm sm:text-base mb-3 leading-relaxed">
-                        {review.comment}
+                        {review.review || "No review text provided."}
                       </p>
 
                       <div className="text-sm text-gray-500">
                         <p className="font-medium text-gray-900">
-                          {review.user.name}
+                          {review.userId.firstName} {review.userId.lastName}
                         </p>
                         <p>
-                          {new Date(review.created_at).toLocaleString("en-US", {
+                          {new Date(review.createdAt).toLocaleString("en-US", {
                             year: "numeric",
                             month: "long",
                             day: "numeric",

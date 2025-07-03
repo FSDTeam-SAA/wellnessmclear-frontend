@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import Pagination from "@/components/pagination";
 // import WishlistProductCard from "@/components/wishlist-product-card";
-import type { Product } from "@/lib/types";
+// import type { Product } from "@/lib/types";
 import { getWishlistItems } from "@/lib/wishlist-utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import WishlistProductCard from "./wishlist-product-card";
+import { Product } from "@/types/productDataType";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -60,7 +61,7 @@ export default function WishlistPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {currentItems.map((product) => (
             <WishlistProductCard
-              key={product.id}
+              key={product._id}
               product={product}
               onRemove={handleRemoveItem}
             />
