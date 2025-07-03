@@ -58,7 +58,7 @@ function WellnessServices() {
   }
 
   return (
-    <div className="lg:p-[72px] md:p-[50px] p-[30px] bg-[#EFE2F6]">
+    <div className="lg:py-[72px] bg-[#EFE2F6] py-10">
       <div className="mb-[56px]">
         <h1 className="lg:text-[40px] mb-2 md:text-[28px] text-[24px] text-[#0F0F0F] text-center leading-[120%] font-semibold">
           Our Wellness Services
@@ -69,7 +69,7 @@ function WellnessServices() {
         </p>
       </div>
 
-      <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 px-4">
+      <div className="lg:container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 w-[90%] mx-auto">
         {servicesData.map((service: ServiceCardProps, index: number) => (
           <ServiceCard
             key={service._id}

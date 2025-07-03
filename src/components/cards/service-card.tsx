@@ -31,9 +31,9 @@ const ServiceCard = ({
 }: ServiceCardProps) => {
   return (
     <Card
-      className={`shadow-none rounded-[8px] bg-[#F0F4F8] max-w-[275px] max-h-[305px]`}
+      className={`shadow-none rounded-[8px] bg-[#F0F4F8] lg:max-w-[275px] max-h-[305px]`}
     >
-      <CardHeader className="space-y-[28px]">
+      <CardHeader className="lg:space-y-[28px]">
         {Icon ? (
           <Icon className={`size-[32px] text-[#CBA0E3]`} />
         ) : iconUrl ? (

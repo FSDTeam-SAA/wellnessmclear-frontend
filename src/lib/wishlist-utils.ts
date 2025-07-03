@@ -1,4 +1,6 @@
-import type { Product } from "./types"
+// import type { Product } from "./types"
+
+import { Product } from "@/types/productDataType"
 
 export const getWishlistItems = (): Product[] => {
   if (typeof window === "undefined") return []
@@ -13,7 +15,7 @@ export const saveWishlistItems = (items: Product[]): void => {
 
 export const addToWishlist = (product: Product): void => {
   const wishlistItems = getWishlistItems()
-  const existingItem = wishlistItems.find((item) => item.id === product.id)
+  const existingItem = wishlistItems.find((item) => item._id === product._id)
 
   if (!existingItem) {
     wishlistItems.push(product)
@@ -23,20 +25,20 @@ export const addToWishlist = (product: Product): void => {
 
 export const removeFromWishlist = (productId: string): void => {
   const wishlistItems = getWishlistItems()
-  const filteredItems = wishlistItems.filter((item) => item.id !== productId)
+  const filteredItems = wishlistItems.filter((item) => item._id !== productId)
   saveWishlistItems(filteredItems)
 }
 
 export const isInWishlist = (productId: string): boolean => {
   const wishlistItems = getWishlistItems()
-  return wishlistItems.some((item) => item.id === productId)
+  return wishlistItems.some((item) => item._id === productId)
 }
 
 export const toggleWishlist = (product: Product): boolean => {
-  const inWishlist = isInWishlist(product.id)
+  const inWishlist = isInWishlist(product._id)
 
   if (inWishlist) {
-    removeFromWishlist(product.id)
+    removeFromWishlist(product._id)
     return false
   } else {
     addToWishlist(product)
