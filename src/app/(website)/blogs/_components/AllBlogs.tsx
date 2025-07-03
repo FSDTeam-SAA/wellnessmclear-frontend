@@ -1,126 +1,167 @@
+"use client";
 import React from "react";
+import BlogCard from "@/components/cards/BlogCard";
 import Link from "next/link";
-import BlogCard from "../../../../components/cards/BlogCard";
+import { useQuery } from "@tanstack/react-query";
 
-const BlogSection = () => {
-  const blogData = [
-    {
-      id: 1,
-      image: "/images/blog1.jpg",
-      date: "January 01, 2025",
-      title: "The Power of Mindfulness in Daily Life",
+
+interface Blog {
+  _id: string;
+  title: string;
+  slug: string;
+  description: string;
+  image: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+interface Pagination {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+interface BlogData {
+  blogs: Blog[];
+  pagination: Pagination;
+}
+
+interface ApiResponse {
+  status: boolean;
+  message: string;
+  data: BlogData;
+}
+
+const AllBlogs = () => {
+  const { data, isLoading, error } = useQuery<ApiResponse>({
+    queryKey: ["blogs"],
+    queryFn: async () => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/blog/`, {
+        method: "GET",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch blogs");
+      }
+
+      return res.json();
     },
-    {
-      id: 2,
-      image: "/images/blog2.jpg",
-      date: "January 02, 2025",
-      title: "Healthy Eating Habits for a Balanced Lifestyle",
-    },
-    {
-      id: 3,
-      image: "/images/blog3.jpg",
-      date: "January 03, 2025",
-      title: "Exercise Routines for Beginners",
-    },
-    {
-      id: 4,
-      image: "/images/blog4.jpg",
-      date: "January 04, 2025",
-      title: "Stress Management Techniques",
-    },
-    {
-      id: 5,
-      image: "/images/blog5.jpg",
-      date: "January 05, 2025",
-      title: "The Importance of Sleep for Health",
-    },
-    {
-      id: 6,
-      image: "/images/blog6.jpg",
-      date: "January 06, 2025",
-      title: "Hydration and Your Body: What You Need to Know",
-    },
-    {
-      id: 7,
-      image: "/images/blog7.jpg",
-      date: "January 07, 2025",
-      title: "Building Mental Resilience for Everyday Life",
-    },
-    {
-      id: 8,
-      image: "/images/blog8.jpg",
-      date: "January 08, 2025",
-      title: "Simple Yoga Poses for Relaxation",
-    },
-    {
-      id: 9,
-      image: "/images/blog9.jpg",
-      date: "January 09, 2025",
-      title: "How Journaling Can Improve Your Mental Health",
-    },
-    {
-      id: 10,
-      image: "/images/blog10.jpg",
-      date: "January 10, 2025",
-      title: "Meditation for Beginners: A Guide",
-    },
-    {
-      id: 11,
-      image: "/images/blog11.jpg",
-      date: "January 11, 2025",
-      title: "Balancing Work and Wellness",
-    },
-    {
-      id: 12,
-      image: "/images/blog12.jpg",
-      date: "January 12, 2025",
-      title: "Creating a Morning Routine That Works",
-    },
-  ];
+  });
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center lg:mb-[56px] lg:mt-[49px] mb-5">
+          <h2 className="text-[#2F3E34] hover:text-[#3b5243] text-2xl font-medium">
+            The Wellness Vault
+          </h2>
+          <Link
+            href="/blogs"
+            className="text-[#2F3E34] hover:text-[#3b5243] lg:text-2xl font-medium"
+          >
+            View all Blogs <span aria-hidden="true">→</span>
+          </Link>
+        </div>
+
+        {/* Loading skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[...Array(4)].map((_, index) => (
+            <div
+              key={index}
+              className="max-w-sm w-full bg-white rounded overflow-hidden flex flex-col animate-pulse"
+            >
+              <div className="w-full h-[275px] bg-gray-300"></div>
+              <div className="flex flex-col flex-1 justify-between mt-6 p-4">
+                <div>
+                  <div className="h-4 bg-gray-300 rounded w-1/3 mb-2"></div>
+                  <div className="h-6 bg-gray-300 rounded w-full mb-4"></div>
+                </div>
+                <div className="h-10 bg-gray-300 rounded"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center lg:mb-[56px] lg:mt-[49px] mb-5">
+          <h2 className="text-[#2F3E34] hover:text-[#3b5243] text-2xl font-medium">
+            The Wellness Vault
+          </h2>
+          <Link
+            href="/blogs"
+            className="text-[#2F3E34] hover:text-[#3b5243] lg:text-2xl font-medium"
+          >
+            View all Blogs <span aria-hidden="true">→</span>
+          </Link>
+        </div>
+
+        <div className="text-center py-8">
+          <p className="text-red-500 text-lg">Error loading blogs</p>
+          <p className="text-gray-600 mt-2">{error.message}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // No data state
+  if (!data || !data.data || !data.data.blogs || data.data.blogs.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center lg:mb-[56px] lg:mt-[49px] mb-5">
+          <h2 className="text-[#2F3E34] hover:text-[#3b5243] text-2xl font-medium">
+            The Wellness Vault
+          </h2>
+          <Link
+            href="/blogs"
+            className="text-[#2F3E34] hover:text-[#3b5243] lg:text-2xl font-medium"
+          >
+            View all Blogs <span aria-hidden="true">→</span>
+          </Link>
+        </div>
+
+        <div className="text-center py-8">
+          <p className="text-gray-500 text-lg">No blogs found</p>
+        </div>
+      </div>
+    );
+  }
+
+  const blogs = data.data.blogs;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Section Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">The Wellness Vault</h1>
-        <p className="text-gray-500 text-sm mt-2">
-          Unlock Your Path to Clear, Sustainable Health
-        </p>
-      </div>
-
-      {/* Blog Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {blogData.map((blog) => (
-          <BlogCard
-            key={blog.id}
-            id={blog.id}
-            image={blog.image}
-            date={blog.date}
-            title={blog.title}
-          />
-        ))}
-      </div>
-
-      {/* Footer Links */}
-      <div className="mt-8 text-center">
-        <Link
-          href="/view-all"
-          className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition duration-300 inline-block"
-        >
-          View Details
-        </Link>
-        <div className="mt-4 text-gray-500 text-sm space-x-2">
-          <Link href="/about" className="hover:underline">
-            About
-          </Link>
-          <span>|</span>
-          <Link href="/contact" className="hover:underline">
-            Contact
-          </Link>
+    <div className="bg-[#F8FAF9]">
+      <div className="container mx-auto px-4 lg:py-[72px] md:py-[60px] py-[40px] ">
+        <div className="text-center lg:mb-[51px] md:mb-[40px] mb-[40px]">
+          <h1 className="text-3xl font-bold text-gray-800">
+            The Wellness Vault
+          </h1>
+          <p className="text-gray-500 text-sm mt-2">
+            Unlock Your Path to Clear, Sustainable Health
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {blogs.map((blog) => (
+            <BlogCard
+              key={blog._id}
+              slug={blog.slug}
+              image={blog.image}
+              date={blog.createdAt}
+              title={blog.title}
+            />
+          ))}
         </div>
       </div>
     </div>
   );
 };
 
-export default BlogSection;
+export default AllBlogs;

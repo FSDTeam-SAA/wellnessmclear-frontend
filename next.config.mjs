@@ -1,11 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains:['images.unsplash.com','plus.unsplash.com'],
+    domains: [
+      'images.unsplash.com',
+      'plus.unsplash.com',
+      'res.cloudinary.com', // ✅ Added Cloudinary
+    ],
     remotePatterns: [
       {
-        hostname: "files.edgestore.dev",
         protocol: "https",
+        hostname: "files.edgestore.dev",
       },
     ],
   },
