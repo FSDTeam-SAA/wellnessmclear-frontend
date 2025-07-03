@@ -1,121 +1,158 @@
 "use client";
 
 import * as React from "react";
-import useEmblaCarousel from "embla-carousel-react";
-// import { cn } from "@/lib/utils"
-// import Image from "next/image";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Star } from "lucide-react";
+import Autoplay from "embla-carousel-autoplay";
 
 const testimonials = [
   {
+    id: 1,
     name: "Sarah Johnson",
-    title: "Yoga Enthusiast",
-    image:
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    role: "Yoga Enthusiast",
+    avatar: "/placeholder.svg?height=60&width=60",
     rating: 5,
-    quote:
+    testimonial:
       "The personalized wellness program transformed my approach to health. I've never felt more balanced and energized.",
   },
   {
-    name: "Sarah Johnson",
-    title: "Yoga Enthusiast",
-    image:
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    rating: 5,
-    quote:
-      "The personalized wellness program transformed my approach to health. I've never felt more balanced and energized.",
-  },
-  {
-    name: "Sarah Johnson",
-    title: "Yoga Enthusiast",
-    image:
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    rating: 5,
-    quote:
-      "The personalized wellness program transformed my approach to health. I've never felt more balanced and energized.",
-  },
-  {
+    id: 2,
     name: "Michael Chen",
-    title: "Business Professional",
-    image:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    role: "Business Professional",
+    avatar: "/placeholder.svg?height=60&width=60",
     rating: 5,
-    quote:
+    testimonial:
       "After struggling with stress for years, the mindfulness practices I learned here have given me tools to find calm in any situation.",
   },
   {
+    id: 3,
     name: "Alicia Rodriguez",
-    title: "Marathon Runner",
-    image:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    role: "Marathon Runner",
+    avatar: "/placeholder.svg?height=60&width=60",
     rating: 5,
-    quote:
+    testimonial:
       "The nutritional guidance was eye-opening. Small changes to my diet have made a remarkable difference in my energy levels.",
+  },
+  {
+    id: 4,
+    name: "David Kim",
+    role: "Software Engineer",
+    avatar: "/placeholder.svg?height=60&width=60",
+    rating: 5,
+    testimonial:
+      "The community support and expert guidance helped me develop sustainable healthy habits that fit my busy lifestyle.",
+  },
+  {
+    id: 5,
+    name: "Emma Thompson",
+    role: "Teacher",
+    avatar: "/placeholder.svg?height=60&width=60",
+    rating: 5,
+    testimonial:
+      "I've tried many wellness programs, but this one truly understands the importance of mental and physical balance.",
   },
 ];
 
-export function Testimonial() {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+export default function TestimonialCarousel() {
+  const plugin = React.useRef(
+    Autoplay({ delay: 4000, stopOnInteraction: true })
+  );
 
-  const scrollPrev = () => emblaApi?.scrollPrev();
-  const scrollNext = () => emblaApi?.scrollNext();
+  const renderStars = (rating: number) => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <Star
+        key={i}
+        className={`w-4 h-4 ${
+          i < rating
+            ? "fill-yellow-400 text-yellow-400"
+            : "fill-gray-200 text-gray-200"
+        }`}
+      />
+    ));
+  };
 
   return (
-    <section className="w-full bg-[#f9f3fb] py-12">
-      <div className="container px-4 mx-auto">
-        <div className="mb-8 flex justify-between items-center">
-          <div>
-            <h2 className="text-3xl font-bold">The Clarity Circle</h2>
-            <p className="text-sm text-muted-foreground">
-              wmc community for individuals committed to living well.
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={scrollPrev}
-              className="h-10 w-10 rounded-full border flex items-center justify-center hover:bg-gray-200 transition"
-            >
-              ←
-            </button>
-            <button
-              onClick={scrollNext}
-              className="h-10 w-10 rounded-full border flex items-center justify-center hover:bg-gray-200 transition"
-            >
-              →
-            </button>
+    <div className="w-full bg-[#F0F4F8] px-4 py-8 md:py-12">
+      <div className="container mx-auto">
+        <div className="mb-8 md:mb-12">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+                The Clarity Circle
+              </h2>
+              <p className="text-sm md:text-base text-gray-600">
+                WMC community for individuals committed to living well.
+              </p>
+            </div>
           </div>
         </div>
 
-        <div className="overflow-hidden" ref={emblaRef}>
-          <div className="flex gap-4">
-            {testimonials.map((item, idx) => (
-              <div
-                key={idx}
-                className="min-w-full md:min-w-[50%] lg:min-w-[33.333%] bg-white p-6 rounded-xl shadow-sm"
-              >
-                <div className="flex items-center gap-4 mb-4">
-                  <Avatar>
-                    <AvatarImage src={item.image} />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h4 className="font-semibold text-base">{item.name}</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {item.title}
-                    </p>
-                    <div className="text-yellow-500 mt-1">
-                      {"★".repeat(item.rating)}
-                    </div>
-                  </div>
-                </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  “{item.quote}”
-                </p>
-              </div>
-            ))}
+        <Carousel
+          className="w-full"
+          plugins={[plugin.current]}
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+        >
+          <div className="flex justify-end mt-6 mb-6">
+            <CarouselPrevious className="relative" />
+            <CarouselNext className="relative" />
           </div>
-        </div>
+
+          <CarouselContent className="-ml-2 md:-ml-4">
+            {testimonials.map((testimonial) => (
+              <CarouselItem
+                key={testimonial.id}
+                className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3"
+              >
+                <Card className="h-full rounded-lg bg-white shadow-[0px_0px_16px_0px_#00000014] hover:shadow-md transition-shadow duration-300">
+                  <CardContent className="p-6 md:p-8 flex flex-col h-full">
+                    <div className="flex items-center gap-4 mb-4">
+                      <Avatar className="w-12 h-12 md:w-14 md:h-14">
+                        <AvatarImage
+                          src={testimonial.avatar || "/placeholder.svg"}
+                          alt={testimonial.name}
+                        />
+                        <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
+                          {testimonial.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-900 text-sm md:text-base">
+                          {testimonial.name}
+                        </h3>
+                        <p className="text-xs md:text-sm text-gray-600">
+                          {testimonial.role}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1 mb-4">
+                      {renderStars(testimonial.rating)}
+                    </div>
+
+                    <blockquote className="text-sm md:text-base text-gray-700 leading-relaxed flex-1">
+                      &quot;{testimonial.testimonial}&quot;
+                    </blockquote>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
       </div>
-    </section>
+    </div>
   );
 }
