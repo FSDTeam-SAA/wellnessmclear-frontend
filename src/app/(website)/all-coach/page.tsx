@@ -1,9 +1,8 @@
 "use client"
 
-import { useState } from "react"
-
 import CoachCard from "@/components/cards/CoachCard"
 
+// Static list of coach data
 const coaches = [
   {
     id: 1,
@@ -62,43 +61,27 @@ const coaches = [
 ]
 
 export default function AllCoachesPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [selectedExperience, setSelectedExperience] = useState("all")
-
-
-  const filteredCoaches = coaches.filter((coach) => {
-    const matchesSearch =
-      coach.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      coach.specialty.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === "all" || coach.category === selectedCategory
-    const matchesExperience = selectedExperience === "all" || coach.experience === selectedExperience
-
-    return matchesSearch && matchesCategory && matchesExperience
-  })
-
   return (
     <div className="min-h-screen bg-gray-50">
- 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
         {/* Page Title */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">All Coaches</h2>
-          <p className="text-gray-600">{filteredCoaches.length} coaches available</p>
+          <p className="text-gray-600">{coaches.length} coaches available</p>
         </div>
-
-   
 
         {/* Coaches Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredCoaches.map((coach) => (
-     <CoachCard key={coach.id} coach={coach} />
+          {coaches.map((coach) => (
+            <CoachCard key={coach.id} coach={coach} />
           ))}
         </div>
 
-        {filteredCoaches.length === 0 && (
+        {/* Fallback message if no coaches exist (optional) */}
+        {coaches.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No coaches found matching your criteria.</p>
+            <p className="text-gray-500 text-lg">No coaches available at the moment.</p>
           </div>
         )}
       </div>

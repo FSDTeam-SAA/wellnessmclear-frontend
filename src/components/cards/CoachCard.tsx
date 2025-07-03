@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import Image from "next/image"
 
 interface Coach {
   id: number
@@ -19,7 +20,9 @@ export default function CoachCard({ coach }: { coach: Coach }) {
     <Card className="shadow-sm hover:shadow-lg transition-shadow">
       <CardHeader className="text-center pb-4">
         <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden">
-          <img
+          <Image
+            height={96}
+            width={96}
             src={coach.image || "/placeholder.svg"}
             alt={coach.name}
             className="w-full h-full object-cover"

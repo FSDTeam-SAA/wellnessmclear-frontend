@@ -8,13 +8,15 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Progress } from "@/components/ui/progress"
 import { Calendar, Clock, Facebook, Instagram, Twitter, Linkedin } from "lucide-react"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 const coachData = {
   1: {
-    name: "Test 111",
+    name: "Jordan Peele",
     specialty: "General Health Specialist",
+    price: 250,
+    sessionDuration: "60 minutes",
     image: "/placeholder.svg?height=300&width=300",
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in",
@@ -23,7 +25,53 @@ const coachData = {
     experience:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor si",
     skills: {
-      "Medical Skills": 99,
+      "Medical Skills": 95,
+      "Communication Skills": 100,
+      "Patients Care": 98,
+      "Career Overview": 95,
+    },
+    openingHours: {
+      weekdays: "Monday to Friday: 10.00Am-06.00Pm",
+      weekend: "Sunday: 10.00Am-02.00Pm",
+    },
+  },  
+  2: {
+    name: "Jordan Peele",
+    specialty: "General Health Specialist",
+    price: 550,
+    sessionDuration: "60 minutes",
+    image: "/placeholder.svg?height=300&width=300",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in",
+    qualification:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in",
+    experience:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor si",
+    skills: {
+      "Medical Skills": 95,
+      "Communication Skills": 100,
+      "Patients Care": 98,
+      "Career Overview": 95,
+    },
+    openingHours: {
+      weekdays: "Monday to Friday: 10.00Am-06.00Pm",
+      weekend: "Sunday: 10.00Am-02.00Pm",
+    },
+  }, 
+   3: {
+    name: "Jordan Peele",
+    specialty: "General Health Specialist",
+    price: 50,
+    sessionDuration: "60 minutes",
+    image: "/placeholder.svg?height=300&width=300",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in",
+    qualification:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in",
+    experience:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor si",
+    skills: {
+      "Medical Skills": 95,
       "Communication Skills": 100,
       "Patients Care": 98,
       "Career Overview": 95,
@@ -56,43 +104,17 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
   const handleBookAppointment = () => {
     console.log("Appointment Booking Data:", formData)
 
-    // Store appointment data in localStorage for the next page
+    // Store appointment data and coach data for payment page
     localStorage.setItem("appointmentData", JSON.stringify(formData))
     localStorage.setItem("coachData", JSON.stringify(coach))
 
-    // Navigate to plans page
-    router.push("/plans")
+    // Navigate directly to payment page (skip plans)
+    router.push("/payment")
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-2xl font-bold text-gray-900">
-              WMC
-            </Link>
-            <nav className="hidden md:flex space-x-8">
-              <Link href="/" className="text-gray-700 hover:text-gray-900">
-                HOME
-              </Link>
-              <Link href="/shop" className="text-gray-700 hover:text-gray-900">
-                SHOP
-              </Link>
-              <Link href="/blog" className="text-gray-700 hover:text-gray-900">
-                BLOG
-              </Link>
-              <Link href="/community" className="text-gray-700 hover:text-gray-900">
-                COMMUNITY
-              </Link>
-              <Link href="/" className="text-gray-900 font-medium">
-                FIND A COACH
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+     
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -103,7 +125,9 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className="w-48 h-48 mx-auto md:mx-0 rounded-lg overflow-hidden flex-shrink-0">
-                    <img
+                    <Image 
+                    height={300 } 
+                    width={300} 
                       src={coach.image || "/placeholder.svg"}
                       alt={coach.name}
                       className="w-full h-full object-cover"
@@ -111,7 +135,11 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
                   </div>
                   <div className="flex-1">
                     <p className="text-green-600 text-sm mb-2">Lorem ipsum dolor sit amet.</p>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-4">{coach.name}</h1>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">{coach.name}</h1>
+                    <div className="flex items-center gap-4 mb-4">
+                      <span className="text-2xl font-bold text-green-600">${coach.price}</span>
+                      <span className="text-gray-600">/ {coach.sessionDuration}</span>
+                    </div>
                     <div className="mb-4">
                       <h3 className="font-semibold text-gray-900 mb-2">
                         Specialized In: <span className="font-normal text-gray-600">Lorem ipsum dolor sit amet.</span>
@@ -230,7 +258,7 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
 
                 <div>
                   <Label>Time</Label>
-                  <p className="text-sm text-gray-600 mb-2">I'm available on:</p>
+                  <p className="text-sm text-gray-600 mb-2">I&apos;m available on:</p>
                   <div className="relative">
                     <Calendar className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
                     <Input

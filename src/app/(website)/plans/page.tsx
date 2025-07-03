@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation"
 export default function PlansPage() {
   const router = useRouter()
   const [isAnnual, setIsAnnual] = useState(false)
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
 
   const plans = [
     {
