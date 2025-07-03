@@ -1,163 +1,101 @@
+"use client";
+
 import Link from "next/link";
 import ProductCard from "@/components/cards/product-card";
 import ProductReviews from "@/components/ProductReviews";
 import ProductDetails from "./_components/productDetails";
 import RelatedProduct from "./_components/relatedProduct";
-// import ProductCard from "@/components/product-card"
+import { useQuery } from "@tanstack/react-query";
+import { SingleProductResponse } from "@/types/singelProductDataType";
 
 export default function ProductDetailPage({
   params,
 }: {
   params: { id: string };
 }) {
-  console.log(params);
-  const product = {
-    id: 1,
-    name: "Brightening Serum",
-    category: "Serums",
-    price: 65,
-    rating: 4.8,
-    reviews: 161,
-    image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D",
-    isFavorite: false,
-    description:
-      "Our best-selling brightening serum helps even skin tone and reduce dark spots with powerful vitamin C and niacinamide.",
-    details: [
-      "Vitamin C brightens and evens skin tone",
-      "Niacinamide reduces pore appearance",
-      "Hyaluronic acid provides deep hydration",
-      "Suitable for all skin types",
-    ],
-    ingredients: "Water, Vitamin C, Niacinamide, Hyaluronic Acid, Glycerin",
-  };
+  const { data, isLoading, isError, error } = useQuery<SingleProductResponse>({
+    queryKey: ["SingelProducts", params.id],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/product/${params.id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!res.ok) {
+        throw new Error("Failed to fetch product");
+      }
+      return res.json();
+    },
+  });
 
-  const relatedProducts = [
-    {
-      id: 2,
-      name: "Brightening Serum",
-      category: "Serums",
-      price: 65,
-      rating: 4.9,
-      reviews: 186,
-      image: "/placeholder.svg?height=200&width=200",
-      isFavorite: false,
-    },
-    {
-      id: 3,
-      name: "Brightening Serum",
-      category: "Serums",
-      price: 65,
-      rating: 4.9,
-      reviews: 186,
-      image: "/placeholder.svg?height=200&width=200",
-      isFavorite: false,
-    },
-    {
-      id: 4,
-      name: "Brightening Serum",
-      category: "Serums",
-      price: 65,
-      rating: 4.9,
-      reviews: 186,
-      image: "/placeholder.svg?height=200&width=200",
-      isFavorite: false,
-    },
-    {
-      id: 5,
-      name: "Brightening Serum",
-      category: "Serums",
-      price: 65,
-      rating: 4.9,
-      reviews: 186,
-      image: "/placeholder.svg?height=200&width=200",
-      isFavorite: false,
-    },
-  ];
+  const relatedProducts = data?.data.relatedProducts || [];
+  const product = data?.data.product;
+  const reviews = data?.data.reviews || [];
 
-  // const reviews = [
-  //   {
-  //     id: 1,
-  //     rating: 5,
-  //     author: "Sarah M.",
-  //     date: "2 weeks ago",
-  //     comment:
-  //       "Amazing product! My skin looks brighter and more even after just 2 weeks of use.",
-  //   },
-  //   {
-  //     id: 2,
-  //     rating: 5,
-  //     author: "Jessica L.",
-  //     date: "1 month ago",
-  //     comment:
-  //       "Love this serum! It's gentle yet effective. No irritation and great results.",
-  //   },
-  //   {
-  //     id: 3,
-  //     rating: 4,
-  //     author: "Maria K.",
-  //     date: "3 weeks ago",
-  //     comment: "Good product, seeing gradual improvement in my dark spots.",
-  //   },
-  // ];
+  const averageRating =
+    reviews.length > 0
+      ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+      : 0;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white px-4 py-8 container mx-auto">
+        {/* Skeleton Product Details */}
+        <div className="animate-pulse space-y-4 max-w-4xl mx-auto">
+          <div className="h-80 bg-gray-200 rounded-md"></div>
+          <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-4 bg-gray-200 rounded w-full"></div>
+          <div className="h-4 bg-gray-200 rounded w-full"></div>
+        </div>
+
+        {/* Skeleton Related Products */}
+        <div className="mt-16">
+          <div className="h-6 bg-gray-200 rounded w-1/4 mb-6 animate-pulse"></div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="h-60 bg-gray-200 rounded-md animate-pulse"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !data || !product) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 py-8 container mx-auto">
+        <p className="text-red-600 text-lg font-semibold">
+          {(error as Error)?.message || "Failed to load product data."}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
       <div className="px-4 py-8">
         <div className="container mx-auto">
           {/* Product Detail Section */}
-          <ProductDetails product={product} />
+          <ProductDetails
+            product={product}
+            rating={averageRating}
+            totalReviews={reviews.length}
+          />
 
           {/* Related Products */}
           <RelatedProduct />
         </div>
 
-        {/* Reviews Section */}
-        {/* <div className="mb-16">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-            Ratings and Reviews
-          </h2>
-          <div className="space-y-6">
-            {reviews.map((review) => (
-              <div key={review.id} className="border-b border-gray-200 pb-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-medium text-gray-600">
-                      {review.author.charAt(0)}
-                    </span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-4 h-4 ${
-                              i < review.rating
-                                ? "fill-yellow-400 text-yellow-400"
-                                : "text-gray-300"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-sm font-medium text-gray-900">
-                        {review.author}
-                      </span>
-                      <span className="text-sm text-gray-500">
-                        {review.date}
-                      </span>
-                    </div>
-                    <p className="text-gray-600">{review.comment}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div> */}
-
-        {/* ProductReviews */}
+        {/* Product Reviews */}
         <div className="bg-[#E4ECE2] py-10">
-          <ProductReviews productId={product.id.toString()} />
+          <ProductReviews productId={product._id?.toString()} />
         </div>
 
         {/* Most Popular Section */}
@@ -188,7 +126,7 @@ export default function ProductDetailPage({
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {relatedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product._id} product={product} />
             ))}
           </div>
         </div>
