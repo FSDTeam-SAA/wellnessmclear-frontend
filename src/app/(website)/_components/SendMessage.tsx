@@ -85,14 +85,14 @@ export default function SendMessage() {
 
             <div className="space-y-3 pt-4">
               <div className="flex items-center space-x-3">
-                <Mail className="w-5 h-5 opacity-80 text-black" />
+                <Mail className="w-5 h-5 opacity-80 text-[#424242]" />
                 <span className="opacity-90 text-sm sm:text-base">
                   info@wellnessmadeclear.com
                 </span>
               </div>
 
               <div className="flex items-center space-x-3">
-                <MapPinned className="w-5 h-5 opacity-80 text-black" />
+                <MapPinned className="w-5 h-5 opacity-80 text-[#424242]" />
                 <span className="opacity-90 text-sm sm:text-base">
                   14071 Peyton Drive, Suite #2831, Chino Hills, CA 91709
                 </span>

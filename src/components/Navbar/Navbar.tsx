@@ -306,7 +306,7 @@ export function Navbar() {
               COMMUNITY
             </Link>
             <Link
-              href="/blog"
+              href="/all-coach"
               className="text-lg font-medium hover:text-[#23547B] px-4"
             >
               FIND A COACH
