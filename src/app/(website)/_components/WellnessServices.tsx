@@ -1,58 +1,64 @@
+"use client";
 import ServiceCard from "@/components/cards/service-card";
+import { useQuery } from "@tanstack/react-query";
 import { Brain, Heart, Activity, Zap } from "lucide-react";
 import React from "react";
 
-// Sample service data - you can move this to a separate file or fetch from API
-const servicesData = [
-  {
-    id: 1,
-    icon: Brain,
-    iconColor: "text-[#CBA0E3]",
-    title: "Clarity Health Audit",
-    description: "(1:1 Foundational Session – 60 mins)",
-    price: "$150",
-    buttonText: "Book a Coach",
-    href: "/health-audit",
-    backgroundColor: "bg-[#F0F4F8]"
-  },
-  {
-    id: 2,
-    icon: Heart,
-    iconColor: "text-[#CBA0E3]",
-    title: "Wellness Coaching",
-    description: "(Weekly Sessions – 45 mins each)",
-    price: "$200",
-    buttonText: "Start Journey",
-    href: "/busy-people",
-    backgroundColor: "bg-[#F0F4F8]"
-  },
-  {
-    id: 3,
-    icon: Activity,
-    iconColor: "text-[#CBA0E3]",
-    title: "Fitness Assessment",
-    description: "(Complete Body Analysis – 90 mins)",
-    price: "$120",
-    buttonText: "Get Assessed",
-    href: "/coaching-program",
-    backgroundColor: "bg-[#F0F4F8]"
-  },
-  {
-    id: 4,
-    icon: Zap,
-    iconColor: "text-[#CBA0E3]",
-    title: "Energy Optimization",
-    description: "(Nutrition & Lifestyle – 75 mins)",
-    price: "$180",
-    buttonText: "Boost Energy",
-    href: "/wellness-mentorship",
-    backgroundColor: "bg-[#F0F4F8]"
-  },
-];
+
+type ServiceCardProps = {
+  Icon?: React.ComponentType<{ className?: string }>;
+  iconUrl?: string;
+  iconColor: string;
+  title: string;
+  description: string;
+  price: string | number;
+  buttonText: string;
+  href: string;
+  backgroundColor: string;
+  _id: string
+};
 
 function WellnessServices() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["service"],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/service`,
+        {
+          method: "GET",
+        }
+      );
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return res.json();
+    },
+  });
+  const servicesData = data?.data || [];
+  console.log("data", data);
+
+  // Default icons array to cycle through
+  const defaultIcons = [Brain, Heart, Activity, Zap];
+  const defaultColors = ["text-blue-500", "text-red-500", "text-green-500", "text-yellow-500"];
+  const defaultBackgrounds = ["bg-blue-50", "bg-red-50", "bg-green-50", "bg-yellow-50"];
+
+  // Loading state
+  if (isLoading) {
+    return <p className="text-gray-500">Loading services...</p>;
+  }
+
+  // Error state
+  if (error) {
+    return <p className="text-red-500">Error: {error.message}</p>;
+  }
+
+  // Empty state
+  if (!data || servicesData.length === 0) {
+    return <p className="text-gray-400">No services found.</p>;
+  }
+
   return (
-    <div className="lg:p-[72px] md:p-[50px] p-[30px] bg-[#EFE2F6]">
+    <div className="lg:py-[72px] bg-[#EFE2F6] py-10">
       <div className="mb-[56px]">
         <h1 className="lg:text-[40px] mb-2 md:text-[28px] text-[24px] text-[#0F0F0F] text-center leading-[120%] font-semibold">
           Our Wellness Services
@@ -62,19 +68,19 @@ function WellnessServices() {
           unique needs and goals.
         </p>
       </div>
-      
-      <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 px-4">
-        {servicesData.map((service) => (
+
+      <div className="lg:container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 w-[90%] mx-auto">
+        {servicesData.map((service: ServiceCardProps, index: number) => (
           <ServiceCard
-            key={service.id}
-            Icon={service.icon}
-            iconColor={service.iconColor}
+            key={service._id}
+            Icon={defaultIcons[index % defaultIcons.length]}
+            iconColor={defaultColors[index % defaultColors.length]}
             title={service.title}
             description={service.description}
             price={service.price}
-            buttonText={service.buttonText}
-            href={service.href}
-            backgroundColor={service.backgroundColor}
+            buttonText="Book A Coach"
+            href={`/service/${service._id}`}
+            backgroundColor={defaultBackgrounds[index % defaultBackgrounds.length]}
           />
         ))}
       </div>
