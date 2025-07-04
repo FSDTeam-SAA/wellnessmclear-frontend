@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, MapPinned } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export default function SendMessage() {
   const [formData, setFormData] = useState({
@@ -25,9 +27,41 @@ export default function SendMessage() {
     }));
   };
 
+  const mutation = useMutation({
+    mutationFn: async (data: typeof formData) => {
+      // Replace with your API call
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/contact`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      // Handle success, e.g., show a success message or reset the form
+      setFormData({ name: "", email: "", message: "" });
+      toast.success("Message sent successfully!");
+    },
+    onError: (error) => {
+      // Handle error, e.g., show an error message
+      console.error("Error sending message:", error);
+      toast.error("Failed to send message. Please try again.");
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    mutation.mutate(formData);
     // Handle form submission here
   };
 
