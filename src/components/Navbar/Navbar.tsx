@@ -22,27 +22,39 @@ export function Navbar() {
   const [isMounted, setIsMounted] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [cartItemCount, setCartItemCount] = useState(0);
-const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [wishlistItem, setWishlistItemCount] = useState(0);
 
   useEffect(() => {
     const updateCartCount = () => {
       const items = getCartItems();
-      const count = items.length; // Only count unique items
+      const count = items.length;
       setCartItemCount(count);
     };
-    const storedWishlist = localStorage.getItem("wishlist");
-    const wishlist = storedWishlist ? JSON.parse(storedWishlist) : [];
-    setWishlistItemCount(wishlist.length);
+
+    const updateWishlistCount = () => {
+      const storedWishlist = localStorage.getItem("wishlist");
+      const wishlist = storedWishlist ? JSON.parse(storedWishlist) : [];
+      setWishlistItemCount(wishlist.length);
+    };
+
     setIsMounted(true);
     updateCartCount();
+    updateWishlistCount();
 
-    window.addEventListener("storage", updateCartCount);
+    // Listen for cart and wishlist updates
+    window.addEventListener("storage", () => {
+      updateCartCount();
+      updateWishlistCount();
+    });
+
     window.addEventListener("cartUpdated", updateCartCount);
+    window.addEventListener("wishlistUpdated", updateWishlistCount);
 
     return () => {
       window.removeEventListener("storage", updateCartCount);
       window.removeEventListener("cartUpdated", updateCartCount);
+      window.removeEventListener("wishlistUpdated", updateWishlistCount);
     };
   }, []);
 
@@ -116,7 +128,7 @@ const [isDropdownOpen, setIsDropdownOpen] = useState(false);
             <Search className="text-2xl" />
           </button>
 
-        <div className="flex items-center">
+          <div className="flex items-center">
             <Link href="/wishlist" className="relative p-2 flex">
               <Heart className="text-2xl text-gray-600" />
               {isMounted && (
@@ -132,7 +144,6 @@ const [isDropdownOpen, setIsDropdownOpen] = useState(false);
                   {cartItemCount}
                 </Badge>
               )}
-          
             </Link>
 
             {/* Account Dropdown */}
@@ -266,7 +277,7 @@ const [isDropdownOpen, setIsDropdownOpen] = useState(false);
         </div>
       )}
 
-    {/* Bottom Nav */}
+      {/* Bottom Nav */}
       <div className="bg-white pb-4 hidden md:block  border-[#23547B]">
         <div className="container mx-auto">
           <nav className="flex items-center justify-center gap-2 divide-x divide-gray-300">
@@ -295,7 +306,7 @@ const [isDropdownOpen, setIsDropdownOpen] = useState(false);
               COMMUNITY
             </Link>
             <Link
-              href="/blog"
+              href="/all-coach"
               className="text-lg font-medium hover:text-[#23547B] px-4"
             >
               FIND A COACH

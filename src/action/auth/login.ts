@@ -19,7 +19,7 @@ export async function loginAction(data: LoginFormValues) {
 
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/login`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`,
       {
         method: "POST",
         headers: {
@@ -33,7 +33,7 @@ export async function loginAction(data: LoginFormValues) {
     );
 
     const result = await response.json();
-
+    console.log(result);
     if (!response.ok) {
       return {
         success: false,
