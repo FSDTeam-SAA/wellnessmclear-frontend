@@ -1,62 +1,76 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { Search, ShoppingCart, Heart, Menu, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import Image from "next/image";
-import wmcTopNav from "@/public/images/wmc-topnav.svg";
-import accoutn from "@/public/images/account.svg";
-import middleNavLogo from "@/public/images/middleNavLogo.svg";
-import { LiaFacebookSquare } from "react-icons/lia";
-import { CiInstagram, CiLinkedin } from "react-icons/ci";
-import { RiTwitterXFill } from "react-icons/ri";
-import { getCartItems } from "@/lib/cart-utils";
+"use client"
+import { useState, useEffect } from "react"
+import Link from "next/link"
+import { Search, ShoppingCart, Heart, Menu, ChevronDown } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import Image from "next/image"
+import wmcTopNav from "@/public/images/wmc-topnav.svg"
+import accoutn from "@/public/images/account.svg"
+import middleNavLogo from "@/public/images/middleNavLogo.svg"
+import { LiaFacebookSquare } from "react-icons/lia"
+import { CiInstagram, CiLinkedin } from "react-icons/ci"
+import { RiTwitterXFill } from "react-icons/ri"
+import { getCartItems } from "@/lib/cart-utils"
+import { useSession, signOut } from "next-auth/react"
 
 export function Navbar() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isMounted, setIsMounted] = useState(false);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [cartItemCount, setCartItemCount] = useState(0);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [wishlistItem, setWishlistItemCount] = useState(0);
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [isMounted, setIsMounted] = useState(false)
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const [cartItemCount, setCartItemCount] = useState(0)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [wishlistItem, setWishlistItemCount] = useState(0)
+
+  // Get session data
+  const { data: session, status } = useSession()
+    useEffect(() => {
+    if (status === "authenticated") {
+      console.log("Session Data:", session?.user?.name);
+    } else {
+      console.log("Not authenticated or loading:", status);
+    }
+  }, [session, status]);
 
   useEffect(() => {
     const updateCartCount = () => {
-      const items = getCartItems();
-      const count = items.length;
-      setCartItemCount(count);
-    };
+      const items = getCartItems()
+      const count = items.length
+      setCartItemCount(count)
+    }
 
     const updateWishlistCount = () => {
-      const storedWishlist = localStorage.getItem("wishlist");
-      const wishlist = storedWishlist ? JSON.parse(storedWishlist) : [];
-      setWishlistItemCount(wishlist.length);
-    };
+      const storedWishlist = localStorage.getItem("wishlist")
+      const wishlist = storedWishlist ? JSON.parse(storedWishlist) : []
+      setWishlistItemCount(wishlist.length)
+    }
 
-    setIsMounted(true);
-    updateCartCount();
-    updateWishlistCount();
+    setIsMounted(true)
+    updateCartCount()
+    updateWishlistCount()
 
     // Listen for cart and wishlist updates
     window.addEventListener("storage", () => {
-      updateCartCount();
-      updateWishlistCount();
-    });
-
-    window.addEventListener("cartUpdated", updateCartCount);
-    window.addEventListener("wishlistUpdated", updateWishlistCount);
+      updateCartCount()
+      updateWishlistCount()
+    })
+    window.addEventListener("cartUpdated", updateCartCount)
+    window.addEventListener("wishlistUpdated", updateWishlistCount)
 
     return () => {
-      window.removeEventListener("storage", updateCartCount);
-      window.removeEventListener("cartUpdated", updateCartCount);
-      window.removeEventListener("wishlistUpdated", updateWishlistCount);
-    };
-  }, []);
+      window.removeEventListener("storage", updateCartCount)
+      window.removeEventListener("cartUpdated", updateCartCount)
+      window.removeEventListener("wishlistUpdated", updateWishlistCount)
+    }
+  }, [])
+
+  const handleLogout = async () => {
+    setIsDropdownOpen(false)
+    await signOut({ callbackUrl: "/login" })
+  }
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white">
@@ -65,7 +79,7 @@ export function Navbar() {
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center md:pl-0">
             <Image
-              src={wmcTopNav}
+              src={wmcTopNav || "/placeholder.svg"}
               alt="WellnessMclear Logo"
               width={40}
               height={40}
@@ -74,9 +88,7 @@ export function Navbar() {
             />
           </div>
           <div className="flex-1 text-center hidden lg:block">
-            <span className="text-sm">
-              Special Offers: Saved up to 30% by Purchase wellness things
-            </span>
+            <span className="text-sm">Special Offers: Saved up to 30% by Purchase wellness things</span>
           </div>
           <div className="flex items-center space-x-[18px] md:pr-0">
             <LiaFacebookSquare className="text-3xl" />
@@ -93,7 +105,7 @@ export function Navbar() {
           <div className="flex items-center">
             <Link href="/" className="block w-[72px] h-[72px]">
               <Image
-                src={middleNavLogo}
+                src={middleNavLogo || "/placeholder.svg"}
                 alt="Lawbie Logo"
                 width={72}
                 height={72}
@@ -121,10 +133,7 @@ export function Navbar() {
             </form>
           </div>
 
-          <button
-            className="md:hidden text-gray-600 mr-3"
-            onClick={() => setIsSearchOpen(!isSearchOpen)}
-          >
+          <button className="md:hidden text-gray-600 mr-3" onClick={() => setIsSearchOpen(!isSearchOpen)}>
             <Search className="text-2xl" />
           </button>
 
@@ -137,6 +146,7 @@ export function Navbar() {
                 </Badge>
               )}
             </Link>
+
             <Link href="/cart" className="relative p-2 flex">
               <ShoppingCart className="text-2xl text-gray-600" />
               {isMounted && (
@@ -154,7 +164,7 @@ export function Navbar() {
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
                   <Image
-                    src={accoutn}
+                    src={accoutn || "/placeholder.svg"}
                     alt="Account Icon"
                     width={36}
                     height={36}
@@ -162,62 +172,74 @@ export function Navbar() {
                   />
                   <ChevronDown />
                 </button>
+
                 {isDropdownOpen && (
                   <ul className="absolute top-10 right-0 w-40 bg-white border border-gray-300 rounded shadow-md mt-2 z-50">
-                    <li>
-                      <Link
-                        href="/account"
-                        className="block px-4 py-2 hover:bg-gray-500/10 text-black"
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        My Account
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/order"
-                        className="block px-4 py-2 hover:bg-gray-500/10 text-black"
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        Orders
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/booking"
-                        className="block px-4 py-2 hover:bg-gray-500/10 text-black"
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        Bookings
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/login"
-                        className="block px-4 py-2 hover:bg-gray-500/10 text-black"
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        Login
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/sign-up"
-                        className="block px-4 py-2 hover:bg-gray-500/10 text-black"
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        Sign Up
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/sign-up"
-                        className="block px-4 py-2 hover:bg-gray-500/10 text-red-600"
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        Logout
-                      </Link>
-                    </li>
+                    {status === "loading" ? (
+                      <li className="px-4 py-2 text-gray-500">Loading...</li>
+                    ) : session ? (
+                      // Authenticated user menu
+                      <>
+                      <p className="text-black font-bold px-4 py-2">{session?.user?.name}</p>
+                        <li>
+                          <Link
+                            href="/account"
+                            className="block px-4 py-2 hover:bg-gray-500/10 text-black"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            My Account
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/order"
+                            className="block px-4 py-2 hover:bg-gray-500/10 text-black"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            Orders
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/booking"
+                            className="block px-4 py-2 hover:bg-gray-500/10 text-black"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            Bookings
+                          </Link>
+                        </li>
+                        <li>
+                          <button
+                            onClick={handleLogout}
+                            className="block w-full text-left px-4 py-2 hover:bg-gray-500/10 text-red-600"
+                          >
+                            Logout
+                          </button>
+                        </li>
+                      </>
+                    ) : (
+                      // Non-authenticated user menu
+                      <>
+                        <li>
+                          <Link
+                            href="/login"
+                            className="block px-4 py-2 hover:bg-gray-500/10 text-black"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            Login
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/sign-up"
+                            className="block px-4 py-2 hover:bg-gray-500/10 text-black"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            Sign Up
+                          </Link>
+                        </li>
+                      </>
+                    )}
                   </ul>
                 )}
               </div>
@@ -247,6 +269,43 @@ export function Navbar() {
                   <Link href="/blog" onClick={() => setIsSheetOpen(false)}>
                     FIND A COACH
                   </Link>
+
+                  {/* Mobile Auth Links */}
+                  <div className="border-t pt-4 mt-4">
+                    {status === "loading" ? (
+                      <div className="text-gray-500">Loading...</div>
+                    ) : session ? (
+                      <>
+                        <Link href="/account" onClick={() => setIsSheetOpen(false)} className="block py-2">
+                          My Account
+                        </Link>
+                        <Link href="/order" onClick={() => setIsSheetOpen(false)} className="block py-2">
+                          Orders
+                        </Link>
+                        <Link href="/booking" onClick={() => setIsSheetOpen(false)} className="block py-2">
+                          Bookings
+                        </Link>
+                        <button
+                          onClick={() => {
+                            setIsSheetOpen(false)
+                            handleLogout()
+                          }}
+                          className="block w-full text-left py-2 text-red-600"
+                        >
+                          Logout
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <Link href="/login" onClick={() => setIsSheetOpen(false)} className="block py-2">
+                          Login
+                        </Link>
+                        <Link href="/sign-up" onClick={() => setIsSheetOpen(false)} className="block py-2">
+                          Sign Up
+                        </Link>
+                      </>
+                    )}
+                  </div>
                 </nav>
               </SheetContent>
             </Sheet>
@@ -266,11 +325,7 @@ export function Navbar() {
               className="flex-1 text-sm rounded-r-none border border-gray-300 h-10"
               autoFocus
             />
-            <Button
-              type="submit"
-              size="sm"
-              className="rounded-l-none bg-[#23547b] hover:bg-[#153a58] h-10 px-3"
-            >
+            <Button type="submit" size="sm" className="rounded-l-none bg-[#23547b] hover:bg-[#153a58] h-10 px-3">
               <Search className="h-4 w-4 text-white" />
             </Button>
           </form>
@@ -278,42 +333,27 @@ export function Navbar() {
       )}
 
       {/* Bottom Nav */}
-      <div className="bg-white pb-4 hidden md:block  border-[#23547B]">
+      <div className="bg-white pb-4 hidden md:block border-[#23547B]">
         <div className="container mx-auto">
           <nav className="flex items-center justify-center gap-2 divide-x divide-gray-300">
-            <Link
-              href="/"
-              className="text-lg font-medium hover:text-[#616161] leading-[120%] pr-4"
-            >
+            <Link href="/" className="text-lg font-medium hover:text-[#616161] leading-[120%] pr-4">
               HOME
             </Link>
-            <Link
-              href="/product"
-              className="text-lg font-medium hover:text-[#23547B] px-4"
-            >
+            <Link href="/product" className="text-lg font-medium hover:text-[#23547B] px-4">
               SHOP
             </Link>
-            <Link
-              href="/blogs"
-              className="text-lg font-medium hover:text-[#23547B] px-4"
-            >
+            <Link href="/blogs" className="text-lg font-medium hover:text-[#23547B] px-4">
               BLOG
             </Link>
-            <Link
-              href="/blog"
-              className="text-lg font-medium hover:text-[#23547B] px-4"
-            >
+            <Link href="/blog" className="text-lg font-medium hover:text-[#23547B] px-4">
               COMMUNITY
             </Link>
-            <Link
-              href="/all-coach"
-              className="text-lg font-medium hover:text-[#23547B] px-4"
-            >
+            <Link href="/all-coach" className="text-lg font-medium hover:text-[#23547B] px-4">
               FIND A COACH
             </Link>
           </nav>
         </div>
       </div>
     </header>
-  );
+  )
 }
