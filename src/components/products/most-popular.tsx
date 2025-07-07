@@ -1,85 +1,31 @@
+"use client";
 import Link from "next/link";
 import ProductCard from "../cards/product-card";
+import { useQuery } from "@tanstack/react-query";
+import { ProductResponse } from "@/types/productDataType";
 
 export default function MostPopular() {
-  const products = [
-    {
-      _id: "1",
-      name: "Wireless Headphones",
-      description: "Experience high-quality sound with long battery life.",
-      actualPrice: 120,
-      discountedPrice: 99,
-      savedPrice: 21,
-      image:
-        "https://images.unsplash.com/photo-1580894908360-95d00fdfd7ec?w=500&auto=format&fit=crop&q=80",
-      category: "electronics",
-      subCategory: "Audio",
-      brand: "SoundPro",
-      countInStock: 25,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      __v: 0,
-      avgRating: 4.8,
-      totalReviews: 154,
+  const { data, isLoading, isError } = useQuery<ProductResponse>({
+    queryKey: ["most-popular"],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/product/most-popular`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!res.ok) {
+        throw new Error("Failed to fetch products");
+      }
+      return res.json();
     },
-    {
-      _id: "2",
-      name: "Gaming Controller",
-      description: "Precision controls with ergonomic design for pro gamers.",
-      actualPrice: 80,
-      discountedPrice: 60,
-      savedPrice: 20,
-      image:
-        "https://images.unsplash.com/photo-1603791440384-56cd371ee9a7?w=500&auto=format&fit=crop&q=80",
-      category: "electronics",
-      subCategory: "Gaming",
-      brand: "GameX",
-      countInStock: 15,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      __v: 0,
-      avgRating: 2.9,
-      totalReviews: 212,
-    },
-    {
-      _id: "3",
-      name: "Smartwatch",
-      description: "Track health, receive notifications, and stay connected.",
-      actualPrice: 220,
-      discountedPrice: 199,
-      savedPrice: 21,
-      image:
-        "https://images.unsplash.com/photo-1611516439736-75b5f1a38f72?w=500&auto=format&fit=crop&q=80",
-      category: "electronics",
-      subCategory: "Wearables",
-      brand: "WristTech",
-      countInStock: 30,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      __v: 0,
-      avgRating: 4.7,
-      totalReviews: 98,
-    },
-    {
-      _id: "4",
-      name: "Mechanical Keyboard",
-      description: "Tactile feedback with RGB lighting for gamers & coders.",
-      actualPrice: 120,
-      discountedPrice: 99,
-      savedPrice: 21,
-      image:
-        "https://images.unsplash.com/photo-1555617117-08fda9f2994a?w=500&auto=format&fit=crop&q=80",
-      category: "electronics",
-      subCategory: "Accessories",
-      brand: "KeyGlow",
-      countInStock: 20,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      __v: 0,
-      avgRating: 5.0,
-      totalReviews: 134,
-    },
-  ];
+  });
+
+  const products = Array.isArray(data?.data)
+    ? data?.data
+    : data?.data?.products || [];
 
   return (
     <section className="w-full py-8 px-4 bg-[#F8FAF9]">
@@ -107,15 +53,39 @@ export default function MostPopular() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <ProductCard
-              key={product._id}
-              product={product}
-              showAddToCart={true}
-            />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="animate-pulse bg-white p-4 rounded-lg shadow"
+              >
+                <div className="h-48 bg-gray-300 rounded mb-4"></div>
+                <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                <div className="h-6 bg-gray-300 rounded w-1/3"></div>
+              </div>
+            ))}
+          </div>
+        ) : isError ? (
+          <div className="text-center py-10 text-red-500">
+            Failed to load most popular products. Please try again later.
+          </div>
+        ) : products.length === 0 ? (
+          <div className="text-center py-10 text-gray-600">
+            No popular products found.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {products.map((product) => (
+              <ProductCard
+                key={product._id}
+                product={product}
+                showAddToCart={true}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
