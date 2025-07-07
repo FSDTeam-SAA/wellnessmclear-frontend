@@ -3,16 +3,49 @@ import React, { useState } from "react";
 import { Twitter, Instagram, Linkedin, Facebook } from "lucide-react";
 import Image from "next/image";
 import logoImage from "@/public/images/middleNavLogo.svg";
+import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
 
+  const mutation = useMutation({
+    mutationFn: async (email: string) => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/newsletter/subscribe`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email })
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      toast.success("Subscribed to newsletter successfully!");
+      setEmail("");
+    },
+    onError: (error) => {
+      console.error("Error subscribing to newsletter:", error);
+      toast.error("Failed to subscribe. Please try again.");
+    },
+  });
+
   const handleSubscribe = () => {
     if (email.trim()) {
-      console.log("Subscribing email:", email);
-      setEmail("");
+      mutation.mutate(email);
+    } else {
+      toast.error("Please enter a valid email.");
     }
   };
+
 
   return (
     <footer className="bg-[#FFFFFF] py-16 px-4">
@@ -23,7 +56,13 @@ const Footer = () => {
             <div className="flex items-center mb-6">
               <div className="w-[72px] h-[72px] rounded-full border-2 border-gray-300 flex items-center justify-center">
                 <div className="text-green-600 font-bold text-xl">
-                  <Image src={logoImage} alt="" width={100} height={100} className="object-cover" />
+                  <Image
+                    src={logoImage}
+                    alt=""
+                    width={100}
+                    height={100}
+                    className="object-cover"
+                  />
                 </div>
               </div>
             </div>
@@ -47,24 +86,11 @@ const Footer = () => {
           {/* Company & Support Links */}
           <div className="flex sm:flex-row lg:gap-32 gap-20">
             <div>
-              <h3 className="font-semibold text-[#2F3E34] mb-6 text-[20px]">Company</h3>
+              <h3 className="font-semibold text-[#2F3E34] mb-6 text-[20px]">
+                Company
+              </h3>
               <ul className="space-y-4">
-                {["About Us", "Blogs", "Products", "Contract"].map((item, i) => (
-                  <li key={i}>
-                    <a
-                      href="#"
-                      className="text-gray-600 text-sm hover:text-gray-800 transition-colors"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-[#2F3E34] mb-6 text-[20px]">Support</h3>
-              <ul className="space-y-4">
-                {["Privacy Policy", "Terms Of Service", "FAQ", "Help Center"].map(
+                {["About Us", "Blogs", "Products", "Contract"].map(
                   (item, i) => (
                     <li key={i}>
                       <a
@@ -76,6 +102,28 @@ const Footer = () => {
                     </li>
                   )
                 )}
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-[#2F3E34] mb-6 text-[20px]">
+                Support
+              </h3>
+              <ul className="space-y-4">
+                {[
+                  "Privacy Policy",
+                  "Terms Of Service",
+                  "FAQ",
+                  "Help Center",
+                ].map((item, i) => (
+                  <li key={i}>
+                    <a
+                      href="#"
+                      className="text-gray-600 text-sm hover:text-gray-800 transition-colors"
+                    >
+                      {item}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
