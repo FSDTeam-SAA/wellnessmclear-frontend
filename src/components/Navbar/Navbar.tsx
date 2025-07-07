@@ -202,7 +202,7 @@ export function Navbar() {
                     </li>
                     <li>
                       <Link
-                        href="/signup"
+                        href="/sign-up"
                         className="block px-4 py-2 hover:bg-gray-500/10 text-black"
                         onClick={() => setIsDropdownOpen(false)}
                       >
@@ -211,7 +211,7 @@ export function Navbar() {
                     </li>
                     <li>
                       <Link
-                        href="/signup"
+                        href="/sign-up"
                         className="block px-4 py-2 hover:bg-gray-500/10 text-red-600"
                         onClick={() => setIsDropdownOpen(false)}
                       >
