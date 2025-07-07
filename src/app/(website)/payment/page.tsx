@@ -10,11 +10,31 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Lock, Search, Globe } from "lucide-react"
 import Link from "next/link"
 
-export default function PaymentPage() {
-  const [appointmentData, setAppointmentData] = useState<any>(null)
-  const [coachData, setCoachData] = useState<any>(null)
+// Define specific types instead of using `any`
+type CoachData = {
+  price?: number
+  [key: string]: unknown // Use `unknown` instead of `any` for flexibility
+}
 
-  const [paymentData, setPaymentData] = useState({
+type AppointmentData = {
+  [key: string]: unknown // Use `unknown` instead of `any` for flexibility
+}
+
+type PaymentData = {
+  paymentMethod: string
+  country: string
+  zipCode: string
+  nameOnCard: string
+  cardNumber: string
+  expiryDate: string
+  address: string
+  agreeToTerms: boolean
+}
+
+export default function PaymentPage() {
+  const [appointmentData, setAppointmentData] = useState<AppointmentData | null>(null)
+  const [coachData, setCoachData] = useState<CoachData | null>(null)
+  const [paymentData, setPaymentData] = useState<PaymentData>({
     paymentMethod: "credit-card",
     country: "US",
     zipCode: "",
@@ -33,7 +53,7 @@ export default function PaymentPage() {
     if (storedCoach) setCoachData(JSON.parse(storedCoach))
   }, [])
 
-  const handleInputChange = (field: string, value: string | boolean) => {
+  const handleInputChange = <K extends keyof PaymentData>(field: K, value: PaymentData[K]) => {
     setPaymentData((prev) => ({ ...prev, [field]: value }))
   }
 
@@ -59,7 +79,7 @@ export default function PaymentPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600 mb-4">Loading payment information...</p>
+          <p className="text personally-600 mb-4">Loading payment information...</p>
           <Link href="/">
             <Button>Go to Coaches</Button>
           </Link>
@@ -74,7 +94,6 @@ export default function PaymentPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-   
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Pricing Summary */}
         <div className="bg-white rounded-lg p-8 mb-8">
@@ -106,7 +125,7 @@ export default function PaymentPage() {
             {/* Payment Method Selection */}
             <RadioGroup
               value={paymentData.paymentMethod}
-              onValueChange={(value) => handleInputChange("paymentMethod", value)}
+              onValueChange={(value: string) => handleInputChange("paymentMethod", value)}
             >
               <div className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg">
                 <RadioGroupItem value="credit-card" id="credit-card" className="text-blue-600" />
@@ -126,7 +145,10 @@ export default function PaymentPage() {
                 <Label htmlFor="country" className="text-gray-900 font-medium mb-2 block">
                   Country
                 </Label>
-                <Select value={paymentData.country} onValueChange={(value) => handleInputChange("country", value)}>
+                <Select
+                  value={paymentData.country}
+                  onValueChange={(value: string) => handleInputChange("country", value)}
+                >
                   <SelectTrigger className="h-12">
                     <div className="flex items-center gap-2">
                       <Globe className="h-4 w-4 text-gray-400" />
@@ -222,7 +244,7 @@ export default function PaymentPage() {
               <Checkbox
                 id="terms"
                 checked={paymentData.agreeToTerms}
-                onCheckedChange={(checked) => handleInputChange("agreeToTerms", checked as boolean)}
+                onCheckedChange={(checked: boolean) => handleInputChange("agreeToTerms", checked)}
               />
               <Label htmlFor="terms" className="text-gray-700 cursor-pointer">
                 Agree with shipping & billing address
