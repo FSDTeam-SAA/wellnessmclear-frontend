@@ -1,24 +1,20 @@
 import { Button } from "@/components/ui/button";
+import { SingleProductResponse } from "@/types/singelProductDataType";
 import { Heart, Share2, Star } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 
-interface Product {
-  image?: string;
-  name: string;
-  category: string;
-  price: number;
-  rating: number;
-  reviews: number;
-  description: string;
-  details: string[];
-}
-
 interface ProductDetailsProps {
-  product: Product;
+  product: SingleProductResponse["data"]["product"];
+  rating?: number;
+  totalReviews?: number;
 }
 
-const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
+const ProductDetails: React.FC<ProductDetailsProps> = ({
+  product,
+  rating = 0,
+  totalReviews = 0,
+}) => {
   return (
     <div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
@@ -41,9 +37,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
               {product.name}
             </h1>
-            <p className="text-3xl font-bold text-gray-900">${product.price}</p>
+            <p className="text-3xl font-bold text-gray-900">
+              ${product.discountedPrice}
+            </p>
           </div>
 
+          {/* Ratings */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="flex items-center">
@@ -51,7 +50,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
                   <Star
                     key={i}
                     className={`w-4 h-4 ${
-                      i < Math.floor(product.rating)
+                      i < Math.floor(rating)
                         ? "fill-yellow-400 text-yellow-400"
                         : "text-gray-300"
                     }`}
@@ -59,11 +58,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
                 ))}
               </div>
               <span className="text-sm text-gray-600">
-                {product.rating} ({product.reviews} reviews)
+                {rating.toFixed(1)} ({totalReviews} reviews)
               </span>
             </div>
           </div>
 
+          {/* Description */}
           <div>
             <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
             <p className="text-gray-600 leading-relaxed">
@@ -71,18 +71,37 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
             </p>
           </div>
 
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Key Benefits</h3>
-            <ul className="space-y-1">
-              {product.details.map((detail, index) => (
-                <li key={index} className="text-gray-600 flex items-start">
-                  <span className="text-green-500 mr-2">•</span>
-                  {detail}
-                </li>
-              ))}
-            </ul>
+          {/* Extra Fields */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700">
+            <div>
+              <strong>Actual Price:</strong> ${product.actualPrice}
+            </div>
+            <div>
+              <strong>Saved:</strong> ${product.savedPrice}
+            </div>
+            <div>
+              <strong>Brand:</strong> {product.brand || "N/A"}
+            </div>
+            <div>
+              <strong>Subcategory:</strong> {product.subCategory || "N/A"}
+            </div>
+            <div>
+              <strong>Stock:</strong>{" "}
+              {product.countInStock > 0
+                ? `${product.countInStock} available`
+                : "Out of stock"}
+            </div>
+            <div>
+              <strong>Created:</strong>{" "}
+              {new Date(product.createdAt).toLocaleDateString()}
+            </div>
+            <div>
+              <strong>Updated:</strong>{" "}
+              {new Date(product.updatedAt).toLocaleDateString()}
+            </div>
           </div>
 
+          {/* Buttons */}
           <div className="flex gap-4">
             <Button className="flex-1 bg-black text-white hover:bg-gray-800">
               Add to Cart
