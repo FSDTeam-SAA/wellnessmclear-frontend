@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { UserResponse } from "@/types/profiledatatype";
 // import { toast } from "react-hot-toast";
 
+
 export default function AccountSettings() {
   const [activeTab, setActiveTab] = useState("personal");
 
