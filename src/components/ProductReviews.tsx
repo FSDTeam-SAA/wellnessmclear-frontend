@@ -75,7 +75,7 @@ function WriteReviewModal({ productId }: { productId: string }) {
       review: string;
     }) => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/reviews`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/review-rating`,
         {
           method: "POST",
           headers: {
@@ -111,7 +111,7 @@ function WriteReviewModal({ productId }: { productId: string }) {
 
     mutation.mutate({
       productId,
-      userId: "12345", // Replace with actual user ID from session or context
+      userId: "686b547fb7ce49a3054a6715", // Replace with actual user ID from session or context
       rating: formData.rating,
       review: formData.comment,
     });
