@@ -7,6 +7,7 @@ import { User, Lock, LogOut, Camera } from "lucide-react";
 import ChangePassword from "./ChangePassword";
 import PersonalInfo from "./PersonalInfo";
 
+
 export default function AccountSettings() {
   const [activeTab, setActiveTab] = useState("personal");
 
@@ -23,7 +24,7 @@ export default function AccountSettings() {
                     <Avatar className="w-[150px] h-[150px] mb-4">
                       <AvatarImage src="/api/placeholder/96/96" alt="Profile" />
                       <AvatarFallback className="bg-blue-100 text-blue-600 text-xl font-semibold">
-                        BE
+                        BE 
                       </AvatarFallback>
                     </Avatar>
                     <div className="absolute  bottom-7 right-4 bg-[#FFFFFF] rounded-full p-1.5 cursor-pointer hover:bg-blue-700 transition-colors">
@@ -31,7 +32,7 @@ export default function AccountSettings() {
                     </div>
                   </div>
                   <h2 className="text-xl font-semibold text-gray-900">
-                    Bessie Edwards
+                    Bessie zzz
                   </h2>
                   <p className="text-gray-500 text-sm">
                     darrellesteward@gmail.com
