@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { resetReqestForm, ResetRequestFormValues } from "@/schemas/auth";
+import { useMutation } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 
 export default function ResetRequestForm() {
   // Initialize the form
@@ -24,9 +26,38 @@ export default function ResetRequestForm() {
     },
   });
 
+  const session = useSession();
+  // Use type assertion if you are sure accessToken exists on user
+  const TOKEN = (session?.data?.user as { accessToken?: string })?.accessToken;
+
+  const forgotPassMutation = useMutation({
+  mutationFn: async (bodyData: { email: string }) => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/forget-password`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${TOKEN}`,
+        },
+        body: JSON.stringify(bodyData),
+      }
+    );
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Something went wrong");
+    }
+
+    return res.json(); // returns the response data
+  },
+});
+
+
   // Handle form submission
   async function onSubmit(data: ResetRequestFormValues) {
     console.log(data);
+    forgotPassMutation.mutate(data);
   }
 
   return (
