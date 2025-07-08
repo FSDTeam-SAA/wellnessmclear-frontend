@@ -27,13 +27,18 @@ export function Navbar() {
 
   // Get session data
   const { data: session, status } = useSession()
-    useEffect(() => {
-    if (status === "authenticated") {
-      console.log("Session Data:", session?.user?.name);
-    } else {
-      console.log("Not authenticated or loading:", status);
-    }
-  }, [session, status]);
+  
+
+  // const token = session?.user.accessToken
+
+  // useEffect(() => {
+  //   if (status === "authenticated") {
+  //     console.log("Session Data:", session?.user?.name);
+  //     console.log("Session Data:", token);
+  //   } else {
+  //     console.log("Not authenticated or loading:", status);
+  //   }
+  // }, [session, status]);
 
   useEffect(() => {
     const updateCartCount = () => {

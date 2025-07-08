@@ -5,14 +5,18 @@ import type { DefaultSession } from "next-auth"
 export type ExtendedUser = DefaultSession["user"] & {
   role: "USER" | "ADMIN"
   id: string
+  accessToken?: string
+  refreshToken?: string
 }
 
+// Extend the default session
 declare module "next-auth" {
   interface Session {
     user: ExtendedUser
   }
 }
 
+// Extend the default user
 declare module "next-auth" {
   interface User {
     id: string
@@ -39,16 +43,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: credentials.email,
-              password: credentials.password,
-            }),
-          })
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email: credentials.email,
+                password: credentials.password,
+              }),
+            }
+          )
 
           const result = await response.json()
 
@@ -56,7 +63,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return null
           }
 
-          const { user, accessToken } = result.data
+          const { user, accessToken, refreshToken } = result.data
 
           return {
             id: user._id,
@@ -64,8 +71,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: user.email,
             image: user.profileImage || null,
             role: user.role,
-            accessToken: accessToken,
-            refreshToken: user.refreshToken,
+            accessToken,
+            refreshToken,
           }
         } catch (error) {
           console.error("Login error:", error)
@@ -74,16 +81,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
+
   callbacks: {
-    async session({ session, token }) {
-      if (token.sub && session.user) {
-        session.user.id = String(token.id)
-        if (token.role === "USER" || token.role === "ADMIN") {
-          session.user.role = token.role
-        }
-      }
-      return session
-    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
@@ -95,10 +94,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return token
     },
+
+    async session({ session, token }) {
+      if (session.user && token) {
+        session.user.id = String(token.id)
+        session.user.role = token.role as "USER" | "ADMIN"
+        session.user.accessToken = token.accessToken as string
+        session.user.refreshToken = token.refreshToken as string
+      }
+      return session
+    },
   },
+
   pages: {
     signIn: "/login",
   },
+
   session: {
     strategy: "jwt",
   },
