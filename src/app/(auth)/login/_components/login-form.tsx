@@ -70,7 +70,7 @@ export default function LoginForm() {
         })
 
         if (result?.error) {
-          toast.error("Invalid credentials. Please try again.")
+          toast.error(result?.error)
           setIsLoading(false)
           return
         }
@@ -151,6 +151,7 @@ export default function LoginForm() {
             <FormField
               control={form.control}
               name="rememberMe"
+              
               render={({ field }) => (
                 <div className="flex items-center space-x-2">
                   <Checkbox id="rememberMe" checked={field.value} onCheckedChange={field.onChange} disabled={loading} />

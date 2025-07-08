@@ -30,6 +30,13 @@ export function Navbar() {
   const [wishlistItem, setWishlistItemCount] = useState(0)
 
   const { data: session, status } = useSession()
+    useEffect(() => {
+    if (status === "authenticated") {
+      console.log("Session Data:", session?.user?.name);
+    } else {
+      console.log("Not authenticated or loading:", status);
+    }
+  }, [session, status]);
 
   useEffect(() => {
     const updateCartCount = () => {
