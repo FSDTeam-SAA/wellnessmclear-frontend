@@ -25,6 +25,7 @@ export type Product = {
   subCategory: string;
   brand: string;
   countInStock: number;
+  price?: number;
   createdAt: string;
   updatedAt: string;
   __v: number;

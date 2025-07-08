@@ -1,9 +1,17 @@
 "use client";
-import ServiceCard from "@/components/cards/service-card";
-import { useQuery } from "@tanstack/react-query";
-import { Brain, Heart, Activity, Zap } from "lucide-react";
-import React from "react";
 
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import ServiceCard from "@/components/cards/service-card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Brain, Heart, Activity, Zap } from "lucide-react";
+import Autoplay from "embla-carousel-autoplay";
 
 type ServiceCardProps = {
   Icon?: React.ComponentType<{ className?: string }>;
@@ -15,47 +23,27 @@ type ServiceCardProps = {
   buttonText: string;
   href: string;
   backgroundColor: string;
-  _id: string
+  _id: string;
 };
 
 function WellnessServices() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["service"],
     queryFn: async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/service`,
-        {
-          method: "GET",
-        }
-      );
-      if (!res.ok) {
-        throw new Error("Network response was not ok");
-      }
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/service`);
+      if (!res.ok) throw new Error("Network response was not ok");
       return res.json();
     },
   });
-  const servicesData = data?.data || [];
-  console.log("data", data);
 
-  // Default icons array to cycle through
+  const servicesData = data?.data || [];
   const defaultIcons = [Brain, Heart, Activity, Zap];
   const defaultColors = ["text-blue-500", "text-red-500", "text-green-500", "text-yellow-500"];
   const defaultBackgrounds = ["bg-blue-50", "bg-red-50", "bg-green-50", "bg-yellow-50"];
 
-  // Loading state
-  if (isLoading) {
-    return <p className="text-gray-500">Loading services...</p>;
-  }
-
-  // Error state
-  if (error) {
-    return <p className="text-red-500">Error: {error.message}</p>;
-  }
-
-  // Empty state
-  if (!data || servicesData.length === 0) {
-    return <p className="text-gray-400">No services found.</p>;
-  }
+  if (isLoading) return <p className="text-gray-500">Loading services...</p>;
+  if (error) return <p className="text-red-500">Error: {error.message}</p>;
+  if (!data || servicesData.length === 0) return <p className="text-gray-400">No services found.</p>;
 
   return (
     <div className="lg:py-[72px] bg-[#EFE2F6] py-10">
@@ -64,25 +52,38 @@ function WellnessServices() {
           Our Wellness Services
         </h1>
         <p className="text-base font-normal leading-[150%] text-[#0F0F0F] text-center">
-          Comprehensive approaches to health and wellness that address your
-          unique needs and goals.
+          Comprehensive approaches to health and wellness that address your unique needs and goals.
         </p>
       </div>
 
-      <div className="lg:container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 w-[90%] mx-auto">
-        {servicesData.map((service: ServiceCardProps, index: number) => (
-          <ServiceCard
-            key={service._id}
-            Icon={defaultIcons[index % defaultIcons.length]}
-            iconColor={defaultColors[index % defaultColors.length]}
-            title={service.title}
-            description={service.description}
-            price={service.price}
-            buttonText="Book A Coach"
-            href={`/service/${service._id}`}
-            backgroundColor={defaultBackgrounds[index % defaultBackgrounds.length]}
-          />
-        ))}
+      <div className="w-[90%] mx-auto">
+        <Carousel
+          opts={{ align: "start", loop: true }}
+          plugins={[Autoplay({ delay: 2500 })]} // Auto slides every 2.5 seconds
+          className="w-full container"
+        >
+          <CarouselContent className="-ml-4">
+            {servicesData.map((service: ServiceCardProps, index: number) => (
+              <CarouselItem
+                key={service._id}
+                className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+              >
+                <ServiceCard
+                  Icon={defaultIcons[index % defaultIcons.length]}
+                  iconColor={defaultColors[index % defaultColors.length]}
+                  title={service.title}
+                  description={service.description}
+                  price={service.price}
+                  buttonText="Book A Coach"
+                  href={`/service/${service._id}`}
+                  backgroundColor={defaultBackgrounds[index % defaultBackgrounds.length]}
+                />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
       </div>
     </div>
   );
