@@ -1,12 +1,11 @@
-import React from 'react'
-import OtpFrom from './_components/OtpFrom'
+import React from "react";
+import { Suspense } from "react";
+import OtpFrom from "./_components/OtpFrom";
 
-function page() {
+export default function OtpPage() {
   return (
-    <div>
-        <OtpFrom />
-    </div>
-  )
+    <Suspense fallback={<div>Loading...</div>}>
+      <OtpFrom />
+    </Suspense>
+  );
 }
-
-export default page

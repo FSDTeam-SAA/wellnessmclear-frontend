@@ -16,13 +16,6 @@ export default function LoginPage() {
 
       {/* Right side - Login form */}
       <div className="flex w-full flex-col items-center justify-center px-4 py-12 lg:w-1/2 relative">
-        <Image
-          src="/Logo.png"
-          width={93}
-          height={130}
-          alt="Logo"
-          className="absolute top-10 "
-        />
         <div className="mx-auto w-full max-w-md space-y-12">
           {/* Logo */}
 
