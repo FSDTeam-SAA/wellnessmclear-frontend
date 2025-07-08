@@ -39,7 +39,6 @@ export function Navbar() {
   //     console.log("Not authenticated or loading:", status);
   //   }
   // }, [session, status]);
-
   useEffect(() => {
     const updateCartCount = () => {
       const items = getCartItems()
@@ -169,11 +168,11 @@ export function Navbar() {
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
                   <Image
-                    src={accoutn || "/placeholder.svg"}
+                    src={session?.user.image|| accoutn || "/placeholder.svg"}
                     alt="Account Icon"
                     width={36}
                     height={36}
-                    className="mr-2"
+                    className="mr-2 rounded-full"
                   />
                   <ChevronDown />
                 </button>

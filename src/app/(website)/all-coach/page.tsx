@@ -8,7 +8,7 @@ import { Pagination, PaginationContent, PaginationItem, PaginationNext, Paginati
 
 export default function AllCoachesPage() {
   const [page, setPage] = useState(1);
-  const limit = 8;
+  const limit = 10;
 
   const {
     data,
