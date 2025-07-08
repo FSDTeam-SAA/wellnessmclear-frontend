@@ -1,43 +1,44 @@
-"use client";
+"use client"
 
-import { loginAction } from "@/action/auth/login";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { loginFormSchema, LoginFormValues } from "@/schemas/auth";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Cookies from "js-cookie";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { zodResolver } from "@hookform/resolvers/zod"
+import Cookies from "js-cookie"
+import { Eye, EyeOff, Lock, Mail } from "lucide-react"
+import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState, useTransition } from "react"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+import { signIn } from "next-auth/react"
+import { z } from "zod"
 
-const rememberedEmail = Cookies.get("rememberMeEmail");
-const rememberMePassword = Cookies.get("rememberMePassword");
-const isRemembered = !!rememberedEmail && !!rememberMePassword;
+const loginFormSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
+  rememberMe: z.boolean(),
+})
+
+type LoginFormValues = z.infer<typeof loginFormSchema>
+
+const rememberedEmail = Cookies.get("rememberMeEmail")
+const rememberMePassword = Cookies.get("rememberMePassword")
+const isRemembered = !!rememberedEmail && !!rememberMePassword
 
 export default function LoginForm() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [pending, startTransition] = useTransition();
-  const [isMounted, setMounted] = useState(false);
-
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const callback = searchParams.get("callback") || undefined;
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [pending, startTransition] = useTransition()
+  const [isMounted, setMounted] = useState(false)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const callback = searchParams.get("callback") || undefined
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    setMounted(true)
+  }, [])
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
@@ -46,25 +47,50 @@ export default function LoginForm() {
       password: rememberMePassword ?? "",
       rememberMe: isRemembered ?? false,
     },
-  });
+  })
 
   async function onSubmit(data: LoginFormValues) {
-    startTransition(() => {
-      loginAction(data).then((res) => {
-        if (!res.success) {
-          toast.error(res.message);
-          return;
+    startTransition(async () => {
+      try {
+        setIsLoading(true)
+
+        // Handle remember me functionality
+        if (data.rememberMe) {
+          Cookies.set("rememberMeEmail", data.email, { expires: 30 })
+          Cookies.set("rememberMePassword", data.password, { expires: 30 })
+        } else {
+          Cookies.remove("rememberMeEmail")
+          Cookies.remove("rememberMePassword")
         }
 
-        setIsLoading(true);
-        router.push(callback ?? "/");
-      });
-    });
+        const result = await signIn("credentials", {
+          email: data.email,
+          password: data.password,
+          redirect: false,
+        })
+
+        if (result?.error) {
+          toast.error("Invalid credentials. Please try again.")
+          setIsLoading(false)
+          return
+        }
+
+        if (result?.ok) {
+          toast.success("Login successful!")
+          router.push(callback ?? "/")
+          router.refresh()
+        }
+      } catch (error) {
+        console.error("Login error:", error)
+        toast.error("An error occurred during login. Please try again.")
+        setIsLoading(false)
+      }
+    })
   }
 
-  const loading = isLoading || pending;
+  const loading = isLoading || pending
 
-  if (!isMounted) return;
+  if (!isMounted) return null
 
   return (
     <>
@@ -81,10 +107,10 @@ export default function LoginForm() {
                       {...field}
                       placeholder="Enter your email"
                       type="email"
-                      className="border-primary border-[1px]  min-h-[45px]"
+                      className="border-primary border-[1px] min-h-[45px] pl-10"
                       disabled={loading}
-                      startIcon={Mail}
                     />
+                    <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -103,21 +129,17 @@ export default function LoginForm() {
                       placeholder="Enter your Password"
                       type={showPassword ? "text" : "password"}
                       autoComplete="current-password"
-                      className="pr-10 border-primary border-[1px]  min-h-[45px]"
-                      startIcon={Lock}
+                      className="pr-10 pl-10 border-primary border-[1px] min-h-[45px]"
                       disabled={loading}
                     />
+                    <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-3 text-gray-400"
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
                       tabIndex={-1}
                     >
-                      {showPassword ? (
-                        <EyeOff className="h-5 w-5" />
-                      ) : (
-                        <Eye className="h-5 w-5" />
-                      )}
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
                   </div>
                 </FormControl>
@@ -131,38 +153,19 @@ export default function LoginForm() {
               name="rememberMe"
               render={({ field }) => (
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="rememberMe"
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    disabled={loading}
-                  />
-                  <label
-                    htmlFor="rememberMe"
-                    className="text-sm font-medium text-gray-700"
-                  >
+                  <Checkbox id="rememberMe" checked={field.value} onCheckedChange={field.onChange} disabled={loading} />
+                  <label htmlFor="rememberMe" className="text-sm font-medium text-gray-700">
                     Remember me
                   </label>
                 </div>
               )}
             />
-            <Link
-              href="/reset-request"
-              className="text-sm font-medium text-[#8C311ECC] hover:text-[#8C311ECC]/60"
-            >
+            <Link href="/reset-request" className="text-sm font-medium text-[#8C311ECC] hover:text-[#8C311ECC]/60">
               Forgot password?
             </Link>
           </div>
-          <Button
-            type="submit"
-            className="w-full min-h-[45px]"
-            disabled={loading}
-          >
-            {pending
-              ? "Signing In..."
-              : isLoading
-              ? "Just a second..."
-              : "Sign In"}
+          <Button type="submit" className="w-full min-h-[45px]" disabled={loading}>
+            {pending ? "Signing In..." : isLoading ? "Just a second..." : "Sign In"}
           </Button>
         </form>
       </Form>
@@ -176,5 +179,5 @@ export default function LoginForm() {
         </Link>
       </div>
     </>
-  );
+  )
 }

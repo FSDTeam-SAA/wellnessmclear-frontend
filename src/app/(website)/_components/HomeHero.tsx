@@ -54,7 +54,7 @@ export default function HomeHero() {
                     Explore Resources
                   </Button>
                 </Link>
-                <Link href="/products" className="w-full sm:w-auto">
+                <Link href="/all-coach" className="w-full sm:w-auto">
                   <Button className="w-full sm:w-[200px] h-10 sm:h-[54px] text-base sm:text-lg font-bold text-white bg-[#A8C2A3] hover:bg-[#94b294] transition-colors duration-200">
                     Find A Coach
                   </Button>

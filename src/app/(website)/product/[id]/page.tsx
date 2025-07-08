@@ -90,7 +90,7 @@ export default function ProductDetailPage({
           />
 
           {/* Related Products */}
-          <RelatedProduct />
+          <RelatedProduct relatedProducts={relatedProducts} />
         </div>
 
         {/* Product Reviews */}

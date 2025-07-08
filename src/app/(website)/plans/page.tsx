@@ -105,7 +105,7 @@ export default function PlansPage() {
               <Link href="/community" className="text-gray-700 hover:text-gray-900">
                 COMMUNITY
               </Link>
-              <Link href="/" className="text-gray-900 font-medium">
+              <Link href="/all-coach" className="text-gray-900 font-medium">
                 FIND A COACH
               </Link>
             </nav>
