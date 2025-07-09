@@ -55,21 +55,24 @@ const WellnessVault = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 mb-5 lg:mb-[56px] lg:mt-[49px]">
-  <h2 className="text-[#2F3E34] hover:text-[#3b5243] text-lg sm:text-xl md:text-2xl font-medium">
-    The Wellness Vault
-  </h2>
-  <Link
-    href="/blogs"
-    className="text-[#2F3E34] hover:text-[#3b5243] text-sm sm:text-base md:text-lg lg:text-2xl font-medium"
-  >
-    View all Blogs <span aria-hidden="true">→</span>
-  </Link>
-</div>
-        
+          <h2 className="text-[#2F3E34] hover:text-[#3b5243] text-lg sm:text-xl md:text-2xl font-medium">
+            The Wellness Vault
+          </h2>
+          <Link
+            href="/blogs"
+            className="text-[#2F3E34] hover:text-[#3b5243] text-sm sm:text-base md:text-lg lg:text-2xl font-medium"
+          >
+            View all Blogs <span aria-hidden="true">→</span>
+          </Link>
+        </div>
+
         {/* Loading skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(4)].map((_, index) => (
-            <div key={index} className="max-w-sm w-full bg-white rounded overflow-hidden flex flex-col animate-pulse">
+            <div
+              key={index}
+              className="max-w-sm w-full bg-white rounded overflow-hidden flex flex-col animate-pulse"
+            >
               <div className="w-full h-[275px] bg-gray-300"></div>
               <div className="flex flex-col flex-1 justify-between mt-6 p-4">
                 <div>
@@ -100,7 +103,7 @@ const WellnessVault = () => {
             View all Blogs <span aria-hidden="true">→</span>
           </Link>
         </div>
-        
+
         <div className="text-center py-8">
           <p className="text-red-500 text-lg">Error loading blogs</p>
           <p className="text-gray-600 mt-2">{error.message}</p>
@@ -124,7 +127,7 @@ const WellnessVault = () => {
             View all Blogs <span aria-hidden="true">→</span>
           </Link>
         </div>
-        
+
         <div className="text-center py-8">
           <p className="text-gray-500 text-lg">No blogs found</p>
         </div>
@@ -149,7 +152,7 @@ const WellnessVault = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {blogs.map((blog) => (
+        {blogs.slice(0, 4).map((blog) => (
           <BlogCard
             key={blog._id}
             slug={blog.slug}

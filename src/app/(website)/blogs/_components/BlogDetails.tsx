@@ -28,6 +28,7 @@ const BlogDetails = () => {
   });
 
   const blog = blogData?.data?.[0];
+  console.log("blog", blogData);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -86,30 +87,30 @@ const BlogDetails = () => {
 
         {/* Title and Date */}
         <div className="mb-6">
-          <div className="flex gap-10">
-            <div className="flex items-center">
-              <div className="w-[50px] h-[1.5px] bg-green-500"></div>
-              <p className="text-[#8A8AC5] text-base">
-                {formatDate(blog.createdAt)}
-              </p>
-            </div>
+          <div className="flex flex-col sm:flex-row sm:gap-10 gap-4">
+  {/* Date */}
+  <div className="flex items-center gap-2">
+    <div className="w-[50px] h-[1.5px] bg-green-500" />
+    <p className="text-[#8A8AC5] text-sm sm:text-base">
+      {formatDate(blog.createdAt)}
+    </p>
+  </div>
 
-            <div className="flex items-center">
-              <div className="w-[50px] h-[1.5px] bg-green-500"></div>
-              <p className="text-[#8A8AC5] text-base">Posted by</p>
-              <div className="w-[24px] h-[24px] rounded-full bg-red-600"></div>
-              <p className="text-[#8A8AC5] text-base">jemmi</p>
-            </div>
-          </div>
+  {/* Author */}
+  <div className="flex items-center flex-wrap gap-2">
+    <div className="w-[50px] h-[1.5px] bg-green-500" />
+    <p className="text-[#8A8AC5] text-sm sm:text-base">Posted by</p>
+    <div className="w-[24px] h-[24px] rounded-full bg-red-600" />
+    <p className="text-[#8A8AC5] text-sm sm:text-base">jemmi</p>
+  </div>
+</div>
 
           <h1 className="text-2xl font-semibold text-gray-800 mb-2 mt-[18px]">
             {blog.title}
           </h1>
         </div>
 
-        <div>
-          <p>{blog?.description}</p>
-        </div>
+        <p dangerouslySetInnerHTML={{ __html: blog?.description || "" }} />
       </div>
     </div>
   );
