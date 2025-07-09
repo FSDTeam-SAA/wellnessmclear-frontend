@@ -39,7 +39,7 @@ export default function ShopByCategory() {
 
   return (
     <section className="w-full py-8 px-4 bg-gray-50">
-      <div className="container mx-auto">
+      <div className="lg:container mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold text-gray-900">Shop by Category</h2>
           <Link href="/categories" className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1">

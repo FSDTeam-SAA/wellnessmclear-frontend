@@ -54,17 +54,17 @@ const WellnessVault = () => {
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center lg:mb-[56px] lg:mt-[49px] mb-5">
-          <h2 className="text-[#2F3E34] hover:text-[#3b5243] text-2xl font-medium">
-            The Wellness Vault
-          </h2>
-          <Link
-            href="/blogs"
-            className="text-[#2F3E34] hover:text-[#3b5243] lg:text-2xl font-medium"
-          >
-            View all Blogs <span aria-hidden="true">→</span>
-          </Link>
-        </div>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 mb-5 lg:mb-[56px] lg:mt-[49px]">
+  <h2 className="text-[#2F3E34] hover:text-[#3b5243] text-lg sm:text-xl md:text-2xl font-medium">
+    The Wellness Vault
+  </h2>
+  <Link
+    href="/blogs"
+    className="text-[#2F3E34] hover:text-[#3b5243] text-sm sm:text-base md:text-lg lg:text-2xl font-medium"
+  >
+    View all Blogs <span aria-hidden="true">→</span>
+  </Link>
+</div>
         
         {/* Loading skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
