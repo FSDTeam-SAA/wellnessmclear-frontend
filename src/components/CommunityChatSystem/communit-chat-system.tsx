@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-// import { ChatHeader } from "./chat-header"
+import { useState, useEffect, useRef } from "react"
+import { ChatHeader } from "./chat-header"
 import { ChatSidebar } from "./chat-sidebar"
 import { ChatPanel } from "./chat-panel"
 import { PaymentModal } from "./payment-modal"
@@ -9,6 +9,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { apiService } from "@/lib/api-service"
 import { socketService } from "@/lib/socket-service"
 import type { ChatTab, Message } from "@/types/chat"
+import type { Group } from "@/types/group"
 import { useSession } from "next-auth/react"
 
 export function CommunityChatSystem() {
@@ -17,35 +18,79 @@ export function CommunityChatSystem() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [messages, setMessages] = useState<Message[]>([])
   const [isConnected, setIsConnected] = useState(false)
+  const [groups, setGroups] = useState<Group[]>([])
+  const [groupIds, setGroupIds] = useState<{ public?: string; private?: string }>({})
+  const [joinedGroup, setJoinedGroup] = useState<string | null>(null)
   const queryClient = useQueryClient()
   const {data:session} = useSession()
-  console.log(session?.user?.id);
 
-  // Mock current user ID - replace with actual auth
   const currentUserId = session?.user?.id
-  const currentGroupId = activeTab === "public" ? "public-group" : "private-group"
-  const token = session
-  console.log(token);
+  const token = session?.user.accessToken
 
-  // Fetch current user
+  // Get groupId for current tab
+  const currentGroupId = groupIds[activeTab]
+
+  // Fetch groups on mount
+  useEffect(() => {
+    if (!token) return
+    apiService.getGroups(token).then((groups) => {
+      setGroups(groups)
+      const ids: { public?: string; private?: string } = {}
+      for (const g of groups) {
+        if (g.groupType === "public") ids.public = g._id
+        if (g.groupType === "private") ids.private = g._id
+      }
+      setGroupIds(ids)
+    })
+  }, [token])
+
+  // Fetch current user (requires token and id)
   const { data: currentUser } = useQuery({
     queryKey: ["user", currentUserId],
-    queryFn: () => apiService.getUser(currentUserId),
+    queryFn: () => {
+      if (!currentUserId || !token) throw new Error("No user id or token")
+      return apiService.getUser(currentUserId, token)
+    },
+    enabled: !!currentUserId && !!token,
   })
 
-  // Fetch initial messages
-  const { data: initialMessages = [], isLoading: messagesLoading } = useQuery({
+  // Fetch initial messages (requires token, after join)
+  const { data: initialMessages = [], isLoading: messagesLoading, refetch: refetchMessages } = useQuery({
     queryKey: ["messages", currentGroupId],
-    queryFn: () => apiService.getMessages(currentGroupId),
-    enabled: !!currentGroupId,
+    queryFn: () => {
+      if (!token || !currentGroupId) throw new Error("No token or groupId")
+      return apiService.getMessages(currentGroupId, token)
+    },
+    enabled: !!currentGroupId && !!token && joinedGroup === currentGroupId,
   })
 
-  // Fetch users for sidebar
-  const { data: users = [] } = useQuery({
+  // Fetch users for sidebar (requires token, after join)
+  const { data: users = [], refetch: refetchUsers } = useQuery({
     queryKey: ["users", currentGroupId],
-    queryFn: () => apiService.getUsers(currentGroupId),
-    enabled: !!currentGroupId,
+    queryFn: () => {
+      if (!token || !currentGroupId) throw new Error("No token or groupId")
+      return apiService.getUsers(currentGroupId, token)
+    },
+    enabled: !!currentGroupId && !!token && joinedGroup === currentGroupId,
   })
+
+  // Join group on tab/group change
+  useEffect(() => {
+    if (!currentGroupId || !token) return
+    if (joinedGroup === currentGroupId) return
+    apiService.joinGroup(currentGroupId, token)
+      .then(() => {
+        setJoinedGroup(currentGroupId)
+        refetchMessages()
+        refetchUsers()
+      })
+      .catch((e) => {
+        // Optionally handle join error
+        setJoinedGroup(currentGroupId) // allow anyway for idempotent join
+        refetchMessages()
+        refetchUsers()
+      })
+  }, [currentGroupId, token])
 
   // Initialize Socket.IO connection
   useEffect(() => {
@@ -106,23 +151,26 @@ export function CommunityChatSystem() {
   const handleTabChange = (tab: ChatTab) => {
     if (tab === "private") {
       // Check if user has access to private community
-      if (!currentUser?.isPaidForCommunity || !currentUser?.privateCommityAccess) {
+      if (!currentUser?.isPaidForCommunity && !currentUser?.privateCommityAccess) {
         setShowPaymentModal(true)
         return
       }
     }
     setActiveTab(tab)
     setMessages([]) // Clear messages when switching tabs
+    setJoinedGroup(null) // force re-join
   }
 
-  // Payment mutation
+  // Payment mutation (requires token)
   const paymentMutation = useMutation({
-    mutationFn: () =>
-      apiService.processPayment({
+    mutationFn: () => {
+      if (!token) throw new Error("No token")
+      return apiService.processPayment({
         type: "group",
         groupId: "68661c4a415000d4ba893563",
         totalAmount: 100,
-      }),
+      }, token)
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user", currentUserId] })
       setShowPaymentModal(false)
@@ -131,7 +179,7 @@ export function CommunityChatSystem() {
   })
 
   return (
-    <div className="flex h-[600px] bg-white">
+    <div className="flex h-screen bg-white">
       {/* Sidebar */}
       <div
         className={`${isSidebarOpen ? "w-80" : "w-0"} transition-all duration-300 overflow-hidden border-r border-gray-200 lg:w-80 lg:block`}
@@ -142,13 +190,13 @@ export function CommunityChatSystem() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        {/* <ChatHeader
+        <ChatHeader
           activeTab={activeTab}
           onTabChange={handleTabChange}
           onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
           isSidebarOpen={isSidebarOpen}
           isConnected={isConnected}
-        /> */}
+        />
 
         {/* Chat Panel */}
         <ChatPanel

@@ -1,6 +1,8 @@
 export type ChatTab = "public" | "private"
 
 export interface User {
+  _id: ReactNode
+  firstName: ReactNode
   id: string
   name: string
   avatar?: string
@@ -12,6 +14,9 @@ export interface User {
 }
 
 export interface Message {
+  updatedAt: string | number | Date
+  createdAt(createdAt: any): import("react").ReactNode
+  _id: string | Blob
   id: string
   content: string
   image?: string

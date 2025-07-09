@@ -9,6 +9,8 @@ import { Send, ImageIcon, X, Loader2 } from "lucide-react"
 import { apiService } from "@/lib/api-service"
 import { socketService } from "@/lib/socket-service"
 import type { Message, ChatTab } from "@/types/chat"
+import { useSession } from "next-auth/react"
+import Image from "next/image"
 
 interface ChatPanelProps {
   messages: Message[]
@@ -18,7 +20,7 @@ interface ChatPanelProps {
   isConnected: boolean
 }
 
-export function ChatPanel({ messages, isLoading, activeTab, groupId, isConnected }: ChatPanelProps) {
+export function ChatPanel({ messages, isLoading, groupId, isConnected }: ChatPanelProps) {
   const [messageText, setMessageText] = useState("")
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [replyingTo, setReplyingTo] = useState<Message | null>(null)
@@ -28,6 +30,12 @@ export function ChatPanel({ messages, isLoading, activeTab, groupId, isConnected
   const fileInputRef = useRef<HTMLInputElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
+
+//   get token 
+  const {data:session} = useSession()
+  const token = session?.user.accessToken
+
+  console.log(replyingTo);
 
   // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = useCallback(() => {
@@ -64,20 +72,21 @@ export function ChatPanel({ messages, isLoading, activeTab, groupId, isConnected
         formData.append("content", messageText.trim())
       }
       if (replyingTo) {
-        formData.append("replyTo", replyingTo.id)
-      }
+        formData.append("replyTo", replyingTo._id)
+      } 
       if (selectedImage) {
         formData.append("image", selectedImage)
       }
 
       // Send via REST API (for file uploads)
-      const response = await apiService.sendMessage(groupId, formData)
+      const response = await apiService.sendMessage(groupId, formData, token || "")
+      console.log(response);
 
       // Also emit via socket for real-time updates (without image)
       socketService.emit("sendMessage", {
         groupId,
         content: messageText.trim(),
-        replyTo: replyingTo?.id || null,
+        replyTo: replyingTo?._id || null,
       })
 
       // Clear form
@@ -101,34 +110,49 @@ export function ChatPanel({ messages, isLoading, activeTab, groupId, isConnected
     }
   }
 
-  // Format time display
-  const formatTime = (timestamp: string) => {
-    return new Date(timestamp).toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
+// Format time display safely
+const formatTime = (timestamp?: string | Date) => {
+  if (!timestamp) return "Invalid Date"
+  const parsed = new Date(timestamp)
+  return isNaN(parsed.getTime())
+    ? "Invalid Date"
+    : parsed.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })
+}
+
+
+
+// Format date safely
+const formatDate = (timestamp?: string | Date) => {
+  if (!timestamp) return ""
+  const date = new Date(timestamp)
+  if (isNaN(date.getTime())) {
+    console.warn("Invalid date:", timestamp)
+    return ""
+  }
+
+  const today = new Date()
+  const yesterday = new Date()
+  yesterday.setDate(today.getDate() - 1)
+
+  if (date.toDateString() === today.toDateString()) {
+    return "Today"
+  } else if (date.toDateString() === yesterday.toDateString()) {
+    return "Yesterday"
+  } else {
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "short",
+      day: "numeric",
     })
   }
+}
 
-  // Format date header
-  const formatDate = (timestamp: string) => {
-    const date = new Date(timestamp)
-    const today = new Date()
-    const yesterday = new Date(today)
-    yesterday.setDate(yesterday.getDate() - 1)
-
-    if (date.toDateString() === today.toDateString()) {
-      return "Today"
-    } else if (date.toDateString() === yesterday.toDateString()) {
-      return "Yesterday"
-    } else {
-      return date.toLocaleDateString("en-US", {
-        weekday: "long",
-        month: "short",
-        day: "numeric",
-      })
-    }
-  }
+  
+  // console.log(formData());
 
   if (isLoading) {
     return (
@@ -142,33 +166,41 @@ export function ChatPanel({ messages, isLoading, activeTab, groupId, isConnected
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-gray-50">
+    <div className="flex flex-col h-full bg-gray-50 relative  py-10 ">
       {/* Messages Area */}
       <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-6 space-y-6" style={{ scrollBehavior: "smooth" }}>
         {messages.map((message, index) => {
-          const showDateHeader =
-            index === 0 ||
-            new Date(message.timestamp).toDateString() !== new Date(messages[index - 1].timestamp).toDateString()
-
+          // const currentDate = new Date(message.updatedAt)
+          // const previousDate = new Date(messages[index - 1]?.updatedAt)
+          
+          // const showDateHeader =
+          //   index === 0 ||
+          //   (currentDate instanceof Date &&
+          //     previousDate instanceof Date &&
+          //     !isNaN(currentDate.getTime()) &&
+          //     !isNaN(previousDate.getTime()) &&
+          //     currentDate.toDateString() !== previousDate.toDateString())
+          
+        
           return (
             <div key={message.id}>
               {/* Date Header */}
-              {showDateHeader && (
+              
                 <div className="text-center text-sm text-gray-500 my-6 font-medium">
-                  {formatDate(message.timestamp)}
+                  {formatDate(String(message.createdAt))}
                 </div>
-              )}
+              
 
               {/* Message */}
               <div className="flex gap-3">
                 <Avatar className="h-10 w-10 flex-shrink-0">
                   <AvatarImage
-                    src={message.sender.avatar || "/placeholder.svg?height=40&width=40"}
-                    alt={message.sender.name}
+                    src={message?.sender?.avatar || "/placeholder.svg?height=40&width=40"}
+                    alt={message.sender?.firstName}
                   />
                   <AvatarFallback className="bg-green-100 text-green-700 text-sm font-medium">
-                    {message.sender.name
-                      .split(" ")
+                    {message.sender?.firstName
+                      ?.split(" ")
                       .map((n) => n[0])
                       .join("")
                       .toUpperCase()}
@@ -177,22 +209,24 @@ export function ChatPanel({ messages, isLoading, activeTab, groupId, isConnected
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="font-medium text-gray-900">{message.sender.name}</span>
-                    <span className="text-xs text-gray-500">{message.sender.id}</span>
+                    <span className="font-medium text-gray-900">{message.sender?.firstName}</span>
+                    <span className="text-xs text-gray-500">{message.sender?._id}</span>
                   </div>
 
                   {/* Reply Preview */}
                   {message.replyTo && (
                     <div className="bg-gray-100 border-l-4 border-blue-400 p-3 mb-3 rounded-r">
-                      <div className="text-xs text-gray-600 mb-1">Replying to {message.replyTo.sender.name}</div>
-                      <div className="text-sm text-gray-800 truncate">{message.replyTo.content}</div>
+                      <div className="text-xs text-gray-600 mb-1">Replying to {message.replyTo?.sender?.firstName || "User"}</div>
+                      <div className="text-sm text-gray-800 truncate">{message.replyTo?.content}</div>
                     </div>
                   )}
 
                   {/* Message Image */}
                   {message.image && (
                     <div className="mb-3">
-                      <img
+                      <Image
+                      width={200}
+                      height={100}
                         src={message.image || "/placeholder.svg"}
                         alt="Message attachment"
                         className="max-w-sm max-h-80 rounded-lg shadow-sm object-cover cursor-pointer hover:shadow-md transition-shadow"
@@ -218,7 +252,7 @@ export function ChatPanel({ messages, isLoading, activeTab, groupId, isConnected
                     >
                       Reply
                     </button>
-                    <span className="text-xs text-gray-400">{formatTime(message.timestamp)}</span>
+                    <span className="text-xs text-gray-400">{formatTime(String(message.createdAt))}</span>
                   </div>
                 </div>
               </div>
@@ -248,7 +282,9 @@ export function ChatPanel({ messages, isLoading, activeTab, groupId, isConnected
         <div className="px-6 py-3 bg-gray-50 border-t">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
-              <img
+              <Image
+                width={500}
+                height={400}
                 src={imagePreview || "/placeholder.svg"}
                 alt="Preview"
                 className="w-12 h-12 object-cover rounded border"

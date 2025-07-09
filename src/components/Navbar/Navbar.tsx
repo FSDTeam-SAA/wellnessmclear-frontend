@@ -244,11 +244,21 @@ export function Navbar() {
               </SheetTrigger>
               <SheetContent side="left" className="w-[300px] sm:w-[400px]">
                 <nav className="flex flex-col gap-4 mt-8">
-                  <Link href="/" onClick={() => setIsSheetOpen(false)}>Home</Link>
-                  <Link href="/products" onClick={() => setIsSheetOpen(false)}>Shop</Link>
-                  <Link href="/blogs" onClick={() => setIsSheetOpen(false)}>Blog</Link>
-                  <Link href="/blog" onClick={() => setIsSheetOpen(false)}>Community</Link>
-                  <Link href="/all-coach" onClick={() => setIsSheetOpen(false)}>Find A Coach</Link>
+                  <Link href="/" onClick={() => setIsSheetOpen(false)}>
+                    Home
+                  </Link>
+                  <Link href="/products" onClick={() => setIsSheetOpen(false)}>
+                    SHOP
+                  </Link>
+                  <Link href="/blog" onClick={() => setIsSheetOpen(false)}>
+                    BLOG
+                  </Link>
+                  <Link href="/community" onClick={() => setIsSheetOpen(false)}>
+                    COMMUNITY
+                  </Link>
+                  <Link href="/blog" onClick={() => setIsSheetOpen(false)}>
+                    FIND A COACH
+                  </Link>
 
                   <div className="border-t pt-4 mt-4">
                     {status === "loading" ? (
@@ -301,11 +311,21 @@ export function Navbar() {
       <div className="bg-white pb-4 hidden md:block border-[#23547B]">
         <div className="container mx-auto">
           <nav className="flex items-center justify-center gap-2 divide-x divide-gray-300">
-            <Link href="/" className="text-lg font-medium hover:text-[#616161] leading-[120%] pr-4">HOME</Link>
-            <Link href="/product" className="text-lg font-medium hover:text-[#23547B] px-4">SHOP</Link>
-            <Link href="/blogs" className="text-lg font-medium hover:text-[#23547B] px-4">BLOG</Link>
-            <Link href="/blog" className="text-lg font-medium hover:text-[#23547B] px-4">COMMUNITY</Link>
-            <Link href="/all-coach" className="text-lg font-medium hover:text-[#23547B] px-4">FIND A COACH</Link>
+            <Link href="/" className="text-lg font-medium hover:text-[#616161] leading-[120%] pr-4">
+              HOME
+            </Link>
+            <Link href="/product" className="text-lg font-medium hover:text-[#23547B] px-4">
+              SHOP
+            </Link>
+            <Link href="/blogs" className="text-lg font-medium hover:text-[#23547B] px-4">
+              BLOG
+            </Link>
+            <Link href="/community" className="text-lg font-medium hover:text-[#23547B] px-4">
+              COMMUNITY
+            </Link>
+            <Link href="/all-coach" className="text-lg font-medium hover:text-[#23547B] px-4">
+              FIND A COACH
+            </Link>
           </nav>
         </div>
       </div>

@@ -4,7 +4,7 @@ import { io, type Socket } from "socket.io-client"
 
 class SocketService {
   private socket: Socket | null = null
-  private serverUrl = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000"
+  private serverUrl = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000/api/v1"
 
   connect() {
     if (this.socket?.connected) return
