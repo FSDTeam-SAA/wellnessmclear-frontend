@@ -178,37 +178,36 @@ export function CommunityChatSystem() {
     },
   })
 
+  // --- LAYOUT FIX START ---
+  // The main fix: use flex-col and min-h-0 to prevent overflow
   return (
-    <div className="flex h-screen bg-white">
-      {/* Sidebar */}
-      <div
-        className={`${isSidebarOpen ? "w-80" : "w-0"} transition-all duration-300 overflow-hidden border-r border-gray-200 lg:w-80 lg:block`}
-      >
-        <ChatSidebar users={users} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <ChatHeader
-          activeTab={activeTab}
-          onTabChange={handleTabChange}
-          onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-          isSidebarOpen={isSidebarOpen}
-          isConnected={isConnected}
-        />
-
+    <div className="flex flex-col min-h-[70vh] max-h-screen h-full w-full bg-white rounded-lg shadow overflow-hidden">
+      {/* Header (Tabs) */}
+      <ChatHeader
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        onToggleSidebar={() => setIsSidebarOpen((v) => !v)}
+        isSidebarOpen={isSidebarOpen}
+        isConnected={isConnected}
+      />
+      {/* Main content: sidebar + chat */}
+      <div className="flex flex-1 min-h-0">
+        {/* Sidebar */}
+        <div className={`transition-all duration-300 border-r border-gray-200 bg-white ${isSidebarOpen ? "w-80 min-w-[16rem]" : "w-0"} h-full min-h-0 overflow-y-auto`}>
+          <ChatSidebar users={users} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+        </div>
         {/* Chat Panel */}
-        <ChatPanel
-          messages={messages}
-          isLoading={messagesLoading}
-          activeTab={activeTab}
-          groupId={currentGroupId}
-          isConnected={isConnected}
-        />
+        <div className="flex-1 min-h-0 flex flex-col">
+          <ChatPanel
+            messages={messages}
+            isLoading={messagesLoading}
+            activeTab={activeTab}
+            groupId={currentGroupId || ""}
+            isConnected={isConnected}
+          />
+        </div>
       </div>
-
-      {/* Payment Modal */}
+      {/* Payment Modal (if needed) */}
       {showPaymentModal && (
         <PaymentModal
           isOpen={showPaymentModal}
@@ -219,4 +218,5 @@ export function CommunityChatSystem() {
       )}
     </div>
   )
+  // --- LAYOUT FIX END ---
 }
