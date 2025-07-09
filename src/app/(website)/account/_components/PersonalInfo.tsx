@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { SquarePen } from "lucide-react";
 import { toast } from "sonner";
 import { UserResponse } from "@/types/profiledatatype";
+import { useSession } from "next-auth/react";
 
 const profileSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -34,6 +35,7 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 function PersonalInfo() {
+  const session = useSession()
   const queryClient = useQueryClient();
 
   const {
@@ -55,16 +57,16 @@ function PersonalInfo() {
       postalCode: "",
     },
   });
-  const accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODZiNTQ3ZmI3Y2U0OWEzMDU0YTY3MTUiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTg3ODAyNywiZXhwIjoxNzUzMTc0MDI3fQ.Z449lo4bDLRBjgrptViqO9Acuwves2LAp7uI-De_8J0"
-  const userId = "686b547fb7ce49a3054a6715";
+  // const accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODZiNTQ3ZmI3Y2U0OWEzMDU0YTY3MTUiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MTg3ODAyNywiZXhwIjoxNzUzMTc0MDI3fQ.Z449lo4bDLRBjgrptViqO9Acuwves2LAp7uI-De_8J0"
+  // const userId = "686b547fb7ce49a3054a6715";
 
   const { data } = useQuery<UserResponse>({
     queryKey: ["user"],
     queryFn: async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${userId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${session.data?.user.id}`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${session.data?.user.accessToken}`,
         },
       });
       if (!res.ok) throw new Error("Failed to fetch user");
@@ -92,11 +94,11 @@ function PersonalInfo() {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (formData: ProfileFormData) => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${userId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${session.data?.user.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${session.data?.user.accessToken}`,
         },
         body: JSON.stringify(formData),
       });
