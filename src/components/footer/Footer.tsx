@@ -90,18 +90,38 @@ const Footer = () => {
                 Company
               </h3>
               <ul className="space-y-4">
-                {["About Us", "Blogs", "Products", "Contract"].map(
-                  (item, i) => (
-                    <li key={i}>
-                      <a
-                        href="#"
-                        className="text-gray-600 text-sm hover:text-gray-800 transition-colors"
-                      >
-                        {item}
-                      </a>
-                    </li>
-                  )
-                )}
+                <li>
+                  <a
+                    href="/about"
+                    className="text-gray-600 text-sm hover:text-gray-800 transition-colors"
+                  >
+                    {"About Us"}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/blogs"
+                    className="text-gray-600 text-sm hover:text-gray-800 transition-colors"
+                  >
+                    {"Blogs"}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/product"
+                    className="text-gray-600 text-sm hover:text-gray-800 transition-colors"
+                  >
+                    {"products"}
+                  </a>
+                </li>
+                {/* <li>
+                  <a
+                    href="/contact"
+                    className="text-gray-600 text-sm hover:text-gray-800 transition-colors"
+                  >
+                    {"Contact Us"}
+                  </a>
+                </li> */}
               </ul>
             </div>
             <div>
@@ -109,21 +129,36 @@ const Footer = () => {
                 Support
               </h3>
               <ul className="space-y-4">
-                {[
+                {/* {[
                   "Privacy Policy",
                   "Terms Of Service",
                   "FAQ",
                   "Help Center",
-                ].map((item, i) => (
-                  <li key={i}>
-                    <a
-                      href="#"
-                      className="text-gray-600 text-sm hover:text-gray-800 transition-colors"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
+                ] */}
+                <li >
+                  <a
+                    href="/privacy"
+                    className="text-gray-600 text-sm hover:text-gray-800 transition-colors"
+                  >
+                    Privacy Policy
+                  </a>
+                </li>
+                <li >
+                  <a
+                    href="/terms"
+                    className="text-gray-600 text-sm hover:text-gray-800 transition-colors"
+                  >
+                     Terms of Service
+                  </a>
+                </li>
+                <li >
+                  <a
+                    href="/faq"
+                    className="text-gray-600 text-sm hover:text-gray-800 transition-colors"
+                  >
+                    FAQ
+                  </a>
+                </li>
               </ul>
             </div>
           </div>

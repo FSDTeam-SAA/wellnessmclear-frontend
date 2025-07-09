@@ -10,12 +10,14 @@ import PersonalInfo from "./PersonalInfo";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { UserResponse } from "@/types/profiledatatype";
+import { useSession } from "next-auth/react";
 // import { toast } from "react-hot-toast";
 
 
 export default function AccountSettings() {
   const [activeTab, setActiveTab] = useState("personal");
-
+   const session = useSession()
+   console.log(session)
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
