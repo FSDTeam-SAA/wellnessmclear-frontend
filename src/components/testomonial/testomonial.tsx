@@ -87,7 +87,7 @@ export default function TestimonialCarousel() {
               loop: true,
             }}
           >
-            <div className="flex justify-end mt-6 mb-6">
+            <div className="flex justify-end gap-0 mt-6 mb-6">
               <CarouselPrevious className="relative" />
               <CarouselNext className="relative" />
             </div>
