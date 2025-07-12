@@ -8,12 +8,9 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import Image from "next/image"
-import wmcTopNav from "@/public/images/wmc-topnav.svg"
 import accoutn from "@/public/images/account.svg"
 import middleNavLogo from "@/public/images/middleNavLogo.svg"
-import { LiaFacebookSquare } from "react-icons/lia"
-import { CiInstagram, CiLinkedin } from "react-icons/ci"
-import { RiTwitterXFill } from "react-icons/ri"
+
 import { getCartItems } from "@/lib/cart-utils"
 import { useSession, signOut } from "next-auth/react"
 import SearchModal from "../searchModal"
@@ -33,39 +30,43 @@ export function Navbar() {
 
   useEffect(() => {
     const updateCartCount = () => {
-      const items = getCartItems()
-      const count = items.length
-      setCartItemCount(count)
-    }
+      const items = getCartItems();
+      const count = items.length;
+      setCartItemCount(count);
+    };
 
     const updateWishlistCount = () => {
-      const storedWishlist = localStorage.getItem("wishlist")
-      const wishlist = storedWishlist ? JSON.parse(storedWishlist) : []
-      setWishlistItemCount(wishlist.length)
-    }
+      const storedWishlist = localStorage.getItem("wishlist");
+      const wishlist = storedWishlist ? JSON.parse(storedWishlist) : [];
+      setWishlistItemCount(wishlist.length);
+    };
+
+    setIsMounted(true);
+    updateCartCount();
+    updateWishlistCount();
 
     setIsMounted(true)
     updateCartCount()
     updateWishlistCount()
 
     window.addEventListener("storage", () => {
-      updateCartCount()
-      updateWishlistCount()
-    })
-    window.addEventListener("cartUpdated", updateCartCount)
-    window.addEventListener("wishlistUpdated", updateWishlistCount)
+      updateCartCount();
+      updateWishlistCount();
+    });
+    window.addEventListener("cartUpdated", updateCartCount);
+    window.addEventListener("wishlistUpdated", updateWishlistCount);
 
     return () => {
-      window.removeEventListener("storage", updateCartCount)
-      window.removeEventListener("cartUpdated", updateCartCount)
-      window.removeEventListener("wishlistUpdated", updateWishlistCount)
-    }
-  }, [])
+      window.removeEventListener("storage", updateCartCount);
+      window.removeEventListener("cartUpdated", updateCartCount);
+      window.removeEventListener("wishlistUpdated", updateWishlistCount);
+    };
+  }, []);
 
   const handleLogout = async () => {
-    setIsDropdownOpen(false)
-    await signOut({ callbackUrl: "/login" })
-  }
+    setIsDropdownOpen(false);
+    await signOut({ callbackUrl: "/login" });
+  };
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white">
@@ -144,8 +145,8 @@ export function Navbar() {
             {/* Account Dropdown */}
             <div className="text-white px-6 py-2 rounded-md hidden sm:flex relative">
               <div className="flex flex-col text-sm">
-                <button
-                  className="w-full text-left bg-white text-gray-700 border-gray-300 focus:outline-none flex items-center"
+                <div
+                  className="w-full text-left bg-white text-gray-700 border-gray-300 focus:outline-none flex items-center cursor-pointer"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
                   <Avatar>
@@ -160,7 +161,7 @@ export function Navbar() {
                     className="mr-2 rounded-full"
                   /> */}
                   <ChevronDown />
-                </button>
+                </div>
 
                 {isDropdownOpen && (
                   <ul className="absolute top-10 right-0 w-40 bg-white border border-gray-300 rounded shadow-md mt-2 z-50">
@@ -197,6 +198,7 @@ export function Navbar() {
               </div>
             </div>
 
+            {/* Mobile Menu */}
             {/* Mobile Menu */}
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
@@ -248,7 +250,11 @@ export function Navbar() {
               className="flex-1 text-sm rounded-r-none border border-gray-300 h-10"
               autoFocus
             />
-            <Button type="submit" size="sm" className="rounded-l-none bg-[#23547b] hover:bg-[#153a58] h-10 px-3">
+            <Button
+              type="submit"
+              size="sm"
+              className="rounded-l-none bg-[#23547b] hover:bg-[#153a58] h-10 px-3"
+            >
               <Search className="h-4 w-4 text-white" />
             </Button>
           </form>
@@ -275,5 +281,5 @@ export function Navbar() {
         searchQuery={searchQuery}
       />
     </header>
-  )
+  );
 }

@@ -1,46 +1,11 @@
 "use client"
 import Image from "next/image"
-import Link from "next/link"
-import shopbycategory1 from '../../public/images/shopbycategory1.jpg';
-import shopbycategory2 from '../../public/images/shopbycategory2.jpg';
-import shopbycategory3 from '../../public/images/shopbycategory3.jpg';
-import shopbycategory4 from '../../public/images/shopbycategory4.jpg';
 import { useQuery } from "@tanstack/react-query";
 import { CategoriesResponse } from "@/types/category";
 
 export default function ShopByCategory() {
-  const categories = [
-    {
-      id: 1,
-      title: "Daily Essentials",
-      description: "Curated for foundational wellness and everyday vitality",
-      image: shopbycategory1,
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    {
-      id: 2,
-      title: "Gut & Detox Support",
-      description: "Balance your microbiome and cleanse your system naturally",
-      image: shopbycategory2,
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    {
-      id: 3,
-      title: "Energy & Focus",
-      description: "Boost vitality, stamina, and mental clarity",
-      image: shopbycategory3,
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    {
-      id: 4,
-      title: "Self-Care Rituals",
-      description: "Restore your body, soul, and mind with intentional practices",
-      image: shopbycategory4,
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-  ]
-   
-   const { data, isLoading, isError } = useQuery<CategoriesResponse>({
+ 
+   const { data } = useQuery<CategoriesResponse>({
     queryKey: ["shop-by-category"],
     queryFn: async () => {
       const res = await fetch(
@@ -62,7 +27,7 @@ export default function ShopByCategory() {
 
   return (
     <section className="w-full py-8 px-4 bg-gray-50">
-      <div className="container mx-auto">
+      <div className="lg:container mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold text-gray-900">Shop by Category</h2>
           {/* <Link href="/categories" className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1">

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import { Loader2 } from "lucide-react"
+import Image from "next/image"
 
 interface Product {
   _id: string
@@ -34,7 +35,7 @@ export default function SearchModal({ open, onClose, searchQuery }: Props) {
     }
   }, [query])
 
-  const { data, refetch, isFetching } = useQuery({
+  const { data, isFetching } = useQuery({
     queryKey: ["search-products", debouncedQuery],
     queryFn: async () => {
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/product?search=${debouncedQuery}`)
@@ -81,7 +82,7 @@ export default function SearchModal({ open, onClose, searchQuery }: Props) {
                   onClick={onClose}
                   className="flex items-center gap-3 hover:bg-gray-100 p-2 rounded"
                 >
-                  <img
+                  <Image
                     src={product.image}
                     alt={product.name}
                     className="w-10 h-10 object-cover rounded"

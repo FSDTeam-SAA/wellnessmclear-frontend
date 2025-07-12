@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { addToCart } from "@/lib/cart-utils";
 import { getWishlistItems, toggleWishlist } from "@/lib/wishlist-utils";
 import { SingleProductResponse } from "@/types/singelProductDataType";
-import { Heart, Share2, Star } from "lucide-react";
+import { Heart,  Star } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
