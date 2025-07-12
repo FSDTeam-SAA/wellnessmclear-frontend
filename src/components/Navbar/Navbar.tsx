@@ -8,9 +8,12 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import Image from "next/image"
+import wmcTopNav from "@/public/images/wmc-topnav.svg";
 import accoutn from "@/public/images/account.svg"
 import middleNavLogo from "@/public/images/middleNavLogo.svg"
-
+import { LiaFacebookSquare } from "react-icons/lia";
+import { CiInstagram, CiLinkedin } from "react-icons/ci";
+import { RiTwitterXFill } from "react-icons/ri";
 import { getCartItems } from "@/lib/cart-utils"
 import { useSession, signOut } from "next-auth/react"
 import SearchModal from "../searchModal"
@@ -70,6 +73,32 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white">
+      <div className="bg-[#7B8C95] text-white font-medium leading-[120%] px-2 text-sm">
+        <div className="container mx-auto flex items-center justify-between">
+          <div className="flex items-center md:pl-0">
+            <Image
+              src={wmcTopNav}
+              alt="WellnessMclear Logo"
+              width={40}
+              height={40}
+              className="h-[72px] w-[72px] object-contain"
+              priority
+            />
+          </div>
+          <div className="flex-1 text-center hidden lg:block">
+            {/* <span className="text-sm">
+              Special Offers: Saved up to 30% by Purchase wellness things
+            </span> */}
+          </div>
+          <div className="flex items-center space-x-[18px] md:pr-0">
+            <LiaFacebookSquare className="text-3xl" />
+            <CiInstagram className="text-3xl" />
+            <RiTwitterXFill className="text-3xl" />
+            <CiLinkedin className="text-3xl" />
+          </div>
+        </div>
+      </div>
+      
       <div className="bg-white border-gray-200 py-4 px-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center">
