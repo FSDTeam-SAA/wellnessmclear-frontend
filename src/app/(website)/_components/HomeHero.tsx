@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import dHero from "@/public/images/d-hero.svg";
+import dHero from "@/public/images/heroImage.svg";
 
 export default function HomeHero() {
   return (

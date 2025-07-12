@@ -49,10 +49,10 @@ const Footer = () => {
 
   return (
     <footer className="bg-[#FFFFFF] py-16 px-4">
-      <div className="container mx-auto">
+      <div className="lg:container mx-auto">
         <div className="flex flex-col lg:flex-row flex-wrap justify-between gap-10">
           {/* Logo and Description */}
-          <div className="max-w-sm">
+          <div className="">
             <div className="flex items-center mb-6">
               <div className="w-[72px] h-[72px] rounded-full border-2 border-gray-300 flex items-center justify-center">
                 <div className="text-green-600 font-bold text-xl">
