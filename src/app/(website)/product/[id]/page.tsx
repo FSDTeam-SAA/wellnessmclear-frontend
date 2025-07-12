@@ -81,7 +81,7 @@ export default function ProductDetailPage({
   return (
     <div className="min-h-screen bg-white">
       <div className="px-4 py-8">
-        <div className="container mx-auto">
+        <div className="lg:container mx-auto">
           {/* Product Detail Section */}
           <ProductDetails
             product={product}
@@ -99,7 +99,7 @@ export default function ProductDetailPage({
         </div>
 
         {/* Most Popular Section */}
-        <div className="container mx-auto mt-10">
+        <div className="lg:container mx-auto mt-10">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-semibold text-gray-900">
               Most Popular

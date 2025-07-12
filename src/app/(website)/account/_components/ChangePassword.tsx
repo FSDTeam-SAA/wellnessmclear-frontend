@@ -9,6 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 // import { useSession } from "next-auth/react";
 import * as z from "zod";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 const passwordSchema = z
   .object({
@@ -24,7 +25,7 @@ const passwordSchema = z
 type PasswordFormData = z.infer<typeof passwordSchema>;
 
 function ChangePassword() {
-  // const { data: session } = useSession();
+  const { data: session } = useSession();
 
   const [passwords, setPasswords] = useState<PasswordFormData>({
     currentPassword: "",
@@ -41,7 +42,6 @@ function ChangePassword() {
 
   const passwordMutation = useMutation<unknown, Error, PasswordFormData>({
     mutationFn: async (data: PasswordFormData) => {
-      // const token = session?.user?.accessToken;
 
       const payload = {
         oldPassword: data.currentPassword,
@@ -52,12 +52,13 @@ function ChangePassword() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${session?.user.accessToken}`,
         },
         body: JSON.stringify(payload),
       });
 
       const response = await res.json();
+
       if (!res.ok || !response?.status) {
         throw new Error(response?.message || "Failed to update password");
       }
@@ -74,7 +75,7 @@ function ChangePassword() {
     },
     onError: (err: Error) => {
       console.error(err);
-      toast.error(err.message || "Failed to change password");
+      toast.error(err.message|| "Failed to change password");
     },
   });
 
