@@ -7,9 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar, Clock, Facebook, Instagram, Twitter, Linkedin } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { Clock, Facebook, Instagram, Twitter, Linkedin } from "lucide-react"
 import Image from "next/image"
+import { useSession } from "next-auth/react"
+// import { useRouter } from "next/navigation"
 
 // Define interfaces for type safety
 interface Slot {
@@ -57,7 +58,7 @@ interface Coach {
   fieldOfExperiences: string
   skills: Skill[]
   availability: Availability[]
-  servicesOffered: Service[] | Service // Handle both array and single object
+  servicesOffered: Service[] | Service
 }
 
 interface CoachResponse {
@@ -66,8 +67,18 @@ interface CoachResponse {
   data: Coach
 }
 
+interface PaymentResponse {
+  status: boolean
+  message: string
+  data: {
+    url: string
+  }
+}
+
 export default function CoachDetailsPage({ params }: { params: { id: string } }) {
-  const router = useRouter()
+  const { data: session, status } = useSession()
+  const token = session?.user.accessToken
+  // const router = useRouter()
   const coachId = params.id
 
   // Fetch coach details using react-query
@@ -94,9 +105,8 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
     name: "",
     email: "",
     phone: "",
-    date: "",
-    startTime: "",
-    endTime: "",
+    day: "",
+    timeSlot: "",
   })
 
   // Handle form input changes
@@ -105,16 +115,70 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
   }
 
   // Handle appointment booking
-  const handleBookAppointment = () => {
-    if (!coach) return
-    console.log("Appointment Booking Data:", formData)
-    localStorage.setItem("appointmentData", JSON.stringify(formData))
-    localStorage.setItem("coachData", JSON.stringify(coach))
-    router.push("/payment")
+  const handleBookAppointment = async () => {
+    if (!coach || !formData.day || !formData.timeSlot || !token) return
+
+    // Split timeSlot into startTime and endTime
+    const [startTime, endTime] = formData.timeSlot.split(" - ")
+
+    // Construct bookingDate (assuming the selected day is relative to the current week)
+    const today = new Date()
+    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    const selectedDayIndex = daysOfWeek.indexOf(formData.day)
+    const currentDayIndex = today.getDay()
+    const dayDifference = selectedDayIndex - currentDayIndex
+    const bookingDate = new Date(today)
+    bookingDate.setDate(today.getDate() + dayDifference)
+    const formattedBookingDate = bookingDate.toISOString().split("T")[0] + "T00:00:00.000Z"
+
+    // Construct API body
+    const requestBody = {
+      type: "booking",
+      coachId: coach._id,
+      serviceId: Array.isArray(coach.servicesOffered) ? coach.servicesOffered[0]?._id : coach.servicesOffered?._id,
+      totalAmount: Array.isArray(coach.servicesOffered) ? coach.servicesOffered[0]?.price || 0 : coach.servicesOffered?.price || 0,
+      bookingDate: formattedBookingDate,
+      selectedSlots: [
+        {
+          day: formData.day,
+          slots: [
+            {
+              startTime,
+              endTime,
+            },
+          ],
+        },
+      ],
+    }
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/payment/checkout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestBody),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to initiate payment checkout")
+      }
+
+      const responseData: PaymentResponse = await response.json()
+      if (responseData.status && responseData.data.url) {
+        window.location.href = responseData.data.url // Redirect to the Stripe checkout URL
+      } else {
+        throw new Error("Invalid response from payment checkout API")
+      }
+    } catch (error) {
+      console.error("Error during payment checkout:", error)
+      // Handle error (e.g., show an error message to the user)
+    }
   }
 
   // Loading state
-  if (isLoading) {
+  if (isLoading || status === "loading") {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
   }
 
@@ -132,6 +196,14 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
 
   // Extract price from the first service in servicesOffered
   const servicePrice = servicesOffered[0]?.price || 0
+
+  // Get available days for the select dropdown
+  const availableDays = coach?.availability && Array.isArray(coach.availability)
+    ? coach.availability.map((avail) => avail.day)
+    : []
+
+  // Get slots for the selected day
+  const selectedDaySlots = coach?.availability?.find((avail) => avail.day === formData.day)?.slots || []
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -225,55 +297,29 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
                   Opening Hours
                 </CardTitle>
               </CardHeader>
-
-              {/* <CardContent>
-                <div className="space-y-2 text-sm">
-                  {coach?.availability && Array.isArray(coach.availability) ? (
+              <CardContent>
+                <div className="space-y-4 text-sm">
+                  {coach?.availability && Array.isArray(coach.availability) && coach.availability.length > 0 ? (
                     coach.availability.map((avail, index) => (
-                      <p key={index}>
-                        Day: {avail.day}, Slots: {avail.slots
-                          .map((slot) => `${slot.startTime} - ${slot.endTime}`)
-                          .join(", ")}
-                      </p>
+                      <div key={index} className="border rounded-xl p-4 bg-muted/50">
+                        <p className="font-medium text-base">{avail.day}</p>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {avail.slots.map((slot, slotIndex) => (
+                            <span
+                              key={slotIndex}
+                              className="bg-primary/10 px-3 py-1 rounded-full text-xs font-medium"
+                            >
+                              {slot.startTime} - {slot.endTime}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
                     ))
                   ) : (
-                    <p>No availability information available</p>
+                    <p className="text-muted-foreground italic">No availability information available.</p>
                   )}
                 </div>
-              </CardContent> */}
-
-
-<CardContent>
-  <div className="space-y-4 text-sm">
-    {coach?.availability && Array.isArray(coach.availability) && coach.availability.length > 0 ? (
-      coach.availability.map((avail, index) => (
-        <div
-          key={index}
-          className="border rounded-xl p-4 bg-muted/50"
-        >
-          <p className="font-medium text-base ">
-            {avail.day}
-          </p>
-          <div className="flex flex-wrap gap-2 mt-2">
-            {avail.slots.map((slot, slotIndex) => (
-              <span
-                key={slotIndex}
-                className="bg-primary/10  px-3 py-1 rounded-full text-xs font-medium"
-              >
-                {slot.startTime} - {slot.endTime}
-              </span>
-            ))}
-          </div>
-        </div>
-      ))
-    ) : (
-      <p className="text-muted-foreground italic">No availability information available.</p>
-    )}
-  </div>
-</CardContent>
-
-
-
+              </CardContent>
             </Card>
             <Card>
               <CardHeader>
@@ -309,60 +355,53 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
                   />
                 </div>
                 <div>
-                  <Label>Date</Label>
-                  <p className="text-sm text-gray-600 mb-2">I’m available on:</p>
-                  <div className="relative">
-                    <Calendar className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      type="date"
-                      value={formData.date}
-                      onChange={(e) => handleInputChange("date", e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label>Start:</Label>
-                  <Select value={formData.startTime} onValueChange={(value) => handleInputChange("startTime", value)}>
+                  <Label>Day</Label>
+                  <Select value={formData.day} onValueChange={(value) => {
+                    handleInputChange("day", value)
+                    handleInputChange("timeSlot", "") // Reset time slot when day changes
+                  }}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select time" />
+                      <SelectValue placeholder="Select a day" />
                     </SelectTrigger>
                     <SelectContent>
-                      {coach?.availability && Array.isArray(coach.availability) && coach.availability.length > 0 ? (
-                        coach.availability.flatMap((avail) =>
-                          avail.slots.map((slot) => (
-                            <SelectItem key={`${avail.day}-${slot.startTime}`} value={slot.startTime}>
-                              {slot.startTime}
-                            </SelectItem>
-                          ))
-                        )
+                      {availableDays.length > 0 ? (
+                        availableDays.map((day) => (
+                          <SelectItem key={day} value={day}>
+                            {day}
+                          </SelectItem>
+                        ))
                       ) : (
-                        <div className="px-4 py-2 text-sm text-gray-500">No time slots available</div>
+                        <div className="px-4 py-2 text-sm text-gray-500">No days available</div>
                       )}
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <Label>End:</Label>
-                  <Select value={formData.endTime} onValueChange={(value) => handleInputChange("endTime", value)}>
+                  <Label>Time Slot</Label>
+                  <Select value={formData.timeSlot} onValueChange={(value) => handleInputChange("timeSlot", value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select time" />
+                      <SelectValue placeholder="Select a time slot" />
                     </SelectTrigger>
                     <SelectContent>
-                      {coach?.availability && Array.isArray(coach.availability) && coach.availability.length > 0 ? (
-                        coach.availability.flatMap((avail) =>
-                          avail.slots.map((slot) => (
-                            <SelectItem key={`${avail.day}-${slot.endTime}`} value={slot.endTime}>
-                              {slot.endTime}
-                            </SelectItem>
-                          ))
-                        )
+                      {formData.day && selectedDaySlots.length > 0 ? (
+                        selectedDaySlots.map((slot, index) => (
+                          <SelectItem key={index} value={`${slot.startTime} - ${slot.endTime}`}>
+                            {slot.startTime} - {slot.endTime}
+                          </SelectItem>
+                        ))
                       ) : (
-                        <div className="px-4 py-2 text-sm text-gray-500">No time slots available</div>
+                        <div className="px-4 py-2 text-sm text-gray-500">
+                          {formData.day ? "No time slots available for this day" : "Please select a day first"}
+                        </div>
                       )}
                     </SelectContent>
                   </Select>
                 </div>
-                <Button className="w-full bg-green-600 hover:bg-green-700" onClick={handleBookAppointment}>
+                <Button
+                  className="w-full bg-green-600 hover:bg-green-700"
+                  onClick={handleBookAppointment}
+                  disabled={!formData.day || !formData.timeSlot || status !== "authenticated"}
+                >
                   Book Appointment
                 </Button>
               </CardContent>

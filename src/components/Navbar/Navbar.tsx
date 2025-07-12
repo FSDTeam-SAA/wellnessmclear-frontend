@@ -38,7 +38,7 @@ export function Navbar() {
     } else {
       console.log("Not authenticated or loading:", status);
     }
-  }, [session, status]);
+  }, [session, status,token]);
 
   useEffect(() => {
     const updateCartCount = () => {
