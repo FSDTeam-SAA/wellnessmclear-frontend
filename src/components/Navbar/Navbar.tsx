@@ -1,4 +1,5 @@
 "use client"
+
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Search, ShoppingCart, Heart, Menu, ChevronDown } from "lucide-react"
@@ -15,30 +16,21 @@ import { CiInstagram, CiLinkedin } from "react-icons/ci"
 import { RiTwitterXFill } from "react-icons/ri"
 import { getCartItems } from "@/lib/cart-utils"
 import { useSession, signOut } from "next-auth/react"
+import SearchModal from "../searchModal"
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
 export function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [cartItemCount, setCartItemCount] = useState(0)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [wishlistItem, setWishlistItemCount] = useState(0)
 
-  // Get session data
   const { data: session, status } = useSession()
-  
 
-  // const token = session?.user.accessToken
-
-  // useEffect(() => {
-  //   if (status === "authenticated") {
-  //     console.log("Session Data:", session?.user?.name);
-  //     console.log("Session Data:", token);
-  //   } else {
-  //     console.log("Not authenticated or loading:", status);
-  //   }
-  // }, [session, status]);
   useEffect(() => {
     const updateCartCount = () => {
       const items = getCartItems()
@@ -56,7 +48,6 @@ export function Navbar() {
     updateCartCount()
     updateWishlistCount()
 
-    // Listen for cart and wishlist updates
     window.addEventListener("storage", () => {
       updateCartCount()
       updateWishlistCount()
@@ -78,39 +69,13 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white">
-      {/* Top Header */}
-      <div className="bg-[#7B8C95] text-white font-medium leading-[120%] px-2 text-sm">
-        <div className="container mx-auto flex items-center justify-between">
-          <div className="flex items-center md:pl-0">
-            <Image
-              src={wmcTopNav || "/placeholder.svg"}
-              alt="WellnessMclear Logo"
-              width={40}
-              height={40}
-              className="h-[48px] w-[72px] object-contain"
-              priority
-            />
-          </div>
-          <div className="flex-1 text-center hidden lg:block">
-            <span className="text-sm">Special Offers: Saved up to 30% by Purchase wellness things</span>
-          </div>
-          <div className="flex items-center space-x-[18px] md:pr-0">
-            <LiaFacebookSquare className="text-3xl" />
-            <CiInstagram className="text-3xl" />
-            <RiTwitterXFill className="text-3xl" />
-            <CiLinkedin className="text-3xl" />
-          </div>
-        </div>
-      </div>
-
-      {/* Middle Navbar */}
       <div className="bg-white border-gray-200 py-4 px-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="block w-[72px] h-[72px]">
               <Image
                 src={middleNavLogo || "/placeholder.svg"}
-                alt="Lawbie Logo"
+                alt="Logo"
                 width={72}
                 height={72}
                 className="w-full h-full object-contain"
@@ -119,28 +84,44 @@ export function Navbar() {
             </Link>
           </div>
 
+          {/* Desktop Search */}
           <div className="flex-1 max-w-md mx-8 hidden md:block">
-            <form className="relative w-[558px]">
+            <form
+              className="relative w-[558px]"
+              onSubmit={(e) => {
+                e.preventDefault()
+                setIsModalOpen(true)
+              }}
+            >
               <Input
                 type="text"
                 placeholder="Search products..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  if (e.target.value.trim()) {
+                    setIsModalOpen(true)
+                  } else {
+                    setIsModalOpen(false)
+                  }
+                }}
                 className="w-full h-[52px] pl-4 pr-12 border-[1.5px] border-[#6A93B6] rounded-full"
               />
               <button
                 type="submit"
-                className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#A8C2A3] hover:bg-[#9ec097] text-white p-2 rounded-full flex items-center justify-center"
+                className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#A8C2A3] hover:bg-[#9ec097] text-white p-2 rounded-full"
               >
                 <Search className="w-5 h-5" />
               </button>
             </form>
           </div>
 
+          {/* Mobile Search Icon */}
           <button className="md:hidden text-gray-600 mr-3" onClick={() => setIsSearchOpen(!isSearchOpen)}>
             <Search className="text-2xl" />
           </button>
 
+          {/* Icons */}
           <div className="flex items-center">
             <Link href="/wishlist" className="relative p-2 flex">
               <Heart className="text-2xl text-gray-600" />
@@ -167,13 +148,17 @@ export function Navbar() {
                   className="w-full text-left bg-white text-gray-700 border-gray-300 focus:outline-none flex items-center"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
-                  <Image
-                    src={session?.user.image|| accoutn || "/placeholder.svg"}
+                  <Avatar>
+                    <AvatarImage src={session?.user.image || accoutn || "/placeholder.svg"}></AvatarImage>
+                    <AvatarFallback>{session?.user.name?.charAt(2)}</AvatarFallback>
+                  </Avatar>
+                  {/* <Image
+                    src={session?.user.image || accoutn || "/placeholder.svg"}
                     alt="Account Icon"
                     width={36}
                     height={36}
                     className="mr-2 rounded-full"
-                  />
+                  /> */}
                   <ChevronDown />
                 </button>
 
@@ -182,65 +167,28 @@ export function Navbar() {
                     {status === "loading" ? (
                       <li className="px-4 py-2 text-gray-500">Loading...</li>
                     ) : session ? (
-                      // Authenticated user menu
                       <>
-                      <p className="text-black font-bold px-4 py-2">{session?.user?.name}</p>
+                        <p className="text-black font-bold px-4 py-2">{session?.user?.name}</p>
                         <li>
-                          <Link
-                            href="/account"
-                            className="block px-4 py-2 hover:bg-gray-500/10 text-black"
-                            onClick={() => setIsDropdownOpen(false)}
-                          >
-                            My Account
-                          </Link>
+                          <Link href="/account" className="block px-4 py-2 hover:bg-gray-500/10 text-black" onClick={() => setIsDropdownOpen(false)}>My Account</Link>
                         </li>
                         <li>
-                          <Link
-                            href="/order"
-                            className="block px-4 py-2 hover:bg-gray-500/10 text-black"
-                            onClick={() => setIsDropdownOpen(false)}
-                          >
-                            Orders
-                          </Link>
+                          <Link href="/order" className="block px-4 py-2 hover:bg-gray-500/10 text-black" onClick={() => setIsDropdownOpen(false)}>Orders</Link>
                         </li>
                         <li>
-                          <Link
-                            href="/booking"
-                            className="block px-4 py-2 hover:bg-gray-500/10 text-black"
-                            onClick={() => setIsDropdownOpen(false)}
-                          >
-                            Bookings
-                          </Link>
+                          <Link href="/booking" className="block px-4 py-2 hover:bg-gray-500/10 text-black" onClick={() => setIsDropdownOpen(false)}>Bookings</Link>
                         </li>
                         <li>
-                          <button
-                            onClick={handleLogout}
-                            className="block w-full text-left px-4 py-2 hover:bg-gray-500/10 text-red-600"
-                          >
-                            Logout
-                          </button>
+                          <button onClick={handleLogout} className="block w-full text-left px-4 py-2 hover:bg-gray-500/10 text-red-600">Logout</button>
                         </li>
                       </>
                     ) : (
-                      // Non-authenticated user menu
                       <>
                         <li>
-                          <Link
-                            href="/login"
-                            className="block px-4 py-2 hover:bg-gray-500/10 text-black"
-                            onClick={() => setIsDropdownOpen(false)}
-                          >
-                            Login
-                          </Link>
+                          <Link href="/login" className="block px-4 py-2 hover:bg-gray-500/10 text-black" onClick={() => setIsDropdownOpen(false)}>Login</Link>
                         </li>
                         <li>
-                          <Link
-                            href="/sign-up"
-                            className="block px-4 py-2 hover:bg-gray-500/10 text-black"
-                            onClick={() => setIsDropdownOpen(false)}
-                          >
-                            Sign Up
-                          </Link>
+                          <Link href="/sign-up" className="block px-4 py-2 hover:bg-gray-500/10 text-black" onClick={() => setIsDropdownOpen(false)}>Sign Up</Link>
                         </li>
                       </>
                     )}
@@ -249,64 +197,35 @@ export function Navbar() {
               </div>
             </div>
 
-            {/* Mobile Sheet Menu */}
+            {/* Mobile Menu */}
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
                 <button className="md:hidden">
-                  <Menu className="text-2xl ml-4 lg:ml-0" />
+                  <Menu className="text-2xl ml-4" />
                 </button>
               </SheetTrigger>
               <SheetContent side="left" className="w-[300px] sm:w-[400px]">
                 <nav className="flex flex-col gap-4 mt-8">
-                  <Link href="/" onClick={() => setIsSheetOpen(false)}>
-                    Home
-                  </Link>
-                  <Link href="/products" onClick={() => setIsSheetOpen(false)}>
-                    SHOP
-                  </Link>
-                  <Link href="/blog" onClick={() => setIsSheetOpen(false)}>
-                    BLOG
-                  </Link>
-                  <Link href="/blogs" onClick={() => setIsSheetOpen(false)}>
-                    COMMUNITY
-                  </Link>
-                  <Link href="/blog" onClick={() => setIsSheetOpen(false)}>
-                    FIND A COACH
-                  </Link>
+                  <Link href="/" onClick={() => setIsSheetOpen(false)}>Home</Link>
+                  <Link href="/products" onClick={() => setIsSheetOpen(false)}>Shop</Link>
+                  <Link href="/blogs" onClick={() => setIsSheetOpen(false)}>Blog</Link>
+                  <Link href="/blog" onClick={() => setIsSheetOpen(false)}>Community</Link>
+                  <Link href="/all-coach" onClick={() => setIsSheetOpen(false)}>Find A Coach</Link>
 
-                  {/* Mobile Auth Links */}
                   <div className="border-t pt-4 mt-4">
                     {status === "loading" ? (
                       <div className="text-gray-500">Loading...</div>
                     ) : session ? (
                       <>
-                        <Link href="/account" onClick={() => setIsSheetOpen(false)} className="block py-2">
-                          My Account
-                        </Link>
-                        <Link href="/order" onClick={() => setIsSheetOpen(false)} className="block py-2">
-                          Orders
-                        </Link>
-                        <Link href="/booking" onClick={() => setIsSheetOpen(false)} className="block py-2">
-                          Bookings
-                        </Link>
-                        <button
-                          onClick={() => {
-                            setIsSheetOpen(false)
-                            handleLogout()
-                          }}
-                          className="block w-full text-left py-2 text-red-600"
-                        >
-                          Logout
-                        </button>
+                        <Link href="/account" onClick={() => setIsSheetOpen(false)} className="block py-2">My Account</Link>
+                        <Link href="/order" onClick={() => setIsSheetOpen(false)} className="block py-2">Orders</Link>
+                        <Link href="/booking" onClick={() => setIsSheetOpen(false)} className="block py-2">Bookings</Link>
+                        <button onClick={() => { setIsSheetOpen(false); handleLogout() }} className="block w-full text-left py-2 text-red-600">Logout</button>
                       </>
                     ) : (
                       <>
-                        <Link href="/login" onClick={() => setIsSheetOpen(false)} className="block py-2">
-                          Login
-                        </Link>
-                        <Link href="/sign-up" onClick={() => setIsSheetOpen(false)} className="block py-2">
-                          Sign Up
-                        </Link>
+                        <Link href="/login" onClick={() => setIsSheetOpen(false)} className="block py-2">Login</Link>
+                        <Link href="/sign-up" onClick={() => setIsSheetOpen(false)} className="block py-2">Sign Up</Link>
                       </>
                     )}
                   </div>
@@ -317,10 +236,10 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Search */}
+      {/* Mobile Search Form */}
       {isSearchOpen && (
         <div className="bg-white py-2 px-4 md:hidden">
-          <form className="flex">
+          <form className="flex" onSubmit={(e) => { e.preventDefault(); setIsModalOpen(true) }}>
             <Input
               type="text"
               placeholder="Search products..."
@@ -340,24 +259,21 @@ export function Navbar() {
       <div className="bg-white pb-4 hidden md:block border-[#23547B]">
         <div className="container mx-auto">
           <nav className="flex items-center justify-center gap-2 divide-x divide-gray-300">
-            <Link href="/" className="text-lg font-medium hover:text-[#616161] leading-[120%] pr-4">
-              HOME
-            </Link>
-            <Link href="/product" className="text-lg font-medium hover:text-[#23547B] px-4">
-              SHOP
-            </Link>
-            <Link href="/blogs" className="text-lg font-medium hover:text-[#23547B] px-4">
-              BLOG
-            </Link>
-            <Link href="/blog" className="text-lg font-medium hover:text-[#23547B] px-4">
-              COMMUNITY
-            </Link>
-            <Link href="/all-coach" className="text-lg font-medium hover:text-[#23547B] px-4">
-              FIND A COACH
-            </Link>
+            <Link href="/" className="text-lg font-medium hover:text-[#616161] leading-[120%] pr-4">HOME</Link>
+            <Link href="/product" className="text-lg font-medium hover:text-[#23547B] px-4">SHOP</Link>
+            <Link href="/blogs" className="text-lg font-medium hover:text-[#23547B] px-4">BLOG</Link>
+            <Link href="/blog" className="text-lg font-medium hover:text-[#23547B] px-4">COMMUNITY</Link>
+            <Link href="/all-coach" className="text-lg font-medium hover:text-[#23547B] px-4">FIND A COACH</Link>
           </nav>
         </div>
       </div>
+
+      {/* 🔍 Search Modal */}
+      <SearchModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        searchQuery={searchQuery}
+      />
     </header>
   )
 }
