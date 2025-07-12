@@ -10,17 +10,48 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Lock, Search, Globe } from "lucide-react"
 import Link from "next/link"
 
-// Define specific types instead of using `any`
-type CoachData = {
-  price?: number
-  [key: string]: unknown // Use `unknown` instead of `any` for flexibility
+// Define specific types to match CoachDetailsPage
+interface Service {
+  _id: string
+  icon: string
+  title: string
+  description: string
+  price: number
+  overview: string
+  overviewImage: string
+  receive: string
+  receiveImage: string
+  whom: string
+  whomImage: string
+  createdAt: string
+  updatedAt: string
 }
 
-type AppointmentData = {
-  [key: string]: unknown // Use `unknown` instead of `any` for flexibility
+interface CoachData {
+  _id: string
+  firstName: string
+  lastName: string
+  specialization: string
+  sessionDuration: string
+  profileImage: string
+  description: string
+  qualification: string
+  fieldOfExperiences: string
+  skills: { skillName: string; description: string }[]
+  availability: { day: string; slots: { startTime: string; endTime: string; isAvailable?: boolean }[] }[]
+  servicesOffered: Service[]
 }
 
-type PaymentData = {
+interface AppointmentData {
+  name: string
+  email: string
+  phone: string
+  date: string
+  startTime: string
+  endTime: string
+}
+
+interface PaymentData {
   paymentMethod: string
   country: string
   zipCode: string
@@ -79,7 +110,7 @@ export default function Payment() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text personally-600 mb-4">Loading payment information...</p>
+          <p className="text-red-600 mb-4">Loading payment information...</p>
           <Link href="/">
             <Button>Go to Coaches</Button>
           </Link>
@@ -88,7 +119,7 @@ export default function Payment() {
     )
   }
 
-  const subtotal = coachData.price || 150
+  const subtotal = coachData.servicesOffered[0]?.price || 0
   const discount = subtotal * 0.1 // 10% discount
   const total = subtotal - discount
 
@@ -204,7 +235,7 @@ export default function Payment() {
                   value={paymentData.cardNumber}
                   onChange={(e) => handleInputChange("cardNumber", e.target.value)}
                 />
-                <Lock className="absolute right-3 top-4 h-4 w-4 text-gray-400" />
+                <Lock className="absolute right-3 top-4 h-4 w-4  text-gray-400" />
               </div>
             </div>
 
