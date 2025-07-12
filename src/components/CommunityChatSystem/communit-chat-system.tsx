@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { ChatHeader } from "./chat-header"
 import { ChatSidebar } from "./chat-sidebar"
 import { ChatPanel } from "./chat-panel"
@@ -177,9 +177,12 @@ export function CommunityChatSystem() {
       setActiveTab("private")
     },
   })
+  const handleMessageSent = (message: Message) => {
+    // Update your messages state
+    setMessages(prev => [...prev, message])
+  }
+  
 
-  // --- LAYOUT FIX START ---
-  // The main fix: use flex-col and min-h-0 to prevent overflow
   return (
     <div className="flex flex-col min-h-[70vh] max-h-screen h-full w-full bg-white rounded-lg shadow overflow-hidden">
       {/* Header (Tabs) */}
@@ -200,6 +203,7 @@ export function CommunityChatSystem() {
         <div className="flex-1 min-h-0 flex flex-col">
           <ChatPanel
             messages={messages}
+            onMessageSent={handleMessageSent}
             isLoading={messagesLoading}
             activeTab={activeTab}
             groupId={currentGroupId || ""}
@@ -218,5 +222,5 @@ export function CommunityChatSystem() {
       )}
     </div>
   )
-  // --- LAYOUT FIX END ---
+
 }
