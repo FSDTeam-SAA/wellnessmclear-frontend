@@ -15,7 +15,7 @@ import PersonalInfo from "./PersonalInfo";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { UserResponse } from "@/types/profiledatatype";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 export default function AccountSettings() {
   const [activeTab, setActiveTab] = useState("personal");
@@ -182,6 +182,7 @@ export default function AccountSettings() {
                   </Button>
 
                   <Button
+                  onClick={()=>signOut({callbackUrl:'/login'})}
                     variant="ghost"
                     className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
                   >

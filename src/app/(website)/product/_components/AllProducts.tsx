@@ -238,7 +238,7 @@ export default function AllProductsPage() {
                   variant={pagination.page === i + 1 ? "default" : "outline"}
                   size="sm"
                   onClick={() => setPage(i + 1)}
-                  className={pagination.page === i + 1 ? "bg-black text-white" : ""}
+                  className={pagination.page === i + 1 ? "bg-[#A8C2A3] text-white" : ""}
                 >
                   {i + 1}
                 </Button>

@@ -1,8 +1,11 @@
+"use client"
 import { Button } from "@/components/ui/button";
+import { addToCart } from "@/lib/cart-utils";
+import { getWishlistItems, toggleWishlist } from "@/lib/wishlist-utils";
 import { SingleProductResponse } from "@/types/singelProductDataType";
-import { Heart, Share2, Star } from "lucide-react";
+import { Heart,  Star } from "lucide-react";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface ProductDetailsProps {
   product: SingleProductResponse["data"]["product"];
@@ -15,6 +18,37 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   rating = 0,
   totalReviews = 0,
 }) => {
+  const [isAdding, setIsAdding] = useState(false);
+  const [isInWishlist, setIsInWishlist] = useState(false);
+
+
+  useEffect(() => {
+    const wishlist = getWishlistItems();
+    const found = wishlist.some((item) => String(item._id) === product._id);
+    console.log(found)
+    setIsInWishlist(found);
+  }, [product._id]);
+
+
+  const handleAddToCart = () => {
+    setIsAdding(true);
+    addToCart({ ...product, _id: product._id });
+    window.dispatchEvent(new Event("cartUpdated"));
+
+    setTimeout(() => {
+      setIsAdding(false);
+    }, 500);
+  };
+
+  const handleToggleWishlist = () => {
+    // e.preventDefault();
+    const newWishlistStatus = toggleWishlist({ ...product, _id: product._id });
+    setIsInWishlist(newWishlistStatus);
+    window.dispatchEvent(new Event("wishlistUpdated"));
+  };
+
+
+
   return (
     <div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
@@ -49,11 +83,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`w-4 h-4 ${
-                      i < Math.floor(rating)
-                        ? "fill-yellow-400 text-yellow-400"
-                        : "text-gray-300"
-                    }`}
+                    className={`w-4 h-4 ${i < Math.floor(rating)
+                      ? "fill-yellow-400 text-yellow-400"
+                      : "text-gray-300"
+                      }`}
                   />
                 ))}
               </div>
@@ -103,15 +136,32 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
           {/* Buttons */}
           <div className="flex gap-4">
-            <Button className="flex-1 bg-black text-white hover:bg-gray-800">
-              Add to Cart
+            <Button
+              className="bg-[#A8C2A3] text-[#F8FAF9]"
+              size="lg"
+              disabled={isAdding}
+              onClick={(e) => {
+                e.preventDefault();
+                handleAddToCart();
+              }}
+            >
+              {isAdding ? "Adding..." : "Add to Cart"}
             </Button>
-            <Button variant="outline" size="icon">
-              <Heart className="w-4 h-4" />
-            </Button>
-            <Button variant="outline" size="icon">
+            <button
+              className=""
+              onClick={(e) => {
+                e.preventDefault()
+                handleToggleWishlist()
+              }}
+            >
+              <Heart
+                className={`${isInWishlist ? "fill-red-500 text-red-500" : "text-gray-400"
+                  }`}
+              />
+            </button>
+            {/* <Button variant="outline" size="icon">
               <Share2 className="w-4 h-4" />
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>
