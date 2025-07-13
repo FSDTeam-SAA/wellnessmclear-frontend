@@ -83,6 +83,8 @@ export default function SearchModal({ open, onClose, searchQuery }: Props) {
                   className="flex items-center gap-3 hover:bg-gray-100 p-2 rounded"
                 >
                   <Image
+                  height={40}
+                  width={40}
                     src={product.image}
                     alt={product.name}
                     className="w-10 h-10 object-cover rounded"
