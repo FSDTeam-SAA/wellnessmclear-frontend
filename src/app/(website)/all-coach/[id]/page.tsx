@@ -1,148 +1,240 @@
 "use client"
 
 import { useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Progress } from "@/components/ui/progress"
-import { Calendar, Clock, Facebook, Instagram, Twitter, Linkedin } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { Clock, Facebook, Instagram, Twitter, Linkedin } from "lucide-react"
 import Image from "next/image"
+import { useSession } from "next-auth/react"
+// import { useRouter } from "next/navigation"
 
-const coachData = {
-  1: {
-    name: "Jordan Peele",
-    specialty: "General Health Specialist",
-    price: 250,
-    sessionDuration: "60 minutes",
-    image: "/placeholder.svg?height=300&width=300",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in",
-    qualification:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in",
-    experience:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor si",
-    skills: {
-      "Medical Skills": 95,
-      "Communication Skills": 100,
-      "Patients Care": 98,
-      "Career Overview": 95,
-    },
-    openingHours: {
-      weekdays: "Monday to Friday: 10.00Am-06.00Pm",
-      weekend: "Sunday: 10.00Am-02.00Pm",
-    },
-  },  
-  2: {
-    name: "Jordan Peele",
-    specialty: "General Health Specialist",
-    price: 550,
-    sessionDuration: "60 minutes",
-    image: "/placeholder.svg?height=300&width=300",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in",
-    qualification:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in",
-    experience:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor si",
-    skills: {
-      "Medical Skills": 95,
-      "Communication Skills": 100,
-      "Patients Care": 98,
-      "Career Overview": 95,
-    },
-    openingHours: {
-      weekdays: "Monday to Friday: 10.00Am-06.00Pm",
-      weekend: "Sunday: 10.00Am-02.00Pm",
-    },
-  }, 
-   3: {
-    name: "Jordan Peele",
-    specialty: "General Health Specialist",
-    price: 50,
-    sessionDuration: "60 minutes",
-    image: "/placeholder.svg?height=300&width=300",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in",
-    qualification:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in",
-    experience:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor si",
-    skills: {
-      "Medical Skills": 95,
-      "Communication Skills": 100,
-      "Patients Care": 98,
-      "Career Overview": 95,
-    },
-    openingHours: {
-      weekdays: "Monday to Friday: 10.00Am-06.00Pm",
-      weekend: "Sunday: 10.00Am-02.00Pm",
-    },
-  },
+// Define interfaces for type safety
+interface Slot {
+  startTime: string
+  endTime: string
+  isAvailable?: boolean
+}
+
+interface Availability {
+  day: string
+  slots: Slot[]
+}
+
+interface Skill {
+  skillName: string
+  description: string
+}
+
+interface Service {
+  _id: string
+  icon: string
+  title: string
+  description: string
+  price: number
+  overview: string
+  overviewImage: string
+  receive: string
+  receiveImage: string
+  whom: string
+  whomImage: string
+  createdAt: string
+  updatedAt: string
+  coaches?: string[]
+}
+
+interface Coach {
+  _id: string
+  firstName: string
+  lastName: string
+  specialization: string
+  sessionDuration: string
+  profileImage: string
+  description: string
+  qualification: string
+  fieldOfExperiences: string
+  skills: Skill[]
+  availability: Availability[]
+  servicesOffered: Service[] | Service
+}
+
+interface CoachResponse {
+  status: boolean
+  message: string
+  data: Coach
+}
+
+interface PaymentResponse {
+  status: boolean
+  message: string
+  data: {
+    url: string
+  }
 }
 
 export default function CoachDetailsPage({ params }: { params: { id: string } }) {
-  const router = useRouter()
-  const coachId = Number.parseInt(params.id)
-  const coach = coachData[coachId as keyof typeof coachData] || coachData[1]
+  const { data: session, status } = useSession()
+  const token = session?.user.accessToken
+  // const router = useRouter()
+  const coachId = params.id
 
+  // Fetch coach details using react-query
+  const { data, isLoading, isError } = useQuery<CoachResponse>({
+    queryKey: ["coach", coachId],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/coach/${coachId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      if (!res.ok) throw new Error("Failed to fetch coach details")
+      return res.json()
+    },
+  })
+
+  const coach = data?.data
+
+  // State for booking form
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    date: "",
-    startTime: "",
-    endTime: "",
+    day: "",
+    timeSlot: "",
   })
 
+  // Handle form input changes
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
-  const handleBookAppointment = () => {
-    console.log("Appointment Booking Data:", formData)
+  // Handle appointment booking
+  const handleBookAppointment = async () => {
+    if (!coach || !formData.day || !formData.timeSlot || !token) return
 
-    // Store appointment data and coach data for payment page
-    localStorage.setItem("appointmentData", JSON.stringify(formData))
-    localStorage.setItem("coachData", JSON.stringify(coach))
+    // Split timeSlot into startTime and endTime
+    const [startTime, endTime] = formData.timeSlot.split(" - ")
 
-    // Navigate directly to payment page (skip plans)
-    router.push("/payment")
+    // Construct bookingDate (assuming the selected day is relative to the current week)
+    const today = new Date()
+    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    const selectedDayIndex = daysOfWeek.indexOf(formData.day)
+    const currentDayIndex = today.getDay()
+    const dayDifference = selectedDayIndex - currentDayIndex
+    const bookingDate = new Date(today)
+    bookingDate.setDate(today.getDate() + dayDifference)
+    const formattedBookingDate = bookingDate.toISOString().split("T")[0] + "T00:00:00.000Z"
+
+    // Construct API body
+    const requestBody = {
+      type: "booking",
+      coachId: coach._id,
+      serviceId: Array.isArray(coach.servicesOffered) ? coach.servicesOffered[0]?._id : coach.servicesOffered?._id,
+      totalAmount: Array.isArray(coach.servicesOffered) ? coach.servicesOffered[0]?.price || 0 : coach.servicesOffered?.price || 0,
+      bookingDate: formattedBookingDate,
+      selectedSlots: [
+        {
+          day: formData.day,
+          slots: [
+            {
+              startTime,
+              endTime,
+            },
+          ],
+        },
+      ],
+    }
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/payment/checkout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestBody),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to initiate payment checkout")
+      }
+
+      const responseData: PaymentResponse = await response.json()
+      if (responseData.status && responseData.data.url) {
+        window.location.href = responseData.data.url // Redirect to the Stripe checkout URL
+      } else {
+        throw new Error("Invalid response from payment checkout API")
+      }
+    } catch (error) {
+      console.error("Error during payment checkout:", error)
+      // Handle error (e.g., show an error message to the user)
+    }
   }
+
+  // Loading state
+  if (isLoading || status === "loading") {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+  }
+
+  // Error state
+  if (isError || !coach) {
+    return <div className="min-h-screen flex items-center justify-center">Error loading coach details</div>
+  }
+
+  // Normalize servicesOffered to always be an array
+  const servicesOffered = Array.isArray(coach.servicesOffered)
+    ? coach.servicesOffered
+    : coach.servicesOffered
+    ? [coach.servicesOffered]
+    : []
+
+  // Extract price from the first service in servicesOffered
+  const servicePrice = servicesOffered[0]?.price || 0
+
+  // Get available days for the select dropdown
+  const availableDays = coach?.availability && Array.isArray(coach.availability)
+    ? coach.availability.map((avail) => avail.day)
+    : []
+
+  // Get slots for the selected day
+  const selectedDaySlots = coach?.availability?.find((avail) => avail.day === formData.day)?.slots || []
 
   return (
     <div className="min-h-screen bg-gray-50">
-     
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Coach Details */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Coach Profile */}
             <Card>
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className="w-48 h-48 mx-auto md:mx-0 rounded-lg overflow-hidden flex-shrink-0">
-                    <Image 
-                    height={300 } 
-                    width={300} 
-                      src={coach.image || "/placeholder.svg"}
-                      alt={coach.name}
+                    <Image
+                      height={300}
+                      width={300}
+                      src={coach.profileImage || "/placeholder.svg"}
+                      alt={`${coach.firstName} ${coach.lastName}`}
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="flex-1">
-                    <p className="text-green-600 text-sm mb-2">Lorem ipsum dolor sit amet.</p>
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">{coach.name}</h1>
+                    <p className="text-green-600 text-sm mb-2">{coach.specialization}</p>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                      {coach.firstName} {coach.lastName}
+                    </h1>
                     <div className="flex items-center gap-4 mb-4">
-                      <span className="text-2xl font-bold text-green-600">${coach.price}</span>
-                      <span className="text-gray-600">/ {coach.sessionDuration}</span>
+                      <span className="text-2xl font-bold text-green-600">${servicePrice}</span>
+                      <span className="text-gray-600">/ 60 minutes</span>
                     </div>
                     <div className="mb-4">
                       <h3 className="font-semibold text-gray-900 mb-2">
-                        Specialized In: <span className="font-normal text-gray-600">Lorem ipsum dolor sit amet.</span>
+                        Specialized In: <span className="font-normal text-gray-600">{coach.specialization}</span>
                       </h3>
                     </div>
                     <div className="mb-4">
@@ -162,8 +254,6 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
                 </div>
               </CardContent>
             </Card>
-
-            {/* Qualification */}
             <Card>
               <CardHeader>
                 <CardTitle>Qualification:</CardTitle>
@@ -172,38 +262,34 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
                 <p className="text-gray-600 text-sm leading-relaxed">{coach.qualification}</p>
               </CardContent>
             </Card>
-
-            {/* Field of Experience */}
             <Card>
               <CardHeader>
                 <CardTitle>Field of Experiences:</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 text-sm leading-relaxed">{coach.experience}</p>
+                <p className="text-gray-600 text-sm leading-relaxed">{coach.fieldOfExperiences}</p>
               </CardContent>
             </Card>
-
-            {/* Skills */}
             <Card>
-              <CardContent className="p-6">
-                <div className="space-y-6">
-                  {Object.entries(coach.skills).map(([skill, percentage]) => (
-                    <div key={skill}>
+              <CardHeader>
+                <CardTitle>Skills:</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {coach.skills.map((skill, index) => (
+                    <div key={index}>
                       <div className="flex justify-between items-center mb-2">
-                        <span className="font-medium text-gray-900">{skill}:</span>
-                        <span className="font-bold text-gray-900">{percentage}%</span>
+                        <span className="font-medium text-gray-900">{skill.skillName}</span>
+                        <span className="font-normal text-gray-600">{skill.description}</span>
                       </div>
-                      <Progress value={percentage} className="h-2" />
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
           </div>
-
-          {/* Right Column - Booking */}
+          {/* Right Column - Availability and Booking */}
           <div className="space-y-6">
-            {/* Opening Hours */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -212,14 +298,29 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2 text-sm">
-                  <p>{coach.openingHours.weekdays}</p>
-                  <p>{coach.openingHours.weekend}</p>
+                <div className="space-y-4 text-sm">
+                  {coach?.availability && Array.isArray(coach.availability) && coach.availability.length > 0 ? (
+                    coach.availability.map((avail, index) => (
+                      <div key={index} className="border rounded-xl p-4 bg-muted/50">
+                        <p className="font-medium text-base">{avail.day}</p>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {avail.slots.map((slot, slotIndex) => (
+                            <span
+                              key={slotIndex}
+                              className="bg-primary/10 px-3 py-1 rounded-full text-xs font-medium"
+                            >
+                              {slot.startTime} - {slot.endTime}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-muted-foreground italic">No availability information available.</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
-
-            {/* Book Appointment */}
             <Card>
               <CardHeader>
                 <CardTitle>Book Appointment</CardTitle>
@@ -234,7 +335,6 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
                     onChange={(e) => handleInputChange("name", e.target.value)}
                   />
                 </div>
-
                 <div>
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -245,7 +345,6 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
                     onChange={(e) => handleInputChange("email", e.target.value)}
                   />
                 </div>
-
                 <div>
                   <Label htmlFor="phone">Phone Number</Label>
                   <Input
@@ -255,55 +354,54 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
                     onChange={(e) => handleInputChange("phone", e.target.value)}
                   />
                 </div>
-
                 <div>
-                  <Label>Time</Label>
-                  <p className="text-sm text-gray-600 mb-2">I&apos;m available on:</p>
-                  <div className="relative">
-                    <Calendar className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      type="date"
-                      value={formData.date}
-                      onChange={(e) => handleInputChange("date", e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label>Start:</Label>
-                  <Select value={formData.startTime} onValueChange={(value) => handleInputChange("startTime", value)}>
+                  <Label>Day</Label>
+                  <Select value={formData.day} onValueChange={(value) => {
+                    handleInputChange("day", value)
+                    handleInputChange("timeSlot", "") // Reset time slot when day changes
+                  }}>
                     <SelectTrigger>
-                      <SelectValue placeholder="09.00Am" />
+                      <SelectValue placeholder="Select a day" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="09:00">09.00Am</SelectItem>
-                      <SelectItem value="10:00">10.00Am</SelectItem>
-                      <SelectItem value="11:00">11.00Am</SelectItem>
-                      <SelectItem value="14:00">02.00Pm</SelectItem>
-                      <SelectItem value="15:00">03.00Pm</SelectItem>
-                      <SelectItem value="16:00">04.00Pm</SelectItem>
+                      {availableDays.length > 0 ? (
+                        availableDays.map((day) => (
+                          <SelectItem key={day} value={day}>
+                            {day}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <div className="px-4 py-2 text-sm text-gray-500">No days available</div>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
-
                 <div>
-                  <Label>End:</Label>
-                  <Select value={formData.endTime} onValueChange={(value) => handleInputChange("endTime", value)}>
+                  <Label>Time Slot</Label>
+                  <Select value={formData.timeSlot} onValueChange={(value) => handleInputChange("timeSlot", value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="10.00Am" />
+                      <SelectValue placeholder="Select a time slot" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="10:00">10.00Am</SelectItem>
-                      <SelectItem value="11:00">11.00Am</SelectItem>
-                      <SelectItem value="12:00">12.00Pm</SelectItem>
-                      <SelectItem value="15:00">03.00Pm</SelectItem>
-                      <SelectItem value="16:00">04.00Pm</SelectItem>
-                      <SelectItem value="17:00">05.00Pm</SelectItem>
+                      {formData.day && selectedDaySlots.length > 0 ? (
+                        selectedDaySlots.map((slot, index) => (
+                          <SelectItem key={index} value={`${slot.startTime} - ${slot.endTime}`}>
+                            {slot.startTime} - {slot.endTime}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <div className="px-4 py-2 text-sm text-gray-500">
+                          {formData.day ? "No time slots available for this day" : "Please select a day first"}
+                        </div>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
-
-                <Button className="w-full bg-green-600 hover:bg-green-700" onClick={handleBookAppointment}>
+                <Button
+                  className="w-full bg-green-600 hover:bg-green-700"
+                  onClick={handleBookAppointment}
+                  disabled={!formData.day || !formData.timeSlot || status !== "authenticated"}
+                >
                   Book Appointment
                 </Button>
               </CardContent>
