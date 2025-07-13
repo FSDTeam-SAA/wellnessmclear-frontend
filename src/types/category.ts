@@ -6,7 +6,7 @@ export interface Category {
   _id: string;
   name: string;
   subCategories: SubCategory[];
-  categoryImage?: string;
+  categoryImage: string;
   createdAt: string;
   updatedAt: string;
   __v: number;
