@@ -49,7 +49,7 @@ export default function CartPage() {
             <h1 className="text-3xl font-bold mb-4">Your Cart is Empty</h1>
             <p className="text-gray-600 mb-8">Add some products to get started!</p>
             <Link href="/">
-              <Button className="bg-[#A8C2A3] hover:bg-green-700">Continue Shopping</Button>
+              <Button className="bg-[#A8C2A3] text-white">Continue Shopping</Button>
             </Link>
           </div>
         </main>
