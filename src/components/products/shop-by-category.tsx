@@ -2,6 +2,9 @@
 import Image from "next/image"
 import { useQuery } from "@tanstack/react-query";
 import { CategoriesResponse } from "@/types/category";
+import noimage from "@/public/images/no-image.jpg";
+
+
 
 export default function ShopByCategory() {
  
@@ -30,36 +33,19 @@ export default function ShopByCategory() {
       <div className="lg:container mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold text-gray-900">Shop by Category</h2>
-          {/* <Link href="/categories" className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1">
-            View all products
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </Link> */}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {data?.data.map((category) => (
+          {data?.data.slice(0,4).map((category) => (
             <div key={category._id}  className="group">
               <div className=" rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="relative aspect-square">
                   <Image
-                    src={category.categoryImage || "/placeholder.svg"}
+                    src={category.categoryImage || noimage}
                     alt={category.name}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute bottom-4 left-4">
-                    {/* <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center">
-                      <Image
-                        src={category.avatar || "/placeholder.svg"}
-                        alt=""
-                        width={24}
-                        height={24}
-                        className="rounded-full"
-                      />
-                    </div> */}
-                  </div>
                 </div>
 
                 <div className="p-4">
