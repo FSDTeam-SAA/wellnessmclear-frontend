@@ -1,6 +1,9 @@
 export interface Group {
-  _id: string;
-  groupName: string;
-  groupType: 'public' | 'private';
-  // ...other fields as needed
+  _id: string
+  name: string
+  groupType: "public" | "private"
+  description?: string
+  memberCount?: number
+  createdAt: string
+  updatedAt: string
 }
