@@ -1,97 +1,62 @@
 "use client";
+
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
+import { Order, OrderResponse } from "@/types/orderDataType";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import Image from "next/image";
 
 export default function OrderPage() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const itemsPerPage = 10;
+  const { data: session } = useSession();
+  const token = session?.user.accessToken;
 
-  const ordersData = [
-    {
-      id: 1,
-      productName: "Brightening Serum",
-      price: "$130.00",
-      date: "Feb 10, 2025",
-      status: "Processing",
+  const { data } = useQuery<OrderResponse>({
+    queryKey: ["order"],
+    queryFn: async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/product/user/products`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!res.ok) throw new Error("Failed to fetch orders");
+      return res.json();
     },
-    {
-      id: 2,
-      productName: "Brightening Serum",
-      price: "$130.00",
-      date: "Feb 10, 2025",
-      status: "Delivered",
-    },
-    {
-      id: 3,
-      productName: "Brightening Serum",
-      price: "$130.00",
-      date: "Feb 10, 2025",
-      status: "Delivered",
-    },
-    {
-      id: 4,
-      productName: "Brightening Serum",
-      price: "$130.00",
-      date: "Feb 10, 2025",
-      status: "Delivered",
-    },
-    {
-      id: 5,
-      productName: "Brightening Serum",
-      price: "$130.00",
-      date: "Feb 10, 2025",
-      status: "Delivered",
-    },
-    {
-      id: 6,
-      productName: "Brightening Serum",
-      price: "$130.00",
-      date: "Feb 10, 2025",
-      status: "Delivered",
-    },
-    {
-      id: 7,
-      productName: "Brightening Serum",
-      price: "$130.00",
-      date: "Feb 10, 2025",
-      status: "Delivered",
-    },
-    {
-      id: 8,
-      productName: "Brightening Serum",
-      price: "$124.00",
-      date: "Feb 10, 2025",
-      status: "Delivered",
-    },
-    {
-      id: 9,
-      productName: "Brightening Serum",
-      price: "$10.00",
-      date: "Feb 10, 2025",
-      status: "Delivered",
-    },
-    {
-      id: 10,
-      productName: "Brightening Serum",
-      price: "$10.00",
-      date: "Feb 10, 2025",
-      status: "Delivered",
-    },
-  ];
+    enabled: !!token,
+  });
 
-  
-  const totalPages = Math.ceil(ordersData.length / itemsPerPage);
+  const orders = data?.data || [];
+  const totalPages = Math.ceil(orders.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentItems = ordersData.slice(startIndex, startIndex + itemsPerPage);
+  const currentItems = orders.slice(startIndex, startIndex + itemsPerPage);
 
   const getStatusBadge = (status: string) => {
-    const baseClasses = "px-3 py-1 rounded-full text-xs font-medium";
-    if (status === "Processing") {
-      return `${baseClasses} bg-[#6A93B6] text-white`;
-    } else if (status === "Delivered") {
-      return `${baseClasses} bg-[#008000] text-white`;
+    const base = "px-3 py-1 rounded-full text-xs font-medium";
+    switch (status) {
+      case "Processing":
+        return `${base} bg-[#6A93B6] text-white`;
+      case "Delivered":
+        return `${base} bg-[#008000] text-white`;
+      case "failed":
+        return `${base} bg-red-500 text-white`;
+      case "succeeded":
+        return `${base} bg-green-500 text-white`;
+      default:
+        return base;
     }
-    return baseClasses;
   };
 
   const handlePageChange = (page: number) => {
@@ -101,107 +66,79 @@ export default function OrderPage() {
   };
 
   return (
-    <div className="bg-[#F8FAF9] ">
-      <div className="lg:container mx-auto lg:py-[88px] md:py-[50px] py-[30px]">
-        <h1 className="lg:text-[40px] md:text-[35px] text-[30px] font-bold text-center mb-10">
-          Orders
-        </h1>
+    <div className="bg-[#F8FAF9]">
+      <div className="lg:container mx-auto py-12">
+        <h1 className="text-center text-3xl md:text-4xl font-bold mb-10">Orders</h1>
 
-        <div className="lg:border-2 border-[#23547B] rounded-[15px] lg:p-6 p-3 ">
-          <div className="bg-white rounded-lg border border-[#23547B] overflow-x-scroll lg:overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-50 border-b border-gray-200">
-                    <th className="px-6 py-4 text-left text-[18px] font-medium text-[#131313] leading-[120%]">
-                      Product Name
-                    </th>
-                    <th className="px-6 py-4 text-left text-[18px] font-medium text-[#131313] leading-[120%]">
-                      Price
-                    </th>
-                    <th className="px-6 py-4 text-left text-[18px] font-medium text-[#131313] leading-[120%]">
-                      Date
-                    </th>
-                    <th className="px-6 py-4 text-left text-[18px] font-medium text-[#131313] leading-[120%]">
-                      Status
-                    </th>
-                    <th className="px-6 py-4 text-left text-[18px] font-medium text-[#131313] leading-[120%]">
-                      Action
-                    </th>
+        <div className="border border-[#23547B] rounded-[15px] p-4 md:p-6">
+          <div className="bg-white rounded-lg border border-[#23547B] overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50 border-b">
+                  <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Products</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Amount</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Date</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Status</th>
+                  <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentItems.map((order) => (
+                  <tr key={order._id} className="border-b">
+                    <td className="px-6 py-4 text-sm">
+                      {order.product.map((p, i) => (
+                        <div key={i}>{p.product?.name ?? "Unknown Product"}</div>
+                      ))}
+                    </td>
+                    <td className="px-6 py-4 text-sm">${order.amount}</td>
+                    <td className="px-6 py-4 text-sm">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={getStatusBadge(order.status)}>{order.status}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <button
+                        onClick={() => setSelectedOrder(order)}
+                        className="text-blue-600 hover:underline text-sm"
+                      >
+                        View Details
+                      </button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {currentItems.map((order, index) => (
-                    <tr
-                      key={order.id}
-                      className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                    >
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        {order.productName}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        {order.price}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        {order.date}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={getStatusBadge(order.status)}>
-                          {order.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <button className="text-[#424242] hover:text-blue-800 text-sm underline font-medium">
-                          View Details
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <div className="lg:px-6 mt-6 flex items-center justify-between">
-            <span className="text-sm text-gray-700 hidden lg:block">
-              Showing 1 of 10 results
-            </span>
 
+          {/* Pagination */}
+          <div className="mt-6 flex items-center justify-between">
+            <span className="text-sm text-gray-600">
+              Showing {startIndex + 1} to {startIndex + currentItems.length} of {orders.length} results
+            </span>
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="p-2 rounded border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                className="p-2 rounded border border-gray-300 disabled:opacity-50 hover:bg-gray-100"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-
-              {[1, 2, 3].map((page) => (
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                 <button
                   key={page}
                   onClick={() => handlePageChange(page)}
                   className={`px-3 py-2 rounded border text-sm ${
-                    currentPage === page
-                      ? "bg-green-500 text-white border-green-500"
-                      : "border-gray-300 hover:bg-gray-50"
+                    currentPage === page ? "bg-green-500 text-white border-green-500" : "border-gray-300 hover:bg-gray-50"
                   }`}
                 >
                   {page}
                 </button>
               ))}
-
-              <span className="px-2 text-gray-500">...</span>
-
-              <button
-                onClick={() => handlePageChange(10)}
-                className="px-3 py-2 rounded border border-gray-300 hover:bg-gray-50 text-sm"
-              >
-                10
-              </button>
-
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="p-2 rounded border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                className="p-2 rounded border border-gray-300 disabled:opacity-50 hover:bg-gray-100"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -209,6 +146,47 @@ export default function OrderPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal */}
+      <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Order Details</DialogTitle>
+          </DialogHeader>
+          {selectedOrder && (
+            <div className="space-y-4">
+              <p><strong>Order ID:</strong> {selectedOrder._id}</p>
+              <p><strong>User ID:</strong> {selectedOrder.userId}</p>
+              <p><strong>Amount:</strong> ${selectedOrder.amount}</p>
+              <p><strong>Status:</strong> <span className={getStatusBadge(selectedOrder.status)}>{selectedOrder.status}</span></p>
+              <p><strong>Date:</strong> {new Date(selectedOrder.createdAt).toLocaleString()}</p>
+              <div>
+                <strong>Products:</strong>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                  {selectedOrder.product.map((item, i) => (
+                    <div key={i} className="flex items-start gap-4 border p-3 rounded-md">
+                      <Image
+                      width={100}
+                      height={100}
+                        src={item.product?.image || "/placeholder.png"}
+                        alt={item.product?.name || "Product"}
+                        className="w-16 h-16 object-cover rounded"
+                      />
+                      <div>
+                        <p className="font-semibold">{item.product?.name}</p>
+                        <p className="text-sm text-gray-600">{item.product?.description}</p>
+                        <p className="text-sm text-gray-500">Brand: {item.product?.brand}</p>
+                        <p className="text-sm text-gray-500">Category: {item.product?.category?.name}</p>
+                        <p className="text-sm mt-1">Qty: {item.quantity}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
