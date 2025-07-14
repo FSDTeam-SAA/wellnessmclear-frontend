@@ -4,17 +4,92 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Check, X } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 interface PaymentModalProps {
   isOpen: boolean
   onClose: () => void
   onPayment: () => void
+  onPaymentSuccess?: () => void
   isLoading: boolean
+  isAnnual?: boolean
+  onBillingChange?: (isAnnual: boolean) => void
 }
 
-export function PaymentModal({ isOpen, onClose, onPayment, isLoading }: PaymentModalProps) {
-  const [isAnnual, setIsAnnual] = useState(true)
+export function PaymentModal({
+  isOpen,
+  onClose,
+  onPayment,
+  onPaymentSuccess,
+  isLoading,
+  isAnnual: externalIsAnnual,
+  onBillingChange,
+}: PaymentModalProps) {
+  const [internalIsAnnual, setInternalIsAnnual] = useState(true)
+  const [paymentStatus, setPaymentStatus] = useState<"idle" | "processing" | "success" | "error">("idle")
+
+  // Use external billing state if provided, otherwise use internal
+  const isAnnual = externalIsAnnual !== undefined ? externalIsAnnual : internalIsAnnual
+
+  const handleBillingToggle = () => {
+    const newValue = !isAnnual
+    if (onBillingChange) {
+      onBillingChange(newValue)
+    } else {
+      setInternalIsAnnual(newValue)
+    }
+  }
+
+  // Listen for payment success (this would typically come from a webhook or redirect)
+  useEffect(() => {
+    const handlePaymentComplete = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return
+
+      if (event.data.type === "PAYMENT_SUCCESS") {
+        setPaymentStatus("success")
+        setTimeout(() => {
+          onPaymentSuccess?.()
+          onClose()
+        }, 2000)
+      } else if (event.data.type === "PAYMENT_ERROR") {
+        setPaymentStatus("error")
+      }
+    }
+
+    window.addEventListener("message", handlePaymentComplete)
+    return () => window.removeEventListener("message", handlePaymentComplete)
+  }, [onPaymentSuccess, onClose])
+
+  const handlePayment = () => {
+    setPaymentStatus("processing")
+    onPayment()
+  }
+
+  const getButtonContent = () => {
+    switch (paymentStatus) {
+      case "processing":
+        return "Processing Payment..."
+      case "success":
+        return "Payment Successful! ✓"
+      case "error":
+        return "Payment Failed - Try Again"
+      default:
+        return isLoading ? "Processing..." : "Unlock Private Community"
+    }
+  }
+
+  const getButtonClassName = () => {
+    const baseClass = "w-full py-4 text-lg font-semibold mb-8 rounded-lg transition-colors"
+
+    switch (paymentStatus) {
+      case "success":
+        return `${baseClass} bg-green-600 text-white cursor-default`
+      case "error":
+        return `${baseClass} bg-red-600 hover:bg-red-700 text-white`
+      default:
+        return `${baseClass} bg-green-600 hover:bg-green-700 text-white`
+    }
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -34,7 +109,7 @@ export function PaymentModal({ isOpen, onClose, onPayment, isLoading }: PaymentM
               Monthly Billing
             </span>
             <button
-              onClick={() => setIsAnnual(!isAnnual)}
+              onClick={handleBillingToggle}
               className="relative w-12 h-6 bg-blue-500 rounded-full transition-colors"
             >
               <div
@@ -61,9 +136,8 @@ export function PaymentModal({ isOpen, onClose, onPayment, isLoading }: PaymentM
                   potential health issues early. Mental health is just as crucial as physical health, and managing
                   stress, building strong relationships, and seeking help
                 </p>
-
                 <div className="text-5xl font-bold text-green-600 mb-2">
-                  ${isAnnual ? "800" : "100"}
+                  ${isAnnual ? "19" : "228"}
                   <span className="text-lg text-gray-500 font-normal">/{isAnnual ? "year" : "month"}</span>
                 </div>
                 {isAnnual && (
@@ -75,12 +149,24 @@ export function PaymentModal({ isOpen, onClose, onPayment, isLoading }: PaymentM
               </div>
 
               <Button
-                onClick={onPayment}
-                disabled={isLoading}
-                className="w-full bg-green-600 hover:bg-green-700 text-white py-4 text-lg font-semibold mb-8 rounded-lg"
+                onClick={handlePayment}
+                disabled={isLoading || paymentStatus === "processing" || paymentStatus === "success"}
+                className={getButtonClassName()}
               >
-                {isLoading ? "Processing..." : "Unlock Private Community"}
+                {getButtonContent()}
               </Button>
+
+              {paymentStatus === "success" && (
+                <div className="text-center text-green-600 text-sm mb-4">
+                  🎉 Welcome to the Private Community! Redirecting...
+                </div>
+              )}
+
+              {paymentStatus === "error" && (
+                <div className="text-center text-red-600 text-sm mb-4">
+                  ❌ Payment failed. Please try again or contact support.
+                </div>
+              )}
 
               <div className="text-center mb-8">
                 <h3 className="font-semibold text-lg text-gray-900">Unlock premium features</h3>
