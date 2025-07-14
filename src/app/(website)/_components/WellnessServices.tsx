@@ -38,12 +38,23 @@ function WellnessServices() {
 
   const servicesData = data?.data || [];
   const defaultIcons = [Brain, Heart, Activity, Zap];
-  const defaultColors = ["text-blue-500", "text-red-500", "text-green-500", "text-yellow-500"];
-  const defaultBackgrounds = ["bg-blue-50", "bg-red-50", "bg-green-50", "bg-yellow-50"];
+  const defaultColors = [
+    "text-blue-500",
+    "text-red-500",
+    "text-green-500",
+    "text-yellow-500",
+  ];
+  const defaultBackgrounds = [
+    "bg-blue-50",
+    "bg-red-50",
+    "bg-green-50",
+    "bg-yellow-50",
+  ];
 
   if (isLoading) return <p className="text-gray-500">Loading services...</p>;
   if (error) return <p className="text-red-500">Error: {error.message}</p>;
-  if (!data || servicesData.length === 0) return <p className="text-gray-400">No services found.</p>;
+  if (!data || servicesData.length === 0)
+    return <p className="text-gray-400">No services found.</p>;
 
   return (
     <div className="lg:py-[72px] bg-[#EFE2F6] py-10">
@@ -52,17 +63,25 @@ function WellnessServices() {
           Our Wellness Services
         </h1>
         <p className="text-base font-normal leading-[150%] text-[#0F0F0F] text-center">
-          Comprehensive approaches to health and wellness that address your unique needs and goals.
+          Comprehensive approaches to health and wellness that address your
+          unique needs and goals.
         </p>
       </div>
 
-      <div className="w-[90%] mx-auto">
+      <div className="w-[90%] lg:w-full mx-auto relative">
         <Carousel
           opts={{ align: "start", loop: true }}
           plugins={[Autoplay({ delay: 2500 })]} // Auto slides every 2.5 seconds
           className="w-full container"
         >
-          <CarouselContent className="-ml-4">
+          {/* Navigation buttons positioned at top-right */}
+          <div className="absolute top-0 lg:right-24 right-16 z-10 flex gap-2">
+            <CarouselPrevious />
+            <CarouselNext />
+          </div>
+
+          {/* Carousel content */}
+          <CarouselContent className="mt-12 -ml-4">
             {servicesData.map((service: ServiceCardProps, index: number) => (
               <CarouselItem
                 key={service._id}
@@ -76,13 +95,13 @@ function WellnessServices() {
                   price={service.price}
                   buttonText="Book A Coach"
                   href={`/service/${service._id}`}
-                  backgroundColor={defaultBackgrounds[index % defaultBackgrounds.length]}
+                  backgroundColor={
+                    defaultBackgrounds[index % defaultBackgrounds.length]
+                  }
                 />
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
         </Carousel>
       </div>
     </div>
