@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -25,6 +26,7 @@ export default function AllCoachesPage() {
         limit: limit.toString(),
         excludeTitle,
       });
+      /* eslint-disable react-hooks/exhaustive-deps */
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/coach/?${queryParams}`,
