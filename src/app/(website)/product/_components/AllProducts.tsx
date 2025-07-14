@@ -178,7 +178,7 @@ export default function AllProductsPage() {
           </Button>
 
           {/* Sort By (other) */}
-          <div className="ml-auto flex items-center gap-2">
+          {/* <div className="ml-auto flex items-center gap-2">
             <span className="text-sm text-gray-600">Sort by:</span>
             <Button
               variant="outline"
@@ -188,7 +188,7 @@ export default function AllProductsPage() {
               Best Sellers
               <ChevronDown className="w-4 h-4" />
             </Button>
-          </div>
+          </div> */}
         </div>
 
         {/* Products Grid */}

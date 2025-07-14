@@ -216,7 +216,7 @@ const WellnessConsultationCard: React.FC<WellnessConsultationCardProps> = ({
   targetImage,
 
   ctaText,
-  ctaColor = "bg-blue-500 hover:bg-blue-600",
+  // ctaColor = "bg-blue-500 hover:bg-blue-600",
 
   
   cardBackgrounds = {},
@@ -303,7 +303,7 @@ const WellnessConsultationCard: React.FC<WellnessConsultationCardProps> = ({
               {whoDescription}
             </p>
             <button
-              className={`${ctaColor} text-white px-6 py-2.5 sm:px-8 sm:py-3 rounded-full font-semibold transition-colors duration-200 text-sm sm:text-base w-full sm:w-auto`}
+              className={`bg-[#A8C2A3] text-white px-6 py-2.5 sm:px-8 sm:py-3 rounded-full font-semibold transition-colors duration-200 text-sm sm:text-base w-full sm:w-auto`}
             >
               {ctaText}
             </button>
