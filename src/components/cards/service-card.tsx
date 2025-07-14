@@ -60,7 +60,7 @@ const ServiceCard = ({
 
       <CardFooter className="flex items-center justify-between gap-2">
         <Button className="text-white flex-1" asChild>
-          <Link href="/">Book A Coach</Link>
+          <Link href="/all-coach">Book A Coach</Link>
         </Button>
         <button className="text-[#CBA0E3] flex-1">
           <Link href={href}>See Details</Link>

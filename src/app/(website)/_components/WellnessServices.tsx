@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/carousel";
 import { Brain, Heart, Activity, Zap } from "lucide-react";
 import Autoplay from "embla-carousel-autoplay";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type ServiceCardProps = {
   Icon?: React.ComponentType<{ className?: string }>;
@@ -51,11 +52,6 @@ function WellnessServices() {
     "bg-yellow-50",
   ];
 
-  if (isLoading) return <p className="text-gray-500">Loading services...</p>;
-  if (error) return <p className="text-red-500">Error: {error.message}</p>;
-  if (!data || servicesData.length === 0)
-    return <p className="text-gray-400">No services found.</p>;
-
   return (
     <div className="lg:py-[72px] bg-[#EFE2F6] py-10">
       <div className="mb-[56px]">
@@ -71,7 +67,7 @@ function WellnessServices() {
       <div className="w-[90%] lg:w-full mx-auto relative">
         <Carousel
           opts={{ align: "start", loop: true }}
-          plugins={[Autoplay({ delay: 2500 })]} // Auto slides every 2.5 seconds
+          plugins={[Autoplay({ delay: 2500 })]}
           className="w-full container"
         >
           {/* Navigation buttons positioned at top-right */}
@@ -80,29 +76,51 @@ function WellnessServices() {
             <CarouselNext />
           </div>
 
-          {/* Carousel content */}
           <CarouselContent className="mt-12 -ml-4">
-            {servicesData.map((service: ServiceCardProps, index: number) => (
-              <CarouselItem
-                key={service._id}
-                className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
-              >
-                <ServiceCard
-                  Icon={defaultIcons[index % defaultIcons.length]}
-                  iconColor={defaultColors[index % defaultColors.length]}
-                  title={service.title}
-                  description={service.description}
-                  price={service.price}
-                  buttonText="Book A Coach"
-                  href={`/service/${service._id}`}
-                  backgroundColor={
-                    defaultBackgrounds[index % defaultBackgrounds.length]
-                  }
-                />
-              </CarouselItem>
-            ))}
+            {isLoading
+              ? [...Array(4)].map((_, index) => (
+                  <CarouselItem
+                    key={index}
+                    className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+                  >
+                    <div className="bg-white rounded-lg shadow p-6 h-full flex flex-col gap-4">
+                      <Skeleton className="h-10 w-10 rounded-full" />
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-1/2" />
+                      <Skeleton className="h-10 w-full rounded-md" />
+                    </div>
+                  </CarouselItem>
+                ))
+              : servicesData.map((service: ServiceCardProps, index: number) => (
+                  <CarouselItem
+                    key={service._id}
+                    className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+                  >
+                    <ServiceCard
+                      Icon={defaultIcons[index % defaultIcons.length]}
+                      iconColor={defaultColors[index % defaultColors.length]}
+                      title={service.title}
+                      description={service.description}
+                      price={service.price}
+                      buttonText="Book A Coach"
+                      href={`/service/${service._id}`}
+                      backgroundColor={
+                        defaultBackgrounds[index % defaultBackgrounds.length]
+                      }
+                    />
+                  </CarouselItem>
+                ))}
           </CarouselContent>
         </Carousel>
+
+        {/* Error or No Data */}
+        {!isLoading && error && (
+          <p className="text-center text-red-500 mt-6">Error: {error.message}</p>
+        )}
+        {!isLoading && !error && servicesData.length === 0 && (
+          <p className="text-center text-gray-500 mt-6">No services found.</p>
+        )}
       </div>
     </div>
   );

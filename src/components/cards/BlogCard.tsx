@@ -42,7 +42,7 @@ function BlogCard({ slug, image, date, title }: BlogCardProps) {
           </p>
         </div>
         <Link href={`/blogs/${slug}`}>
-          <button className="bg-transparent border border-[#A8C2A3] text-[#A8C2A3] text-sm px-4 py-2 rounded hover:bg-green-500 hover:text-white transition duration-300 w-full">
+          <button className="bg-transparent border border-[#A8C2A3] text-[#A8C2A3] text-sm px-4 py-2 rounded hover:bg-[#A8C2A3] hover:text-white transition duration-300 w-full">
             View Details
           </button>
         </Link>
