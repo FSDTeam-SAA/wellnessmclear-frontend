@@ -29,7 +29,9 @@ interface Review {
 
 // Fetch function
 const fetchReviews = async (): Promise<Review[]> => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/review-rating/all-reviews`,);
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/review-rating/all-reviews`
+  );
   if (!res.ok) {
     throw new Error("Failed to fetch reviews");
   }
@@ -42,7 +44,11 @@ export default function TestimonialCarousel() {
     Autoplay({ delay: 4000, stopOnInteraction: true })
   );
 
-  const { data: reviews, isLoading, isError } = useQuery({
+  const {
+    data: reviews,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["reviews"],
     queryFn: fetchReviews,
   });
@@ -51,10 +57,11 @@ export default function TestimonialCarousel() {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`w-4 h-4 ${i < rating
+        className={`w-4 h-4 ${
+          i < rating
             ? "fill-yellow-400 text-yellow-400"
             : "fill-gray-200 text-gray-200"
-          }`}
+        }`}
       />
     ));
   };
@@ -75,8 +82,12 @@ export default function TestimonialCarousel() {
           </div>
         </div>
 
-        {isLoading && <p className="text-center text-gray-500">Loading reviews...</p>}
-        {isError && <p className="text-center text-red-500">Failed to load reviews.</p>}
+        {isLoading && (
+          <p className="text-center text-gray-500">Loading reviews...</p>
+        )}
+        {isError && (
+          <p className="text-center text-red-500">Failed to load reviews.</p>
+        )}
 
         {reviews && reviews.length > 0 && (
           <Carousel
@@ -87,28 +98,34 @@ export default function TestimonialCarousel() {
               loop: true,
             }}
           >
-            <div className="flex justify-end gap-0 mt-6 mb-6">
-              <CarouselPrevious className="relative" />
-              <CarouselNext className="relative" />
+            {/* Buttons positioned absolutely inside Carousel */}
+            <div className="flex justify-end gap-2 absolute right-9 top-0 z-10">
+              <CarouselPrevious />
+              <CarouselNext />
             </div>
 
-            <CarouselContent className="-ml-2 md:-ml-4">
+            <CarouselContent className="mt-12 -ml-2 md:-ml-4">
               {reviews.map((review) => {
                 const { userId, rating, review: content, createdAt } = review;
                 const fullName = `${userId.firstName} ${userId.lastName}`;
-                const initials = `${userId.firstName?.[0] ?? ""}${userId.lastName?.[0] ?? ""}`;
-                const formattedDate = new Date(createdAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                });
+                const initials = `${userId.firstName?.[0] ?? ""}${
+                  userId.lastName?.[0] ?? ""
+                }`;
+                const formattedDate = new Date(createdAt).toLocaleDateString(
+                  "en-US",
+                  {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  }
+                );
 
                 return (
                   <CarouselItem
                     key={review._id}
                     className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3"
                   >
-                    <Card className="h-full rounded-lg bg-white shadow-[0px_0px_16px_0px_#00000014] hover:shadow-md transition-shadow duration-300">
+                    <Card className="h-full rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
                       <CardContent className="p-6 md:p-8 flex flex-col h-full">
                         <div className="flex items-center gap-4 mb-4">
                           <Avatar className="w-12 h-12 md:w-14 md:h-14">
