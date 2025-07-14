@@ -26,14 +26,14 @@ export default function HomeHero() {
           <div className="absolute inset-0 flex items-center px-4 sm:px-6 lg:px-16 z-[2]">
             <div className="text-white max-w-2xl">
               {/* Discount Label */}
-              <div className="mb-2">
+              {/* <div className="mb-2">
                 <p className="text-[#E0B15E] text-lg sm:text-xl lg:text-2xl font-semibold">
                   30%{" "}
                   <span className="text-white text-sm sm:text-base font-medium leading-[120%]">
                     Purchase discount.
                   </span>
                 </p>
-              </div>
+              </div> */}
 
               {/* Headline */}
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-[120%] mb-3 sm:mb-5 text-start">
@@ -49,9 +49,9 @@ export default function HomeHero() {
 
               {/* Buttons */}
               <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 w-full">
-                <Link href="/products" className="w-full sm:w-auto">
+                <Link href="/product" className="w-full sm:w-auto">
                   <Button className="w-full sm:w-[200px] h-10 sm:h-[54px] text-base sm:text-lg font-bold text-white bg-[#A8C2A3] hover:bg-[#94b294] transition-colors duration-200">
-                    Explore Resources
+                    Explore Products
                   </Button>
                 </Link>
                 <Link href="/all-coach" className="w-full sm:w-auto">

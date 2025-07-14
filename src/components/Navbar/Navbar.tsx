@@ -109,7 +109,7 @@ export function Navbar() {
       <div className="bg-white border-gray-200 py-4 px-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center">
-            <Link href="/" className="block w-[72px] h-[72px]">
+            <Link href="/" className="block lg:w-[72px] lg:h-[72px] w-[60px] h-[60px]">
               <Image
                 src={middleNavLogo || "/placeholder.svg"}
                 alt="Logo"

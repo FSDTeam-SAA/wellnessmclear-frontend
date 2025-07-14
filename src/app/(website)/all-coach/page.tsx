@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import CoachCard from "@/components/cards/CoachCard";
 import { CoachResponse } from "@/types/coachDataType";
@@ -52,17 +52,21 @@ export default function AllCoachesPage() {
     },
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const coaches = data?.data?.coaches ?? [];
+  // Memoize coaches to prevent re-computation on every render
+  const coaches = useMemo(() => data?.data?.coaches ?? [], [data]);
+
   const totalPages = data?.data?.pagination?.totalPages ?? 1;
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const uniqueTitles =
-    !isLoading && coaches.length > 0
-      ? Array.from(new Set(coaches.map((coach) => coach.servicesOffered.title))).filter(
-          (title) => title !== excludeTitle
-        )
-      : [];
+  // Memoize uniqueTitles to prevent re-computation on every render
+  const uniqueTitles = useMemo(
+    () =>
+      !isLoading && coaches.length > 0
+        ? Array.from(new Set(coaches.map((coach) => coach.servicesOffered.title))).filter(
+            (title) => title !== excludeTitle
+          )
+        : [],
+    [coaches, isLoading, excludeTitle]
+  );
 
   const filteredCoaches =
     sortBy === "default"
@@ -85,38 +89,32 @@ export default function AllCoachesPage() {
         {/* Header */}
         <div className="mb-8 flex justify-between items-center">
           <div>
-            {isLoading ? (
-              <>
-                <Skeleton className="h-8 w-40 mb-2" />
-                <Skeleton className="h-4 w-64" />
-              </>
-            ) : (
-              <>
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">All Coaches</h2>
-                <p className="text-gray-600">
-                  {`${filteredCoaches.length} coaches available`}
-                </p>
-              </>
-            )}
+          
+            <h2 className="text-xl lg:text-3xl font-bold text-gray-900 mb-2">All Coaches</h2>
+            {/* <p className="text-gray-600">
+              {isLoading ? "Loading..." : `${filteredCoaches.length} coaches available`}
+            </p> */}
           </div>
-          <div className="w-48">
-            {isLoading ? (
-              <Skeleton className="h-10 w-full rounded-md" />
-            ) : (
-              <Select onValueChange={(value) => setSortBy(value)} value={sortBy}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sort by Service Title" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="default">All</SelectItem>
-                  {uniqueTitles.map((title) => (
-                    <SelectItem key={title} value={title}>
-                      {title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+          <div className="w-48 flex justify-between items-center">
+        
+                <h1 className="text-black mr-5">Filter:</h1>
+        
+            <Select
+              onValueChange={(value) => setSortBy(value)}
+              value={sortBy}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Sort by Service Title" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="default">All</SelectItem>
+                {uniqueTitles.map((title) => (
+                  <SelectItem key={title} value={title}>
+                    {title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
