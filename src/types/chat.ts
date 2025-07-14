@@ -1,42 +1,54 @@
 export type ChatTab = "public" | "private"
 
 export interface User {
-  _id: ReactNode
-  firstName: ReactNode
-  id: string
-  name: string
+  _id: string
+  id?: string
+  firstName: string
+  lastName?: string
+  name?: string
+  email?: string
+  phoneNumber?: string
+  profileImage?: string
   avatar?: string
-  role?: "Admin" | "Coach" | "Member"
-  isOnline?: boolean
-  status?: string
-  isPaidForCommunity?: boolean
+  image?: string
+  role?: string
+  hasActiveSubscription?: boolean
   privateCommityAccess?: boolean
+  isPaidForCommunity?: boolean
+  subscriptionExpireDate?: string | null
+  address?: string
+  city?: string
+  country?: string
+  dob?: string
+  postalCode?: string
+  road?: string
+  gender?: string
 }
 
 export interface Message {
-  updatedAt: string | number | Date
-  createdAt(createdAt: any): import("react").ReactNode
-  _id: string | Blob
+  _id: string
   id: string
   content: string
   image?: string
-  timestamp: string
-  sender: User
-  replyTo?: Message
+  sender: {
+    _id: string
+    firstName: string
+    avatar?: string
+  }
+  replyTo?: {
+    _id: string
+    content: string
+    sender: {
+      _id: string
+      firstName: string
+    }
+  }
+  createdAt: string
+  updatedAt: string
 }
 
 export interface PaymentRequest {
-  type: "group"
+  type: string
   groupId: string
   totalAmount: number
-}
-
-export interface SocketEvents {
-  connect: () => void
-  disconnect: (reason: string) => void
-  newMessage: (message: Message) => void
-  editMessage: (message: Message) => void
-  deleteMessage: (data: { messageId: string }) => void
-  sendMessage: (data: { groupId: string; content: string; replyTo?: string }) => void
-  joinRoom: (groupId: string) => void
 }
