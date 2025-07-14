@@ -1,12 +1,24 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import CoachCard from "@/components/cards/CoachCard";
 import { CoachResponse } from "@/types/coachDataType";
-import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AllCoachesPage() {
   const [page, setPage] = useState(1);
@@ -26,7 +38,6 @@ export default function AllCoachesPage() {
         limit: limit.toString(),
         excludeTitle,
       });
-      /* eslint-disable react-hooks/exhaustive-deps */
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/coach/?${queryParams}`,
@@ -41,24 +52,27 @@ export default function AllCoachesPage() {
     },
   });
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const coaches = data?.data?.coaches ?? [];
   const totalPages = data?.data?.pagination?.totalPages ?? 1;
 
-  // Get unique service titles (excluding the specified title)
-  const uniqueTitles = !isLoading && coaches.length > 0
-    ? Array.from(new Set(coaches.map((coach) => coach.servicesOffered.title))).filter(
-        (title) => title !== excludeTitle
-      )
-    : [];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const uniqueTitles =
+    !isLoading && coaches.length > 0
+      ? Array.from(new Set(coaches.map((coach) => coach.servicesOffered.title))).filter(
+          (title) => title !== excludeTitle
+        )
+      : [];
 
-  // Filter and sort coaches based on selected title
-  const filteredCoaches = sortBy === "default"
-    ? coaches
-    : coaches.filter((coach) => coach.servicesOffered.title === sortBy).sort((a, b) =>
-        a.servicesOffered.title.localeCompare(b.servicesOffered.title)
-      );
+  const filteredCoaches =
+    sortBy === "default"
+      ? coaches
+      : coaches
+          .filter((coach) => coach.servicesOffered.title === sortBy)
+          .sort((a, b) =>
+            a.servicesOffered.title.localeCompare(b.servicesOffered.title)
+          );
 
-  // Log unique service titles
   useEffect(() => {
     if (!isLoading && coaches.length > 0) {
       console.log("Unique Service Titles:", uniqueTitles);
@@ -68,52 +82,69 @@ export default function AllCoachesPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Title and Sorting */}
+        {/* Header */}
         <div className="mb-8 flex justify-between items-center">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">All Coaches</h2>
-            <p className="text-gray-600">
-              {isLoading ? "Loading..." : `${filteredCoaches.length} coaches available`}
-            </p>
+            {isLoading ? (
+              <>
+                <Skeleton className="h-8 w-40 mb-2" />
+                <Skeleton className="h-4 w-64" />
+              </>
+            ) : (
+              <>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">All Coaches</h2>
+                <p className="text-gray-600">
+                  {`${filteredCoaches.length} coaches available`}
+                </p>
+              </>
+            )}
           </div>
           <div className="w-48">
-            <Select
-              onValueChange={(value) => setSortBy(value)}
-              value={sortBy}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Sort by Service Title" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="default">All</SelectItem>
-                {uniqueTitles.map((title) => (
-                  <SelectItem key={title} value={title}>
-                    {title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {isLoading ? (
+              <Skeleton className="h-10 w-full rounded-md" />
+            ) : (
+              <Select onValueChange={(value) => setSortBy(value)} value={sortBy}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sort by Service Title" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="default">All</SelectItem>
+                  {uniqueTitles.map((title) => (
+                    <SelectItem key={title} value={title}>
+                      {title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
         </div>
 
-        {/* Loading & Error */}
-        {isLoading && <p>Loading coaches...</p>}
+        {/* Error */}
         {isError && (
           <p className="text-red-500 text-center">Failed to load coaches.</p>
         )}
 
-        {/* Coaches Grid */}
+        {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {!isLoading &&
-            filteredCoaches.map((coach) => (
-              <CoachCard
-                key={coach._id}
-                coach={coach}
-              />
-            ))}
+          {isLoading
+            ? Array.from({ length: 8 }).map((_, idx) => (
+                <div
+                  key={idx}
+                  className="p-4 border rounded-lg shadow-sm bg-white space-y-4"
+                >
+                  <Skeleton className="h-40 w-full rounded-md" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-8 w-full rounded-md" />
+                </div>
+              ))
+            : filteredCoaches.map((coach) => (
+                <CoachCard key={coach._id} coach={coach} />
+              ))}
         </div>
 
-        {/* Empty state */}
+        {/* Empty */}
         {!isLoading && filteredCoaches.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">
@@ -122,7 +153,7 @@ export default function AllCoachesPage() {
           </div>
         )}
 
-        {/* ShadCN Pagination */}
+        {/* Pagination */}
         {totalPages > 1 && (
           <Pagination className="mt-10 justify-center">
             <PaginationContent>

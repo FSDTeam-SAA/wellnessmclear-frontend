@@ -22,7 +22,7 @@ type ServiceCardProps = {
   price: string | number;
   buttonText: string;
   href: string;
-  backgroundColor: string;
+  backgroundColor: string;       
   _id: string;
 };
 
@@ -66,7 +66,7 @@ function WellnessServices() {
           Comprehensive approaches to health and wellness that address your
           unique needs and goals.
         </p>
-      </div>
+      </div>                                    
 
       <div className="w-[90%] lg:w-full mx-auto relative">
         <Carousel
@@ -79,7 +79,7 @@ function WellnessServices() {
             <CarouselPrevious />
             <CarouselNext />
           </div>
-
+      
           {/* Carousel content */}
           <CarouselContent className="mt-12 -ml-4">
             {servicesData.map((service: ServiceCardProps, index: number) => (
