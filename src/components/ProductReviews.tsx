@@ -14,12 +14,15 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Review, ReviewsResponse } from "@/types/reviewDataType";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 interface ReviewsSectionProps {
   productId: string;
+  url: string;
+  coachAndDcotorType: string; // e.g. "productId" or "doctorId"
 }
 
 function StarRating({
@@ -34,25 +37,29 @@ function StarRating({
       {[1, 2, 3, 4, 5].map((star) => (
         <Star
           key={star}
-          className={`${size} ${
-            star <= rating ? "fill-black text-black" : "fill-white text-white"
-          }`}
+          className={`${size} ${star <= rating ? "fill-black text-black" : "fill-white text-white"
+            }`}
         />
       ))}
     </div>
   );
 }
 
-function WriteReviewModal({ productId }: { productId: string }) {
+function WriteReviewModal({
+  productId,
+  coachAndDcotorType,
+}: {
+  productId: string;
+  coachAndDcotorType: string;
+}) {
+  const session = useSession();
+  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({ rating: 5, comment: "" });
 
   const mutation = useMutation({
     mutationFn: async (payload: {
-      productId: string;
-      userId: string;
-      rating: number;
-      review: string;
+      [key: string]: string | number | undefined;
     }) => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/review-rating`,
@@ -60,6 +67,7 @@ function WriteReviewModal({ productId }: { productId: string }) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.data?.user?.accessToken}`,
           },
           body: JSON.stringify(payload),
         }
@@ -77,6 +85,7 @@ function WriteReviewModal({ productId }: { productId: string }) {
       toast.success(data.message || "Review added successfully");
       setFormData({ rating: 5, comment: "" });
       setIsOpen(false);
+      queryClient.invalidateQueries(); // Optional: refresh reviews
     },
 
     onError: (error: Error) => {
@@ -88,12 +97,14 @@ function WriteReviewModal({ productId }: { productId: string }) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    mutation.mutate({
-      productId,
-      userId: "686b547fb7ce49a3054a6715", // Replace with session-based user ID
+    const payload = {
+      [coachAndDcotorType]: productId,
+      userId: session.data?.user.id,
       rating: formData.rating,
       review: formData.comment,
-    });
+    };
+
+    mutation.mutate(payload);
   };
 
   const handleRatingClick = (rating: number) => {
@@ -123,11 +134,10 @@ function WriteReviewModal({ productId }: { productId: string }) {
                   className="p-1"
                 >
                   <Star
-                    className={`w-6 h-6 ${
-                      star <= formData.rating
-                        ? "fill-black text-black"
-                        : "fill-gray-200 text-gray-200"
-                    }`}
+                    className={`w-6 h-6 ${star <= formData.rating
+                      ? "fill-black text-black"
+                      : "fill-gray-200 text-gray-200"
+                      }`}
                   />
                 </button>
               ))}
@@ -166,15 +176,21 @@ function WriteReviewModal({ productId }: { productId: string }) {
   );
 }
 
-export default function ProductReviews({ productId }: ReviewsSectionProps) {
+export default function ProductReviews({
+  productId,
+  url,
+  coachAndDcotorType,
+}: ReviewsSectionProps) {
   const { data, isLoading } = useQuery<ReviewsResponse>({
     queryKey: ["getReviews", productId],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/review-rating/get-all-reviews/${productId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/review-rating/${url}/${productId}`,
         {
           method: "GET",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
       if (!res.ok) throw new Error("Failed to fetch reviews");
@@ -187,7 +203,7 @@ export default function ProductReviews({ productId }: ReviewsSectionProps) {
   const averageRating =
     reviewData.length > 0
       ? reviewData.reduce((sum, review) => sum + review.rating, 0) /
-        reviewData.length
+      reviewData.length
       : 0;
 
   return (
@@ -206,7 +222,10 @@ export default function ProductReviews({ productId }: ReviewsSectionProps) {
             </span>
           </div>
 
-          <WriteReviewModal productId={productId} />
+          <WriteReviewModal
+            coachAndDcotorType={coachAndDcotorType}
+            productId={productId}
+          />
         </div>
 
         {/* Right Section */}
@@ -276,7 +295,7 @@ export default function ProductReviews({ productId }: ReviewsSectionProps) {
             </div>
           ) : (
             <div className="text-center py-8">
-              <p className="text-gray-500">No reviews yet for this product.</p>
+              <p className="text-gray-500">No reviews yet for this item.</p>
             </div>
           )}
         </div>
