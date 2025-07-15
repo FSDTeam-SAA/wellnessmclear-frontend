@@ -13,6 +13,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
 import Autoplay from "embla-carousel-autoplay";
+import { Skeleton } from "@/components/ui/skeleton"; // <-- Import Skeleton from ShadCN UI
 
 // Define types
 interface Review {
@@ -58,13 +59,14 @@ export default function TestimonialCarousel() {
       <Star
         key={i}
         className={`w-4 h-4 ${
-          i < rating
-            ? "fill-yellow-400 text-yellow-400"
-            : "fill-gray-200 text-gray-200"
+          i < rating ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200"
         }`}
       />
     ));
   };
+
+  // Number of skeleton cards to show while loading
+  const skeletonCount = 3;
 
   return (
     <div className="w-full bg-[#F0F4F8] px-4 py-8 md:py-12">
@@ -83,8 +85,41 @@ export default function TestimonialCarousel() {
         </div>
 
         {isLoading && (
-          <p className="text-center text-gray-500">Loading reviews...</p>
+          <div className="flex gap-6 overflow-x-auto scrollbar-hide">
+            {Array.from({ length: skeletonCount }).map((_, i) => (
+              <Card
+                key={i}
+                className="basis-full md:basis-1/2 lg:basis-1/3"
+              >
+                <CardContent className="p-6 md:p-8 flex flex-col gap-4 h-64">
+                  {/* Avatar */}
+                  <div className="flex items-center gap-4">
+                    <Skeleton className="rounded-full w-12 h-12 md:w-14 md:h-14" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-32 rounded" />
+                      <Skeleton className="h-3 w-24 rounded" />
+                    </div>
+                  </div>
+
+                  {/* Stars */}
+                  <div className="flex gap-1">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Skeleton key={i} className="w-4 h-4 rounded" />
+                    ))}
+                  </div>
+
+                  {/* Review text */}
+                  <div className="flex-1 space-y-2 mt-2">
+                    <Skeleton className="h-4 w-full rounded" />
+                    <Skeleton className="h-4 w-5/6 rounded" />
+                    <Skeleton className="h-4 w-4/6 rounded" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         )}
+
         {isError && (
           <p className="text-center text-red-500">Failed to load reviews.</p>
         )}
@@ -107,10 +142,9 @@ export default function TestimonialCarousel() {
             <CarouselContent className="mt-12 -ml-2 md:-ml-4">
               {reviews.map((review) => {
                 const { userId, rating, review: content, createdAt } = review;
-                const fullName = `${userId.firstName} ${userId.lastName}`;
-                const initials = `${userId.firstName?.[0] ?? ""}${
-                  userId.lastName?.[0] ?? ""
-                }`;
+                const fullName = `${userId?.firstName} ${userId?.lastName}`;
+                const initials = `${userId?.firstName?.[0] ?? ""}${userId?.lastName?.[0] ?? ""
+                  }`;
                 const formattedDate = new Date(createdAt).toLocaleDateString(
                   "en-US",
                   {
@@ -122,7 +156,7 @@ export default function TestimonialCarousel() {
 
                 return (
                   <CarouselItem
-                    key={review._id}
+                    key={review?._id}
                     className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3"
                   >
                     <Card className="h-full rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
@@ -130,7 +164,7 @@ export default function TestimonialCarousel() {
                         <div className="flex items-center gap-4 mb-4">
                           <Avatar className="w-12 h-12 md:w-14 md:h-14">
                             <AvatarImage
-                              src={userId.profileImage || "/placeholder.svg"}
+                              src={userId?.profileImage || "/placeholder.svg"}
                               alt={fullName}
                             />
                             <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">
@@ -151,8 +185,8 @@ export default function TestimonialCarousel() {
                           {renderStars(rating)}
                         </div>
 
-                        <blockquote className="text-sm md:text-base text-gray-700 leading-relaxed flex-1">
-                          &quot;{content}&quot;
+                        <blockquote className="text-sm text-wrap md:text-base text-gray-700 leading-relaxed flex-1">
+                          &quot;{content.slice(0, 70)}&quot;
                         </blockquote>
                       </CardContent>
                     </Card>
