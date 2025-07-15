@@ -1,12 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import ProductCard from "@/components/cards/product-card";
 import ProductReviews from "@/components/ProductReviews";
 import ProductDetails from "./_components/productDetails";
 import RelatedProduct from "./_components/relatedProduct";
 import { useQuery } from "@tanstack/react-query";
 import { SingleProductResponse } from "@/types/singelProductDataType";
+import MostPopular from "@/components/products/most-popular";
 
 export default function ProductDetailPage({
   params,
@@ -80,7 +79,7 @@ export default function ProductDetailPage({
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="px-4 py-8">
+      <div className=" py-8">
         <div className="lg:container mx-auto">
           {/* Product Detail Section */}
           <ProductDetails
@@ -95,12 +94,12 @@ export default function ProductDetailPage({
 
         {/* Product Reviews */}
         <div className="bg-[#E4ECE2] py-10">
-          <ProductReviews productId={product._id?.toString()} />
+          <ProductReviews  coachAndDcotorType="productId" url="get-all-reviews" productId={product._id?.toString()} />
         </div>
 
         {/* Most Popular Section */}
-        <div className="lg:container mx-auto mt-10">
-          <div className="flex items-center justify-between mb-6">
+        <div className=" mx-auto mt-10">
+          {/* <div className=" flex items-center justify-between mb-6">
             <h2 className="text-2xl font-semibold text-gray-900">
               Most Popular
             </h2>
@@ -123,12 +122,13 @@ export default function ProductDetailPage({
                 />
               </svg>
             </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          </div> */}
+          {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {relatedProducts.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
-          </div>
+          </div> */}
+          <MostPopular />
         </div>
       </div>
     </div>

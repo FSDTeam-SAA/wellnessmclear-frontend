@@ -426,6 +426,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CoachDetailsSkeleton } from "@/components/CoachDetailsSkeleton";
+import ProductReviews from "@/components/ProductReviews";
 // import { CoachDetailsSkeleton } from "@/components/skeletons/CoachDetailsSkeleton";
 
 interface Slot {
@@ -700,6 +701,9 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
             </Card>
           </div>
         </div>
+      </div>
+      <div>
+        <ProductReviews coachAndDcotorType="doctorId" productId={coachId} url="get-all-coach-reviews"/>
       </div>
     </div>
   );
