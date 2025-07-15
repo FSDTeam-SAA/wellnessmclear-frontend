@@ -16,6 +16,13 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { UserResponse } from "@/types/profiledatatype";
 import { signOut, useSession } from "next-auth/react";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function AccountSettings() {
   const [activeTab, setActiveTab] = useState("personal");
@@ -24,6 +31,7 @@ export default function AccountSettings() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
 
   const { data, refetch } = useQuery<UserResponse>({
     queryKey: ["user"],
@@ -182,7 +190,7 @@ export default function AccountSettings() {
                   </Button>
 
                   <Button
-                  onClick={()=>signOut({callbackUrl:'/login'})}
+                    onClick={() => setOpenLogoutDialog(true)}
                     variant="ghost"
                     className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
                   >
@@ -210,6 +218,32 @@ export default function AccountSettings() {
           </div>
         </div>
       </div>
+
+      {/* Logout Confirmation Dialog */}
+      <Dialog open={openLogoutDialog} onOpenChange={setOpenLogoutDialog}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Log out</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-gray-600">
+            Are you sure you want to log out of your account?
+          </p>
+          <DialogFooter className="flex justify-end gap-2 pt-4">
+            <Button
+              variant="ghost"
+              onClick={() => setOpenLogoutDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="bg-red-600 text-white hover:bg-red-700"
+              onClick={() => signOut({ callbackUrl: "/login" })}
+            >
+              Log out
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

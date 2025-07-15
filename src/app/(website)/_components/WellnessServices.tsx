@@ -23,7 +23,7 @@ type ServiceCardProps = {
   price: string | number;
   buttonText: string;
   href: string;
-  backgroundColor: string;       
+  backgroundColor: string;
   _id: string;
 };
 
@@ -39,18 +39,8 @@ function WellnessServices() {
 
   const servicesData = data?.data || [];
   const defaultIcons = [Brain, Heart, Activity, Zap];
-  const defaultColors = [
-    "text-blue-500",
-    "text-red-500",
-    "text-green-500",
-    "text-yellow-500",
-  ];
-  const defaultBackgrounds = [
-    "bg-blue-50",
-    "bg-red-50",
-    "bg-green-50",
-    "bg-yellow-50",
-  ];
+  const defaultColors = ["text-blue-500", "text-red-500", "text-green-500", "text-yellow-500"];
+  const defaultBackgrounds = ["bg-blue-50", "bg-red-50", "bg-green-50", "bg-yellow-50"];
 
   return (
     <div className="lg:py-[72px] bg-[#EFE2F6] py-10">
@@ -59,61 +49,60 @@ function WellnessServices() {
           Our Wellness Services
         </h1>
         <p className="text-base font-normal leading-[150%] text-[#0F0F0F] text-center">
-          Comprehensive approaches to health and wellness that address your
-          unique needs and goals.
+          Comprehensive approaches to health and wellness that address your unique needs and goals.
         </p>
-      </div>                                    
+      </div>
 
       <div className="w-[90%] lg:w-full mx-auto relative">
         <Carousel
           opts={{ align: "start", loop: true }}
           plugins={[Autoplay({ delay: 2500 })]}
-          className="w-full container"
+          className="container "
         >
-          {/* Navigation buttons positioned at top-right */}
+          {/* Navigation buttons */}
           <div className="absolute top-0 lg:right-24 right-16 z-10 flex gap-2">
             <CarouselPrevious />
             <CarouselNext />
           </div>
+
           <CarouselContent className="mt-12 -ml-4">
             {isLoading
               ? [...Array(4)].map((_, index) => (
-                  <CarouselItem
-                    key={index}
-                    className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
-                  >
-                    <div className="bg-white rounded-lg shadow p-6 h-full flex flex-col gap-4">
-                      <Skeleton className="h-10 w-10 rounded-full" />
-                      <Skeleton className="h-4 w-3/4" />
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-1/2" />
-                      <Skeleton className="h-10 w-full rounded-md" />
-                    </div>
-                  </CarouselItem>
-                ))
+                <CarouselItem
+                  key={index}
+                  className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4 h-full"
+                >
+                  <div className="bg-white rounded-lg shadow p-6 h-full min-h-[300px] flex flex-col gap-4">
+                    <Skeleton className="h-10 w-10 rounded-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-10 w-full rounded-md" />
+                  </div>
+                </CarouselItem>
+              ))
               : servicesData.map((service: ServiceCardProps, index: number) => (
-                  <CarouselItem
-                    key={service._id}
-                    className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
-                  >
+                <CarouselItem
+                  key={service._id}
+                  className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4 h-full"
+                >
+                  <div className="h-full ">
                     <ServiceCard
                       Icon={defaultIcons[index % defaultIcons.length]}
                       iconColor={defaultColors[index % defaultColors.length]}
-                      title={service.title}
-                      description={service.description}
+                      title={service?.title?.slice(0, 30)}
+                      description={service?.description?.slice(0, 30)}
                       price={service.price}
                       buttonText="Book A Coach"
                       href={`/service/${service._id}`}
-                      backgroundColor={
-                        defaultBackgrounds[index % defaultBackgrounds.length]
-                      }
+                      backgroundColor={defaultBackgrounds[index % defaultBackgrounds.length]}
                     />
-                  </CarouselItem>
-                ))}
+                  </div>
+                </CarouselItem>
+              ))}
           </CarouselContent>
         </Carousel>
 
-        {/* Error or No Data */}
         {!isLoading && error && (
           <p className="text-center text-red-500 mt-6">Error: {error.message}</p>
         )}
