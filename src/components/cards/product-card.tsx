@@ -49,7 +49,7 @@ export default function ProductCard({
     setIsInWishlist(newWishlistStatus);
     window.dispatchEvent(new Event("wishlistUpdated"));
   };
-
+  console.log(product)
   return (
     <div className="w-full rounded-lg overflow-hidden transition-shadow">
       <Link href={`/product/${productId}`}>
@@ -59,9 +59,8 @@ export default function ProductCard({
             onClick={handleToggleWishlist}
           >
             <Heart
-              className={`w-5 h-5 transition-all ${
-                isInWishlist ? "fill-red-500 text-red-500" : "text-gray-400"
-              }`}
+              className={`w-5 h-5 transition-all ${isInWishlist ? "fill-red-500 text-red-500" : "text-gray-400"
+                }`}
             />
           </button>
 
@@ -91,28 +90,32 @@ export default function ProductCard({
       </Link>
 
       <div className="p-2 pt-2 mt-[20px]">
-        <p className="text-xs text-[#000000] text-[16px] uppercase tracking-wide mb-1">
+        {/* <p className="text-xs text-[#000000] text-[16px] uppercase tracking-wide mb-1">
           {product.category}
-        </p>
-        <Link href={`/product/${productId}`}>
-          <h3 className="font-medium text-[#000000] text-[20px] mb-2 hover:text-gray-700">
-            {product.name}
+        </p> */}
+        <Link
+          href={`/product/${productId}`}
+          className="block hover:text-gray-700 transition-colors duration-200"
+        >
+          <h3 className="font-medium text-[#000000] text-[20px] mb-2">
+            {product.name.length > 30 ? product.name.slice(0, 25) + "..." : product.name}
           </h3>
         </Link>
-
-        <p className="font-bold text-[#131313] mt-[32px] text-[40px]">
+       <div className="flex justify-start gap-4 items-center my-4">
+         <p className="font-bold text-[#131313]  text-[40px]">
           ${product.discountedPrice}
         </p>
+        <p className="line-through">${product?.actualPrice}</p>
+       </div>
         <div className="flex items-center gap-2 mb-2 mt-[8px]">
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
-                className={`w-3 h-3 ${
-                  i < Math.floor(rating)
-                    ? "fill-yellow-400 text-yellow-400"
-                    : "text-gray-300"
-                }`}
+                className={`w-3 h-3 ${i < Math.floor(rating)
+                  ? "fill-yellow-400 text-yellow-400"
+                  : "text-gray-300"
+                  }`}
               />
             ))}
           </div>

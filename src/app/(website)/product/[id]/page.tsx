@@ -105,7 +105,7 @@ export default function ProductDetailPage({
               Most Popular
             </h2>
             <Link
-              href="/products"
+              href="/product"
               className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1"
             >
               View all products

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { addToCart } from "@/lib/cart-utils";
 import { getWishlistItems, toggleWishlist } from "@/lib/wishlist-utils";
 import { SingleProductResponse } from "@/types/singelProductDataType";
-import { Heart,  Star } from "lucide-react";
+import { Heart, Star } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
@@ -65,9 +65,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         {/* Product Info */}
         <div className="space-y-6">
           <div>
-            <p className="text-sm text-gray-500 uppercase tracking-wide mb-2">
+            {/* <p className="text-sm text-gray-500 uppercase tracking-wide mb-2">
               {product.category}
-            </p>
+            </p> */}
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
               {product.name}
             </h1>
@@ -99,9 +99,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           {/* Description */}
           <div>
             <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
-            <p className="text-gray-600 leading-relaxed">
-              {product.description}
-            </p>
+            <div
+              className="text-gray-600 leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: product.description }}
+            />
           </div>
 
           {/* Extra Fields */}
