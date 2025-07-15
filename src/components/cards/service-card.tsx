@@ -49,8 +49,10 @@ const ServiceCard = ({
       </CardHeader>
 
       <CardContent className="text-[#424242] space-y-[16px]">
-        <p className="leading-[150%] font-normal text-[16px]">{description}</p>
-        <p>
+        <div
+          className="leading-[150%] font-normal text-[16px]"
+          dangerouslySetInnerHTML={{ __html: description }}
+        />        <p>
           Price:{" "}
           <span className="text-[#131313] leading-[150%] text-[20px] font-semibold">
             ${price}
