@@ -151,7 +151,7 @@ export default function OrderPage() {
       <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Order Details</DialogTitle>
+            <DialogTitle className="text-center text-3xl ">Order Details</DialogTitle>
           </DialogHeader>
           {selectedOrder && (
             <div className="space-y-4">
@@ -172,9 +172,11 @@ export default function OrderPage() {
                         alt={item.product?.name || "Product"}
                         className="w-16 h-16 object-cover rounded"
                       />
-                      <div>
-                        <p className="font-semibold">{item.product?.name}</p>
-                        <p className="text-sm text-gray-600">{item.product?.description}</p>
+                      <div className="overflow-hidden w-auto">
+                    <p className="font-semibold text-justify">
+  {item.product?.name?.slice(0, 25)}{(item.product?.name?.length ?? 0) > 25 ? '...' : ''}
+</p>
+                        {/* <p className="text-sm text-gray-600">{item.product?.description}</p> */}
                         <p className="text-sm text-gray-500">Brand: {item.product?.brand}</p>
                         <p className="text-sm text-gray-500">Category: {item.product?.category?.name}</p>
                         <p className="text-sm mt-1">Qty: {item.quantity}</p>

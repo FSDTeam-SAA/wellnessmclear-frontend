@@ -380,6 +380,9 @@ export default function BookingPage() {
     } else if (status === "Completed") {
       return `${baseClasses} bg-[#008000] text-white`;
     } else if (status === "Pending") {
+    } else if (status === "Approved") {
+      return `${baseClasses} bg-[#008000] text-white`;
+    } else if (status === "Pending") {
       return `${baseClasses} bg-[#FFA500] text-white`;
     }
     return baseClasses;
