@@ -12,33 +12,11 @@ interface PaymentModalProps {
   onPayment: () => void
   onPaymentSuccess?: () => void
   isLoading: boolean
-  isAnnual?: boolean
-  onBillingChange?: (isAnnual: boolean) => void
 }
 
-export function PaymentModal({
-  isOpen,
-  onClose,
-  onPayment,
-  onPaymentSuccess,
-  isLoading,
-  isAnnual: externalIsAnnual,
-  onBillingChange,
-}: PaymentModalProps) {
-  const [internalIsAnnual, setInternalIsAnnual] = useState(true)
+export function PaymentModal({ isOpen, onClose, onPayment, onPaymentSuccess, isLoading }: PaymentModalProps) {
+  const [isAnnual, setIsAnnual] = useState(true)
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "processing" | "success" | "error">("idle")
-
-  // Use external billing state if provided, otherwise use internal
-  const isAnnual = externalIsAnnual !== undefined ? externalIsAnnual : internalIsAnnual
-
-  const handleBillingToggle = () => {
-    const newValue = !isAnnual
-    if (onBillingChange) {
-      onBillingChange(newValue)
-    } else {
-      setInternalIsAnnual(newValue)
-    }
-  }
 
   // Listen for payment success (this would typically come from a webhook or redirect)
   useEffect(() => {
@@ -109,7 +87,7 @@ export function PaymentModal({
               Monthly Billing
             </span>
             <button
-              onClick={handleBillingToggle}
+              onClick={() => setIsAnnual(!isAnnual)}
               className="relative w-12 h-6 bg-blue-500 rounded-full transition-colors"
             >
               <div

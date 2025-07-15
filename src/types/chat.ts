@@ -31,9 +31,10 @@ export interface Message {
   content: string
   image?: string
   sender: {
+    profileImage: string
     _id: string
     firstName: string
-    avatar?: string
+    ProfileImage?: string
   }
   replyTo?: {
     _id: string
