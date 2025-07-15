@@ -151,14 +151,14 @@ const WellnessVault = () => {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {blogs.slice(0, 4).map((blog) => (
           <BlogCard
             key={blog._id}
             slug={blog.slug}
             image={blog.image}
             date={blog.createdAt}
-            title={blog.title}
+            title={blog?.title?.length > 30 ? blog.title.slice(0, 30) + "..." : blog.title}
           />
         ))}
       </div>

@@ -64,10 +64,6 @@ export function Navbar() {
     updateCartCount();
     updateWishlistCount();
 
-    setIsMounted(true);
-    updateCartCount();
-    updateWishlistCount();
-
     window.addEventListener("storage", () => {
       updateCartCount();
       updateWishlistCount();
@@ -103,7 +99,7 @@ export function Navbar() {
     setIsLogoutModalOpen(false);
   };
 
-  const isActiveRoute = (href:string) => {
+  const isActiveRoute = (href: string) => {
     if (href === "/") {
       return pathname === "/";
     }
@@ -157,7 +153,7 @@ export function Navbar() {
           </div>
 
           {/* Desktop Search */}
-          <div className="flex-1 max-w-md mx-8 hidden md:block">
+          <div className="flex-1 max-w-md mx-8 hidden lg:block">
             <form
               className="relative w-[558px]"
               onSubmit={(e) => {
@@ -190,7 +186,7 @@ export function Navbar() {
 
           {/* Mobile Search Icon */}
           <button
-            className="md:hidden text-gray-600 mr-3"
+            className="lg:hidden text-gray-600 mr-3"
             onClick={() => setIsSearchOpen(!isSearchOpen)}
           >
             <Search className="text-2xl" />
@@ -236,49 +232,49 @@ export function Navbar() {
                   {isDropdownOpen && (
                     <ul className="absolute top-10 right-0 w-40 bg-white border border-gray-300 rounded shadow-md mt-2 z-50">
                       {status === "loading" ? (
-                  <li className="px-4 py-2 text-gray-500">Loading...</li>
-                ) : (
-                  <>
-                    <p className="text-black font-bold px-4 py-2">
-                      {user.name}
-                    </p>
-                    <li>
-                      <Link
-                        href="/account"
-                        className="block px-4 py-2 hover:bg-gray-500/10 text-black"
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        My Account
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/order"
-                        className="block px-4 py-2 hover:bg-gray-500/10 text-black"
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        Orders
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/booking"
-                        className="block px-4 py-2 hover:bg-gray-500/10 text-black"
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        Bookings
-                      </Link>
-                    </li>
-                    <li>
-                      <button
-                        onClick={handleLogoutClick}
-                        className="block w-full text-left px-4 py-2 hover:bg-gray-500/10 text-red-600"
-                      >
-                        Logout
-                      </button>
-                    </li>
-                  </>
-                )}
+                        <li className="px-4 py-2 text-gray-500">Loading...</li>
+                      ) : (
+                        <>
+                          <p className="text-black font-bold px-4 py-2">
+                            {user.name}
+                          </p>
+                          <li>
+                            <Link
+                              href="/account"
+                              className="block px-4 py-2 hover:bg-gray-500/10 text-black"
+                              onClick={() => setIsDropdownOpen(false)}
+                            >
+                              My Account
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/order"
+                              className="block px-4 py-2 hover:bg-gray-500/10 text-black"
+                              onClick={() => setIsDropdownOpen(false)}
+                            >
+                              Orders
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/booking"
+                              className="block px-4 py-2 hover:bg-gray-500/10 text-black"
+                              onClick={() => setIsDropdownOpen(false)}
+                            >
+                              Bookings
+                            </Link>
+                          </li>
+                          <li>
+                            <button
+                              onClick={handleLogoutClick}
+                              className="block w-full text-left px-4 py-2 hover:bg-gray-500/10 text-red-600"
+                            >
+                              Logout
+                            </button>
+                          </li>
+                        </>
+                      )}
                     </ul>
                   )}
                 </div>
@@ -297,42 +293,42 @@ export function Navbar() {
             {/* Mobile Menu */}
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
-                <button className="md:hidden">
+                <button className="lg:hidden">
                   <Menu className="text-2xl ml-4" />
                 </button>
               </SheetTrigger>
               <SheetContent side="left" className="w-[300px] sm:w-[400px]">
                 <nav className="flex flex-col gap-4 mt-8">
-                  <Link 
-                    href="/" 
+                  <Link
+                    href="/"
                     onClick={() => setIsSheetOpen(false)}
                     className={isActiveRoute("/") ? "text-[#131313]" : "text-[#616161]"}
                   >
                     Home
                   </Link>
-                  <Link 
-                    href="/product" 
+                  <Link
+                    href="/product"
                     onClick={() => setIsSheetOpen(false)}
                     className={isActiveRoute("/product") ? "text-[#131313]" : "text-[#616161]"}
                   >
                     SHOP
                   </Link>
-                  <Link 
-                    href="/blogs" 
+                  <Link
+                    href="/blogs"
                     onClick={() => setIsSheetOpen(false)}
                     className={isActiveRoute("/blogs") ? "text-[#131313]" : "text-[#616161]"}
                   >
                     BLOG
                   </Link>
-                  <Link 
-                    href="/community" 
+                  <Link
+                    href="/community"
                     onClick={() => setIsSheetOpen(false)}
                     className={isActiveRoute("/community") ? "text-[#131313]" : "text-[#616161]"}
                   >
                     COMMUNITY
                   </Link>
-                  <Link 
-                    href="/all-coach" 
+                  <Link
+                    href="/all-coach"
                     onClick={() => setIsSheetOpen(false)}
                     className={isActiveRoute("/all-coach") ? "text-[#131313]" : "text-[#616161]"}
                   >
@@ -347,21 +343,33 @@ export function Navbar() {
                         <Link
                           href="/account"
                           onClick={() => setIsSheetOpen(false)}
-                          className={`block py-2 ${isActiveRoute("/account") ? "text-[#131313]" : "text-[#616161]"}`}
+                          className={`block py-2 ${
+                            isActiveRoute("/account")
+                              ? "text-[#131313]"
+                              : "text-[#616161]"
+                          }`}
                         >
                           My Account
                         </Link>
                         <Link
                           href="/order"
                           onClick={() => setIsSheetOpen(false)}
-                          className={`block py-2 ${isActiveRoute("/order") ? "text-[#131313]" : "text-[#616161]"}`}
+                          className={`block py-2 ${
+                            isActiveRoute("/order")
+                              ? "text-[#131313]"
+                              : "text-[#616161]"
+                          }`}
                         >
                           Orders
                         </Link>
                         <Link
                           href="/booking"
                           onClick={() => setIsSheetOpen(false)}
-                          className={`block py-2 ${isActiveRoute("/booking") ? "text-[#131313]" : "text-[#616161]"}`}
+                          className={`block py-2 ${
+                            isActiveRoute("/booking")
+                              ? "text-[#131313]"
+                              : "text-[#616161]"
+                          }`}
                         >
                           Bookings
                         </Link>
@@ -380,14 +388,22 @@ export function Navbar() {
                         <Link
                           href="/login"
                           onClick={() => setIsSheetOpen(false)}
-                          className={`block py-2 ${isActiveRoute("/login") ? "text-[#131313]" : "text-[#616161]"}`}
+                          className={`block py-2 ${
+                            isActiveRoute("/login")
+                              ? "text-[#131313]"
+                              : "text-[#616161]"
+                          }`}
                         >
                           Login
                         </Link>
                         <Link
                           href="/sign-up"
                           onClick={() => setIsSheetOpen(false)}
-                          className={`block py-2 ${isActiveRoute("/sign-up") ? "text-[#131313]" : "text-[#616161]"}`}
+                          className={`block py-2 ${
+                            isActiveRoute("/sign-up")
+                              ? "text-[#131313]"
+                              : "text-[#616161]"
+                          }`}
                         >
                           Sign Up
                         </Link>
@@ -403,7 +419,7 @@ export function Navbar() {
 
       {/* Mobile Search Form */}
       {isSearchOpen && (
-        <div className="bg-white py-2 px-4 md:hidden">
+        <div className="bg-white py-2 px-4 lg:hidden">
           <form
             className="flex"
             onSubmit={(e) => {
@@ -431,7 +447,7 @@ export function Navbar() {
       )}
 
       {/* Bottom Nav */}
-      <div className="bg-white pb-4 hidden md:block border-[#23547B]">
+      <div className="bg-white pb-4 hidden lg:block border-[#23547B]">
         <div className="container mx-auto">
           <nav className="flex items-center justify-center gap-2 divide-x divide-gray-300">
             <Link
@@ -445,7 +461,9 @@ export function Navbar() {
             <Link
               href="/product"
               className={`text-lg font-medium px-4 ${
-                isActiveRoute("/product") ? "text-[#131313]" : "hover:text-[#23547B] text-[#616161]"
+                isActiveRoute("/product")
+                  ? "text-[#131313]"
+                  : "hover:text-[#23547B] text-[#616161]"
               }`}
             >
               SHOP
@@ -453,7 +471,9 @@ export function Navbar() {
             <Link
               href="/blogs"
               className={`text-lg font-medium px-4 ${
-                isActiveRoute("/blogs") ? "text-[#131313]" : "hover:text-[#23547B] text-[#616161]"
+                isActiveRoute("/blogs")
+                  ? "text-[#131313]"
+                  : "hover:text-[#23547B] text-[#616161]"
               }`}
             >
               BLOG
@@ -461,7 +481,9 @@ export function Navbar() {
             <Link
               href="/community"
               className={`text-lg font-medium px-4 ${
-                isActiveRoute("/community") ? "text-[#131313]" : "hover:text-[#23547B] text-[#616161]"
+                isActiveRoute("/community")
+                  ? "text-[#131313]"
+                  : "hover:text-[#23547B] text-[#616161]"
               }`}
             >
               COMMUNITY
@@ -469,7 +491,9 @@ export function Navbar() {
             <Link
               href="/all-coach"
               className={`text-lg font-medium px-4 ${
-                isActiveRoute("/all-coach") ? "text-[#131313]" : "hover:text-[#23547B] text-[#616161]"
+                isActiveRoute("/all-coach")
+                  ? "text-[#131313]"
+                  : "hover:text-[#23547B] text-[#616161]"
               }`}
             >
               FIND A COACH

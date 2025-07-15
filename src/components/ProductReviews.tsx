@@ -17,26 +17,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Review, ReviewsResponse } from "@/types/reviewDataType";
 import { toast } from "sonner";
-// import { toast } from "sonner";
-// import { useSession } from "next-auth/react";
-// import Link from "next/link";
-
-// interface Review {
-//   id: string;
-//   productId: string;
-//   userName: string;
-//   userAvatar?: string;
-//   rating: number;
-//   comment: string;
-//   date: string;
-//   user: {
-//     name: string;
-//     id: string;
-//     email: string;
-//     image: string;
-//   };
-//   created_at: string;
-// }
 
 interface ReviewsSectionProps {
   productId: string;
@@ -80,7 +60,6 @@ function WriteReviewModal({ productId }: { productId: string }) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            // Authorization: `Bearer ${token}`, // Uncomment if needed
           },
           body: JSON.stringify(payload),
         }
@@ -111,7 +90,7 @@ function WriteReviewModal({ productId }: { productId: string }) {
 
     mutation.mutate({
       productId,
-      userId: "686b547fb7ce49a3054a6715", // Replace with actual user ID from session or context
+      userId: "686b547fb7ce49a3054a6715", // Replace with session-based user ID
       rating: formData.rating,
       review: formData.comment,
     });
@@ -203,36 +182,8 @@ export default function ProductReviews({ productId }: ReviewsSectionProps) {
     },
   });
 
-  if (isLoading) {
-    return (
-      <div className="w-full container mx-auto p-4 sm:p-6 lg:p-8">
-        <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-300 rounded w-1/3" />
-          <div className="h-4 bg-gray-200 rounded w-1/4" />
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, idx) => (
-              <div key={idx} className="space-y-2 border-b pb-4">
-                <div className="flex items-center gap-4">
-                  <div className="rounded-full bg-gray-300 w-10 h-10 sm:w-12 sm:h-12" />
-                  <div className="space-y-2 w-full">
-                    <div className="h-4 bg-gray-300 rounded w-1/3" />
-                    <div className="h-3 bg-gray-200 rounded w-2/3" />
-                  </div>
-                </div>
-                <div className="h-3 bg-gray-200 rounded w-full mt-2" />
-                <div className="h-3 bg-gray-200 rounded w-5/6" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   const reviewData: Review[] = data?.data.reviews || [];
 
-  console.log(reviewData);
-  // console.log(reviewData);
   const averageRating =
     reviewData.length > 0
       ? reviewData.reduce((sum, review) => sum + review.rating, 0) /
@@ -242,28 +193,26 @@ export default function ProductReviews({ productId }: ReviewsSectionProps) {
   return (
     <div className="w-full container mx-auto p-4 sm:p-6 lg:p-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-        {/* Left Side */}
+        {/* Left Section */}
         <div className="space-y-6">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
-              Ratings and Reviews
-            </h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+            Ratings and Reviews
+          </h2>
 
-            <div className="flex items-center gap-3 mb-6">
-              <StarRating rating={Math.round(averageRating)} size="w-5 h-5" />
-              <span className="text-lg font-medium text-gray-700">
-                {reviewData.length} Reviews
-              </span>
-            </div>
-
-            <WriteReviewModal productId={productId} />
+          <div className="flex items-center gap-3 mb-6">
+            <StarRating rating={Math.round(averageRating)} size="w-5 h-5" />
+            <span className="text-lg font-medium text-gray-700">
+              {reviewData.length} Reviews
+            </span>
           </div>
+
+          <WriteReviewModal productId={productId} />
         </div>
 
-        {/* Right Side */}
-        <div className="space-y-6 overflow-x-auto max-w-full">
+        {/* Right Section */}
+        <div className="space-y-6 overflow-y-auto max-h-[350px] pr-2 scroll-hide">
           {isLoading ? (
-            <div className="space-y-6 min-w-[500px]">
+            <div className="space-y-6">
               {Array.from({ length: 3 }).map((_, idx) => (
                 <div
                   key={idx}
@@ -282,7 +231,7 @@ export default function ProductReviews({ productId }: ReviewsSectionProps) {
               ))}
             </div>
           ) : reviewData.length > 0 ? (
-            <div className="flex flex-col gap-6 min-w-[500px]">
+            <div className="flex flex-col gap-6">
               {reviewData.map((review) => (
                 <div key={review._id} className="border-b border-gray-400 pb-6">
                   <div className="flex items-start gap-4">
