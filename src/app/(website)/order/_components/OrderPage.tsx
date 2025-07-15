@@ -20,7 +20,7 @@ export default function OrderPage() {
   const { data: session } = useSession();
   const token = session?.user.accessToken;
 
-  const { data } = useQuery<OrderResponse>({
+  const { data, isLoading } = useQuery<OrderResponse>({
     queryKey: ["order"],
     queryFn: async () => {
       const res = await fetch(
@@ -83,67 +83,93 @@ export default function OrderPage() {
                 </tr>
               </thead>
               <tbody>
-                {currentItems.map((order) => (
-                  <tr key={order._id} className="border-b">
-                    <td className="px-6 py-4 text-sm">
-                      {order.product.map((p, i) => (
-                        <div key={i}>{p.product?.name ?? "Unknown Product"}</div>
-                      ))}
-                    </td>
-                    <td className="px-6 py-4 text-sm">${order.amount}</td>
-                    <td className="px-6 py-4 text-sm">
-                      {new Date(order.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={getStatusBadge(order.status)}>{order.status}</span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() => setSelectedOrder(order)}
-                        className="text-blue-600 hover:underline text-sm"
-                      >
-                        View Details
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {isLoading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i} className="border-b animate-pulse">
+                      <td className="px-6 py-4">
+                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  currentItems.map((order) => (
+                    <tr key={order._id} className="border-b">
+                      <td className="px-6 py-4 text-sm">
+                        {order.product.map((p, i) => (
+                          <div key={i}>{p.product?.name ?? "Unknown Product"}</div>
+                        ))}
+                      </td>
+                      <td className="px-6 py-4 text-sm">${order.amount}</td>
+                      <td className="px-6 py-4 text-sm">
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={getStatusBadge(order.status)}>{order.status}</span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => setSelectedOrder(order)}
+                          className="text-blue-600 hover:underline text-sm"
+                        >
+                          View Details
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
 
           {/* Pagination */}
-          <div className="mt-6 flex items-center justify-between">
-            <span className="text-sm text-gray-600">
-              Showing {startIndex + 1} to {startIndex + currentItems.length} of {orders.length} results
-            </span>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="p-2 rounded border border-gray-300 disabled:opacity-50 hover:bg-gray-100"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          {!isLoading && (
+            <div className="mt-6 flex items-center justify-between">
+              <span className="text-sm text-gray-600">
+                Showing {startIndex + 1} to {startIndex + currentItems.length} of {orders.length} results
+              </span>
+              <div className="flex items-center space-x-2">
                 <button
-                  key={page}
-                  onClick={() => handlePageChange(page)}
-                  className={`px-3 py-2 rounded border text-sm ${
-                    currentPage === page ? "bg-green-500 text-white border-green-500" : "border-gray-300 hover:bg-gray-50"
-                  }`}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="p-2 rounded border border-gray-300 disabled:opacity-50 hover:bg-gray-100"
                 >
-                  {page}
+                  <ChevronLeft className="w-4 h-4" />
                 </button>
-              ))}
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="p-2 rounded border border-gray-300 disabled:opacity-50 hover:bg-gray-100"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`px-3 py-2 rounded border text-sm ${
+                      currentPage === page
+                        ? "bg-green-500 text-white border-green-500"
+                        : "border-gray-300 hover:bg-gray-50"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="p-2 rounded border border-gray-300 disabled:opacity-50 hover:bg-gray-100"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -151,7 +177,7 @@ export default function OrderPage() {
       <Dialog open={!!selectedOrder} onOpenChange={() => setSelectedOrder(null)}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Order Details</DialogTitle>
+            <DialogTitle className="text-center text-3xl">Order Details</DialogTitle>
           </DialogHeader>
           {selectedOrder && (
             <div className="space-y-4">
@@ -166,15 +192,17 @@ export default function OrderPage() {
                   {selectedOrder.product.map((item, i) => (
                     <div key={i} className="flex items-start gap-4 border p-3 rounded-md">
                       <Image
-                      width={100}
-                      height={100}
+                        width={100}
+                        height={100}
                         src={item.product?.image || "/placeholder.png"}
                         alt={item.product?.name || "Product"}
                         className="w-16 h-16 object-cover rounded"
                       />
-                      <div>
-                        <p className="font-semibold">{item.product?.name}</p>
-                        <p className="text-sm text-gray-600">{item.product?.description}</p>
+                      <div className="overflow-hidden w-auto">
+                        <p className="font-semibold text-justify">
+                          {item.product?.name?.slice(0, 25)}
+                          {(item.product?.name?.length ?? 0) > 25 ? "..." : ""}
+                        </p>
                         <p className="text-sm text-gray-500">Brand: {item.product?.brand}</p>
                         <p className="text-sm text-gray-500">Category: {item.product?.category?.name}</p>
                         <p className="text-sm mt-1">Qty: {item.quantity}</p>

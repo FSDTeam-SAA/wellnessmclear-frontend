@@ -13,6 +13,8 @@ export type CoachResponse = {
 
 export type Coach = {
   _id: string;
+  averageRating:number
+  reviewCount:number
   firstName: string;
   lastName: string;
   role: string;

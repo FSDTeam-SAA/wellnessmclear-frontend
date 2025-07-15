@@ -48,15 +48,13 @@ const CoachHero: React.FC<CoachHeroProps> = ({
               {/* Subtitle */}
               <p
                 className={`text-gray-600 text-lg leading-relaxed max-w-xl ${subtitleColor}`}
-              >
-                {subtitle}
-              </p>
+                dangerouslySetInnerHTML={{ __html: subtitle }}
+              />
 
               {/* Button */}
               <button
-                className={`inline-flex items-center px-8 py-4 rounded-lg text-white font-semibold text-base transition-all duration-300 transform hover:scale-105 hover:shadow-xl ${
-                  buttonColor || "bg-[#A8C2A3] hover:bg-emerald-600"
-                } shadow-lg`}
+                className={`inline-flex items-center px-8 py-4 rounded-lg text-white font-semibold text-base transition-all duration-300 transform hover:scale-105 hover:shadow-xl ${buttonColor || "bg-[#A8C2A3] hover:bg-emerald-600"
+                  } shadow-lg`}
               >
                 {buttonText}
               </button>
