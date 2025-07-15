@@ -15,11 +15,11 @@ interface WellnessConsultationCardProps {
 
   receiveTitle?: string;
   receiveItems?: string[];
-  receiveImage?: string; 
+  receiveImage?: string;
 
   whoTitle?: string;
   whoDescription?: string;
-  targetImage?: string; 
+  targetImage?: string;
 
   ctaText?: string;
   ctaColor?: string;
@@ -45,7 +45,7 @@ const WellnessConsultationCard: React.FC<WellnessConsultationCardProps> = ({
   ctaText,
   // ctaColor = "bg-blue-500 hover:bg-blue-600",
 
-  
+
   cardBackgrounds = {},
 }) => {
   return (
@@ -57,9 +57,11 @@ const WellnessConsultationCard: React.FC<WellnessConsultationCardProps> = ({
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3 sm:mb-4">
               {overviewTitle}
             </h2>
-            <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
-              {overviewDescription}
-            </p>
+            <div
+              className="text-sm sm:text-base text-gray-600 leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: overviewDescription }}
+            />
+
           </div>
           {overviewImage && (
             <div className="w-full sm:w-4/5 md:w-3/5 lg:w-[573px] h-48 sm:h-64 md:h-72 lg:h-[352px] relative overflow-hidden rounded-2xl shadow-md order-1 lg:order-2">
@@ -109,8 +111,11 @@ const WellnessConsultationCard: React.FC<WellnessConsultationCardProps> = ({
               <ul className="space-y-2 sm:space-y-3">
                 {receiveItems.map((item, index) => (
                   <li key={index} className="flex items-start">
-                    <span className="text-teal-500 mr-3 mt-1 text-lg sm:text-xl">•</span>
-                    <span className="text-sm sm:text-base text-gray-600">{item}</span>
+                    {/* <span className="text-teal-500 mr-3 mt-1 text-lg sm:text-xl">•</span> */}
+                    <span
+                      className="text-sm sm:text-base text-gray-600"
+                      dangerouslySetInnerHTML={{ __html: item }}
+                    />
                   </li>
                 ))}
               </ul>
@@ -126,9 +131,11 @@ const WellnessConsultationCard: React.FC<WellnessConsultationCardProps> = ({
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3 sm:mb-4">
               {whoTitle}
             </h2>
-            <p className="text-sm sm:text-base text-gray-600 leading-relaxed mb-4 sm:mb-6">
-              {whoDescription}
-            </p>
+            <div
+              className="text-sm sm:text-base text-gray-600 leading-relaxed mb-4 sm:mb-6"
+              dangerouslySetInnerHTML={{ __html: whoDescription }}
+            />
+
             <button
               className={`bg-[#A8C2A3] text-white px-6 py-2.5 sm:px-8 sm:py-3 rounded-full font-semibold transition-colors duration-200 text-sm sm:text-base w-full sm:w-auto`}
             >
