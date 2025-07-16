@@ -59,7 +59,7 @@ const WellnessConsultationCard: React.FC<WellnessConsultationCardProps> = ({
             </h2>
             <div
               className="text-sm sm:text-base text-gray-600 leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: overviewDescription }}
+              dangerouslySetInnerHTML={{ __html: overviewDescription || "" }}
             />
 
           </div>
@@ -133,7 +133,7 @@ const WellnessConsultationCard: React.FC<WellnessConsultationCardProps> = ({
             </h2>
             <div
               className="text-sm sm:text-base text-gray-600 leading-relaxed mb-4 sm:mb-6"
-              dangerouslySetInnerHTML={{ __html: whoDescription }}
+              dangerouslySetInnerHTML={{ __html: whoDescription || "" }}
             />
 
             <button
